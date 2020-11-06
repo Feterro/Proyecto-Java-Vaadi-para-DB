@@ -2,10 +2,13 @@ package bases;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.LoginForm;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -18,15 +21,21 @@ import com.vaadin.ui.VerticalLayout;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
+//@StyleSheet("src/main/webapp/VAADIN/themes/mytheme/login.css")
 public class MyUI extends UI {
 
-    logIn logIn = new logIn();
+    Navigator nav;
+    logIn login = new logIn();
+
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-       final VerticalLayout layout = new VerticalLayout();
+    nav = new Navigator(this, this);
+    nav.addView("LogIn", logIn.class);
 
-        setContent(layout);
+    nav.navigateTo("LogIn");
+
+
 
     }
 
