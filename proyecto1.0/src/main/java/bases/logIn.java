@@ -47,6 +47,8 @@ public class logIn extends VerticalLayout implements View {
     public void obtenerDatos(Button.ClickEvent event){
         nombreUsuario = usuario.getValue();
         contr = contrasenna.getValue();
+        loginP.setVisible(false);
+        banco();
         //if usuario correcto:
             //hacer visible nuevo papel y hacer invisoble panel anterior
         //else:
@@ -54,9 +56,17 @@ public class logIn extends VerticalLayout implements View {
     }
 
     public void banco(){
-        Panel banco = new Panel("PÁGINA BANCO");
-        TabsheetState menu = new TabsheetState();
+
+        Panel beneficiarios = new Panel("Beneficiarios");
+        Panel estadosCuenta = new Panel("Estados de cuenta");
+        HorizontalLayout lay = new HorizontalLayout(beneficiarios, estadosCuenta);
+        Label bancoL = new Label("BANCO");
         
+        Panel banco = new Panel(lay);
+        banco.setWidth("100%");
+        banco.setHeight("600px");
+        addComponents(banco);
+
     }
 
 
