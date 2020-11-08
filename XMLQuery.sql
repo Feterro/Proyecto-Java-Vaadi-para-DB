@@ -2,360 +2,380 @@ USE BDProyecto;
 
 GO
 
-set nocount off
+SET NOCOUNT ON
 
---insert xml en tipoMoneda-----------------------------------------------------------
+--INSERT XML en tipoMoneda-----------------------------------------------------------
 
-insert into dbo.tipoMoneda
+INSERT INTO dbo.tipoMoneda
 
-select 
-A.Tipo_Moneda.value('@Id', 'Int') as ID,
-A.Tipo_Moneda.value('@Nombre', 'varchar(30)') as nombre,
-A.Tipo_Moneda.value('@Simbolo', 'varchar(10)') as simbolo
-
-
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
-
-cross apply c.nodes('Datos/Tipo_Moneda/TipoMoneda') as A(Tipo_Moneda)
-
---select * from dbo.tipoMoneda
---Delete from dbo.tipoMoneda
+SELECT 
+A.Tipo_Moneda.value('@Id', 'int') AS ID,
+A.Tipo_Moneda.value('@Nombre', 'varchar(30)') AS nombre,
+A.Tipo_Moneda.value('@Simbolo', 'varchar(10)') AS simbolo
 
 
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
 
---insert xml en tipoDocIdent-----------------------------------------------------------
+cross apply c.nodes('Datos/Tipo_Moneda/TipoMoneda') AS A(Tipo_Moneda)
 
-insert into dbo.tipoDocIdent
-
-select 
-A.Tipo_Doc.value('@Id', 'Int') as ID,
-A.Tipo_Doc.value('@Nombre', 'varchar(50)') as tipoDoc
-
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
-
-cross apply c.nodes('Datos/Tipo_Doc/TipoDocuIdentidad') as A(Tipo_Doc)
-
---select * from dbo.tipoDocIdent
---Delete from dbo.tipoDocIdent
+--SELECT * FROM dbo.tipoMoneda
+--Delete FROM dbo.tipoMoneda
 
 
---insert xml en parentesco-----------------------------------------------------------
 
-insert into dbo.parentesco
+--INSERT XML en tipoDocIdent-----------------------------------------------------------
 
-select 
-A.Parentezco.value('@Id', 'Int') as ID,
-A.Parentezco.value('@Nombre', 'varchar(30)') as nombre
+INSERT INTO dbo.tipoDocIdent
 
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
+SELECT 
+A.Tipo_Doc.value('@Id', 'int') AS ID,
+A.Tipo_Doc.value('@Nombre', 'varchar(50)') AS tipoDoc
 
-cross apply c.nodes('Datos/Parentezcos/Parentezco') as A(Parentezco)
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
 
---select * from dbo.parentesco
---Delete from dbo.parentesco
+cross apply c.nodes('Datos/Tipo_Doc/TipoDocuIdentidad') AS A(Tipo_Doc)
 
-
---insert xml en tipoCuentaAhorro-----------------------------------------------------------
-
-insert into dbo.tipoCuentaAhorro
-
-select 
-A.TipoCuentaAhorro.value('@Id', 'Int') as ID,
-A.TipoCuentaAhorro.value('@Nombre', 'varchar(50)') as nombre,
-A.TipoCuentaAhorro.value('@SaldoMinimo', 'decimal(10,4)') as saldoMinimo,
-A.TipoCuentaAhorro.value('@MultaSaldoMin', 'decimal(10,4)') as multaSaldoMinimo,
-A.TipoCuentaAhorro.value('@CargoAnual', 'decimal(10,4)') as cargoMens,
-A.TipoCuentaAhorro.value('@NumRetirosHumano', 'int') as numRetirosHum,
-A.TipoCuentaAhorro.value('@NumRetirosAutomatico', 'int') as numRetirosAuto,
-A.TipoCuentaAhorro.value('@Interes', 'int') as Intereses,
-A.TipoCuentaAhorro.value('@ComisionHumano', 'decimal(10,4)') as comisionRetHum,
-A.TipoCuentaAhorro.value('@ComisionAutomatico', 'decimal(10,4)') as comisionRetAuto,
-A.TipoCuentaAhorro.value('@IdTipoMoneda', 'int') as tipoMonedaId
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
-
-cross apply c.nodes('Datos/Tipo_Cuenta_Ahorros/TipoCuentaAhorro') as A(TipoCuentaAhorro)
-
---select * from dbo.tipoCuentaAhorro
---Delete from dbo.tipoCuentaAhorro
-
---insert xml en persona-----------------------------------------------------------
-
-insert into dbo.persona
-
-select 
-A.Persona.value('@Nombre', 'varchar(100)') as nombre,
-A.Persona.value('@Email', 'varchar(50)') as email,
-A.Persona.value('@FechaNacimiento', 'date') as nacimiento,
-A.Persona.value('@Telefono1', 'int') as tel1,
-A.Persona.value('@Telefono2', 'int') as tel2,
-A.Persona.value('@TipoDocuIdentidad', 'int') as tipoDocuIdentidad,
-A.Persona.value('@ValorDocumentoIdentidad', 'int') as valorDocumentoIdentidad
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
-
-cross apply c.nodes('Datos/Personas/Persona') as A(Persona)
+--SELECT * FROM dbo.tipoDocIdent
+--Delete FROM dbo.tipoDocIdent
 
 
---select * from dbo.persona
+--INSERT XML en parentesco-----------------------------------------------------------
+
+INSERT INTO dbo.parentesco
+
+SELECT 
+A.Parentezco.value('@Id', 'int') AS ID,
+A.Parentezco.value('@Nombre', 'varchar(30)') AS nombre
+
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
+
+cross apply c.nodes('Datos/Parentezcos/Parentezco') AS A(Parentezco)
+
+--SELECT * FROM dbo.parentesco
+--Delete FROM dbo.parentesco
+
+
+--INSERT XML en tipoCuentaAhorro-----------------------------------------------------------
+
+INSERT INTO dbo.tipoCuentaAhorro
+
+SELECT 
+A.TipoCuentaAhorro.value('@Id', 'int') AS ID,
+A.TipoCuentaAhorro.value('@Nombre', 'varchar(50)') AS nombre,
+A.TipoCuentaAhorro.value('@SaldoMinimo', 'decimal(10,4)') AS saldoMinimo,
+A.TipoCuentaAhorro.value('@MultASaldoMin', 'decimal(10,4)') AS multASaldoMinimo,
+A.TipoCuentaAhorro.value('@CargoAnual', 'decimal(10,4)') AS cargoMens,
+A.TipoCuentaAhorro.value('@NumRetirosHumano', 'int') AS numRetirosHum,
+A.TipoCuentaAhorro.value('@NumRetirosAutomatico', 'int') AS numRetirosAuto,
+A.TipoCuentaAhorro.value('@interes', 'int') AS intereses,
+A.TipoCuentaAhorro.value('@ComisionHumano', 'decimal(10,4)') AS comisionRetHum,
+A.TipoCuentaAhorro.value('@ComisionAutomatico', 'decimal(10,4)') AS comisionRetAuto,
+A.TipoCuentaAhorro.value('@IdTipoMoneda', 'int') AS tipoMonedaId
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
+
+cross apply c.nodes('Datos/Tipo_Cuenta_Ahorros/TipoCuentaAhorro') AS A(TipoCuentaAhorro)
+
+--SELECT * FROM dbo.tipoCuentaAhorro
+--Delete FROM dbo.tipoCuentaAhorro
+
+--INSERT XML en persona-----------------------------------------------------------
+
+INSERT INTO dbo.persona
+
+SELECT 
+A.Persona.value('@Nombre', 'varchar(100)') AS nombre,
+A.Persona.value('@Email', 'varchar(50)') AS email,
+A.Persona.value('@FechaNacimiento', 'date') AS nacimiento,
+A.Persona.value('@Telefono1', 'int') AS tel1,
+A.Persona.value('@Telefono2', 'int') AS tel2,
+A.Persona.value('@TipoDocuIdentidad', 'int') AS tipoDocuIdentidad,
+A.Persona.value('@ValorDocumentoIdentidad', 'int') AS valorDocumentoIdentidad
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
+
+cross apply c.nodes('Datos/PersonAS/Persona') AS A(Persona)
+
+
+--SELECT * FROM dbo.persona
 --DELETE FROM [dbo].[persona]
 --DBCC checkident('dbo.persona',reseed,0)
 
 
 
---insert xml en cuentaAhorro-----------------------------------------------------------
+--INSERT XML en cuentaAhorro-----------------------------------------------------------
 
-declare @cuentaTemp Table
-(ID int identity, tipoCuenta int, fechaApretura date, tempdocIdent int, numCuenta int, saldo decimal(12,4))
+DECLARE @cuentaTemp Table
+(ID int identity,
+tipoCuenta int,
+fechaApretura date,
+tempdocIdent int,
+numCuenta int,
+saldo decimal(12,4))
 
-insert into @cuentaTemp
-select
-	A.Cuenta.value('@TipoCuentaId', 'int') as tipoCuentaId,
-	A.Cuenta.value('@FechaCreacion', 'date') as fechaInicio,
-	A.Cuenta.value('@ValorDocumentoIdentidadDelCliente', 'int') as tempDocIdent,
-	A.Cuenta.value('@NumeroCuenta', 'int') as numCuenta,
-	A.Cuenta.value('@Saldo', 'decimal(12,4)') as saldo
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
+INSERT INTO @cuentaTemp
+SELECT
+	A.Cuenta.value('@TipoCuentaId', 'int') AS tipoCuentaId,
+	A.Cuenta.value('@FechaCreacion', 'date') AS fechaInicio,
+	A.Cuenta.value('@ValorDocumentoIdentidadDelCliente', 'int') AS tempDocIdent,
+	A.Cuenta.value('@NumeroCuenta', 'int') AS numCuenta,
+	A.Cuenta.value('@Saldo', 'decimal(12,4)') AS saldo
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
 
-cross apply c.nodes('Datos/Cuentas/Cuenta') as A(Cuenta)
+cross apply c.nodes('Datos/CuentAS/Cuenta') AS A(Cuenta)
 
-declare @Lo int = 1
-declare @Hi int
-set @Hi = (select COUNT(*) from @cuentaTemp)
+DECLARE @Lo int = 1
+DECLARE @Hi int
+set @Hi = (SELECT COUNT(*) FROM @cuentaTemp)
 
-declare @TipoCuentaId int
-declare @FechaInicio date
-declare @TempDocIdent int
-declare @NumCuenta int
-declare @Saldo decimal(12,4)
-declare @PersonaId int
+DECLARE @TipoCuentaId int
+DECLARE @FechaInicio date
+DECLARE @TempDocIdent int
+DECLARE @NumCuenta int
+DECLARE @Saldo decimal(12,4)
+DECLARE @PersonaId int
 
 While (@Lo <= @Hi)
 Begin
 
-set @TipoCuentaId = (select tipoCuenta from @cuentaTemp where ID = @Lo)
-set @FechaInicio = (select fechaApretura from @cuentaTemp where ID = @Lo)
-set @TempDocIdent = (select tempdocIdent from @cuentaTemp where ID = @Lo)
-set @NumCuenta = (select numCuenta from @cuentaTemp where ID = @Lo)
-set @Saldo = (select saldo from @cuentaTemp where ID = @Lo)
-set @PersonaId = (select ID from dbo.persona where valorDocIdent = @TempDocIdent)
+set @TipoCuentaId = (SELECT tipoCuenta FROM @cuentaTemp where ID = @Lo)
+set @FechaInicio = (SELECT fechaApretura FROM @cuentaTemp where ID = @Lo)
+set @TempDocIdent = (SELECT tempdocIdent FROM @cuentaTemp where ID = @Lo)
+set @NumCuenta = (SELECT numCuenta FROM @cuentaTemp where ID = @Lo)
+set @Saldo = (SELECT saldo FROM @cuentaTemp where ID = @Lo)
+set @PersonaId = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDocIdent)
 
-insert into dbo.cuentaAhorro (tipoCuentaId, fechaApertura, personaId, numeroCuenta, saldo)
+INSERT INTO dbo.cuentaAhorro (tipoCuentaId, fechaApertura, personaId, numeroCuenta, saldo)
 values(@TipoCuentaId, @FechaInicio, @PersonaId, @NumCuenta, @Saldo)
 
 set @Lo = @Lo+1
 End;
 
---select * from dbo.cuentaAhorro
+--SELECT * FROM dbo.cuentaAhorro
 --DELETE FROM dbo.cuentaAhorro
 --DBCC checkident('dbo.cuentaAhorro',reseed,0)
 
 
 
---insert xml en beneficiario-------------------------
-declare @benefTemp Table
-(ID int identity, ParId int, tempdocIdent int, numCuenta int, porcentaje int)
+--INSERT XML en beneficiario-------------------------
+DECLARE @benefTemp Table
+(ID int identity,
+ParId int,
+tempdocIdent int,
+numCuenta int,
+porcentaje int)
 
-insert into @benefTemp
-select
-	A.Benef.value('@ParentezcoId', 'int') as ParId,
-	A.Benef.value('@ValorDocumentoIdentidadBeneficiario', 'int') as tempDocIdent,
-	A.Benef.value('@NumeroCuenta', 'int') as numCuenta,
-	A.Benef.value('@Porcentaje', 'int') as porcentaje
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
+INSERT INTO @benefTemp
+SELECT
+	A.Benef.value('@ParentezcoId', 'int') AS ParId,
+	A.Benef.value('@ValorDocumentoIdentidadBeneficiario', 'int') AS tempDocIdent,
+	A.Benef.value('@NumeroCuenta', 'int') AS numCuenta,
+	A.Benef.value('@Porcentaje', 'int') AS porcentaje
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
 
-cross apply c.nodes('Datos/Beneficiarios/Beneficiario') as A(Benef)
+cross apply c.nodes('Datos/Beneficiarios/Beneficiario') AS A(Benef)
 
-declare @Lo2 int = 1
-declare @Hi2 int
-set @Hi2 = (select COUNT(*) from @benefTemp)
+DECLARE @Lo2 int = 1
+DECLARE @Hi2 int
+set @Hi2 = (SELECT COUNT(*) FROM @benefTemp)
 
-declare @Parentezco int
-declare @TempDocIden int
-declare @NumCuent int
-declare @Porcentaje int
-declare @CuentaId int
-declare @PersonaId2 int
-declare @Activo bit = 1
+DECLARE @Parentezco int
+DECLARE @TempDocIden int
+DECLARE @NumCuent int
+DECLARE @Porcentaje int
+DECLARE @CuentaId int
+DECLARE @PersonaId2 int
+DECLARE @Activo bit = 1
 
 While (@Lo2 <= @Hi2)
 Begin
 
-set @TempDocIden = (select tempDocIdent from @benefTemp where ID = @Lo2)
-set @NumCuent = (select numCuenta from @benefTemp where ID = @Lo2)
-set @Porcentaje = (select porcentaje from @benefTemp where ID = @Lo2)
-set @Parentezco = (select ParId from @benefTemp where ID = @Lo2)
-set @PersonaId2 = (select ID from dbo.persona where valorDocIdent = @TempDocIden)
-set @CuentaId = (select ID from dbo.cuentaAhorro where numeroCuenta = @NumCuent)
+set @TempDocIden = (SELECT tempDocIdent FROM @benefTemp where ID = @Lo2)
+set @NumCuent = (SELECT numCuenta FROM @benefTemp where ID = @Lo2)
+set @Porcentaje = (SELECT porcentaje FROM @benefTemp where ID = @Lo2)
+set @Parentezco = (SELECT ParId FROM @benefTemp where ID = @Lo2)
+set @PersonaId2 = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDocIden)
+set @CuentaId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @NumCuent)
 
-insert into dbo.beneficiario(porcentaje, personaId, cuentaId, activo,parentescoId)
+INSERT INTO dbo.beneficiario(porcentaje, personaId, cuentaId, activo,parentescoId)
 values(@Porcentaje, @PersonaId2, @CuentaId, @Activo, @Parentezco)
 
 set @Lo2 = @Lo2+1
 End;
 
---select * from dbo.beneficiario
---Delete from dbo.beneficiario
+--SELECT * FROM dbo.beneficiario
+--Delete FROM dbo.beneficiario
 --DBCC checkident('dbo.beneficiario',reseed,0)
 
 
---insert xml en estadoCuenta-------------------------
-declare @estadoCuenta Table
-(ID int identity, numCuenta int, fechaIni date, fechaFin date, saldoIni decimal(12,4), saldoFin decimal(12,4))
+--INSERT XML en estadoCuenta-------------------------
+DECLARE @estadoCuenta Table
+(ID int identity,
+numCuenta int,
+fechaIni date,
+fechaFin date,
+saldoIni decimal(12,4),
+saldoFin decimal(12,4))
 
-insert into @estadoCuenta
-select
-	A.Estado.value('@NumeroCuenta', 'int') as numCuenta,
-	A.Estado.value('@fechaInicio', 'date') as fechaIni,
-	A.Estado.value('@fechaFin', 'date') as fechaFin,
-	A.Estado.value('@saldoInicial', 'decimal(12,4)') as saldIni,
-	A.Estado.value('@saldoFinal', 'decimal(12,4)') as saldFin
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
+INSERT INTO @estadoCuenta
+SELECT
+	A.Estado.value('@NumeroCuenta', 'int') AS numCuenta,
+	A.Estado.value('@fechaInicio', 'date') AS fechaIni,
+	A.Estado.value('@fechaFin', 'date') AS fechaFin,
+	A.Estado.value('@saldoInicial', 'decimal(12,4)') AS saldIni,
+	A.Estado.value('@saldoFinal', 'decimal(12,4)') AS saldFin
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
 
-cross apply c.nodes('Datos/Estados_de_Cuenta/Estado_de_Cuenta') as A(Estado)
+cross apply c.nodes('Datos/Estados_de_Cuenta/Estado_de_Cuenta') AS A(Estado)
 
-declare @Lo3 int = 1
-declare @Hi3 int
-set @Hi3 = (select COUNT(*) from @estadoCuenta)
+DECLARE @Lo3 int = 1
+DECLARE @Hi3 int
+set @Hi3 = (SELECT COUNT(*) FROM @estadoCuenta)
 
-declare @FechIn date
-declare @NumCuen int
-declare @FechFin date
-declare @SaldoIni decimal(12,4)
-declare @SaldoFin decimal(12,4)
-declare @numCuenId int
+DECLARE @FechIn date
+DECLARE @NumCuen int
+DECLARE @FechFin date
+DECLARE @SaldoIni decimal(12,4)
+DECLARE @SaldoFin decimal(12,4)
+DECLARE @numCuenId int
 While (@Lo3 <= @Hi3)
 Begin
 
-set @FechIn = (select fechaIni from @estadoCuenta where ID = @Lo3)
-set @FechFin = (select fechaFin from @estadoCuenta where ID = @Lo3)
-set @NumCuen = (select numCuenta from @estadoCuenta where ID = @Lo3)
-set @SaldoIni = (select saldoIni from @estadoCuenta where ID = @Lo3)
-set @SaldoFin  = (select saldoFin from @estadoCuenta where ID = @Lo3)
-set @numCuenId = (select ID from dbo.cuentaAhorro where numeroCuenta = @NumCuen)
+set @FechIn = (SELECT fechaIni FROM @estadoCuenta where ID = @Lo3)
+set @FechFin = (SELECT fechaFin FROM @estadoCuenta where ID = @Lo3)
+set @NumCuen = (SELECT numCuenta FROM @estadoCuenta where ID = @Lo3)
+set @SaldoIni = (SELECT saldoIni FROM @estadoCuenta where ID = @Lo3)
+set @SaldoFin  = (SELECT saldoFin FROM @estadoCuenta where ID = @Lo3)
+set @numCuenId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @NumCuen)
 
-insert into dbo.estadoCuenta(fechaIni, fechaFin,cuentaAhorroId, saldoIni, saldoFin)
+INSERT INTO dbo.estadoCuenta(fechaIni, fechaFin,cuentaAhorroId, saldoIni, saldoFin)
 values(@FechIn, @FechFin, @numCuenId, @SaldoIni, @SaldoFin)
 
 set @Lo3 = @Lo3+1
 End;
 
---select * from dbo.estadoCuenta
---Delete from dbo.estadoCuenta
+--SELECT * FROM dbo.estadoCuenta
+--Delete FROM dbo.estadoCuenta
 --DBCC checkident('dbo.estadoCuenta',reseed,0)
 
 
---insert xml en usuario-------------------------
+--INSERT XML en usuario-------------------------
 
-declare @usuario Table
-(ID int identity, nomUsuario varchar(50), contra varchar(50), esAdmin bit, tempDoc int)
+DECLARE @usuario Table
+(ID int identity,
+nomUsuario varchar(50),
+contra varchar(50),
+esAdmin bit,
+tempDoc int)
 
-insert into @usuario
-select
-	A.Usuario.value('@User', 'varchar(50)') as username,
-	A.Usuario.value('@Pass', 'varchar(50)') as pass,
-	A.Usuario.value('@EsAdministrador', 'bit') as EsAdmin,
-	A.Usuario.value('@ValorDocumentoIdentidad', 'int') as docide
+INSERT INTO @usuario
+SELECT
+	A.Usuario.value('@User', 'varchar(50)') AS username,
+	A.Usuario.value('@PASs', 'varchar(50)') AS pASs,
+	A.Usuario.value('@EsAdministrador', 'bit') AS EsAdmin,
+	A.Usuario.value('@ValorDocumentoIdentidad', 'int') AS docide
 	
 
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
 
-cross apply c.nodes('Datos/Usuarios/Usuario') as A(Usuario)
+cross apply c.nodes('Datos/Usuarios/Usuario') AS A(Usuario)
 
-declare @Lo4 int = 1
-declare @Hi4 int
-set @Hi4 = (select COUNT(*) from @usuario)
+DECLARE @Lo4 int = 1
+DECLARE @Hi4 int
+set @Hi4 = (SELECT COUNT(*) FROM @usuario)
 
-declare @NomUsuario varchar(50)
-declare @Contra varchar(50)
-declare @EsAdmin bit
-declare @TempDoc int
-declare @tipDocId int
+DECLARE @NomUsuario varchar(50)
+DECLARE @Contra varchar(50)
+DECLARE @EsAdmin bit
+DECLARE @TempDoc int
+DECLARE @tipDocId int
 While (@Lo4 <= @Hi4)
 Begin
 
-set @NomUsuario = (select nomUsuario from @usuario where ID = @Lo4)
-set @Contra = (select contra from @usuario where ID = @Lo4)
-set @EsAdmin = (select esAdmin from @usuario where ID = @Lo4)
-set @TempDoc = (select tempDoc from @usuario where ID = @Lo4)
-set @tipDocId = (select ID from dbo.persona where valorDocIdent = @TempDoc)
+set @NomUsuario = (SELECT nomUsuario FROM @usuario where ID = @Lo4)
+set @Contra = (SELECT contra FROM @usuario where ID = @Lo4)
+set @EsAdmin = (SELECT esAdmin FROM @usuario where ID = @Lo4)
+set @TempDoc = (SELECT tempDoc FROM @usuario where ID = @Lo4)
+set @tipDocId = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDoc)
 
-insert into dbo.usuario(personaId, tipoUsuario, nombreUsuario, contrasenna)
+INSERT INTO dbo.usuario(personaId, tipoUsuario, nombreUsuario, contrASenna)
 values(@tipDocId, @EsAdmin, @NomUsuario, @Contra)
 
 set @Lo4 = @Lo4+1
 End;
 
---select * from dbo.usuario
---Delete from dbo.usuario
+--SELECT * FROM dbo.usuario
+--Delete FROM dbo.usuario
 --DBCC checkident('dbo.usuario',reseed,0)
 
 
---insert xml en puedeVer-------------------------
+--INSERT XML en puedeVer-------------------------
 
-declare @visibilidad Table
-(ID int identity, nomUsuario varchar(50), tempCuent int)
+DECLARE @visibilidad Table
+(ID int identity,
+nomUsuario varchar(50),
+tempCuent int)
 
-insert into @visibilidad
-select
-	A.ver.value('@User', 'varchar(50)') as username,
-	A.ver.value('@NumeroCuenta', 'int') as numcue
+INSERT INTO @visibilidad
+SELECT
+	A.ver.value('@User', 'varchar(50)') AS username,
+	A.ver.value('@NumeroCuenta', 'int') AS numcue
 	
 
-from(
-select cast(c as xml) from 
-openrowset(bulk 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.xml', single_blob) as T(c)
-) as S(c)
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+) AS S(c)
 
-cross apply c.nodes('Datos/Usuarios_Ver/UsuarioPuedeVer') as A(ver)
+cross apply c.nodes('Datos/Usuarios_Ver/UsuarioPuedeVer') AS A(ver)
 
-declare @Lo5 int = 1
-declare @Hi5 int
-set @Hi5 = (select COUNT(*) from @visibilidad)
+DECLARE @Lo5 int = 1
+DECLARE @Hi5 int
+set @Hi5 = (SELECT COUNT(*) FROM @visibilidad)
 
-declare @NomUsuarioTemp varchar(50)
-declare @tempCuenta int
-declare @CuenId int
-declare @UsuarioId int
+DECLARE @NomUsuarioTemp varchar(50)
+DECLARE @tempCuenta int
+DECLARE @CuenId int
+DECLARE @UsuarioId int
 While (@Lo5 <= @Hi5)
 Begin
 
-set @NomUsuarioTemp = (select nomUsuario from @visibilidad where ID = @Lo5)
-set @tempCuenta = (select tempCuent from @visibilidad where ID = @Lo5)
-set @CuenId = (select ID from dbo.cuentaAhorro where numeroCuenta = @tempCuenta)
-set @UsuarioId = (select ID from dbo.usuario where nombreUsuario = @NomUsuarioTemp)
+set @NomUsuarioTemp = (SELECT nomUsuario FROM @visibilidad where ID = @Lo5)
+set @tempCuenta = (SELECT tempCuent FROM @visibilidad where ID = @Lo5)
+set @CuenId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @tempCuenta)
+set @UsuarioId = (SELECT ID FROM dbo.usuario where nombreUsuario = @NomUsuarioTemp)
 
-insert into dbo.puedeVer(usuarioId, cuentaAhorroId)
+INSERT INTO dbo.puedeVer(usuarioId, cuentaAhorroId)
 values(@UsuarioId, @CuenId)
 
 set @Lo5 = @Lo5+1
 End;
 
---select * from dbo.puedeVer
---Delete from dbo.puedeVer
+--SELECT * FROM dbo.puedeVer
+--Delete FROM dbo.puedeVer
 --DBCC checkident('dbo.puedeVer',reseed,0)
