@@ -14,17 +14,21 @@ public class Conectividad {
             Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
             System.out.println("Conexion exitosa!");
 
-            ArrayList<String> listaParentezcos = new ArrayList<String>();
+            ArrayList<String> listaParentezcos = new ArrayList<>();
             try {
 
-                PreparedStatement preparedStatement = connection.prepareStatement("EXEC SP_PA_SolicitaParentezcos ?");
-                preparedStatement.setInt(1,1);
-                ResultSet resultSet = preparedStatement.executeQuery();
+                CallableStatement callableStatement = connection.prepareCall("EXEC SP_PA_SolicitaParentezcos ?");
+                callableStatement.registerOutParameter(1,Types.VARCHAR);
+                ResultSet resultSet = callableStatement.executeQuery();
+                while(resultSet.next()){
 
+                    listaParentezcos.add(resultSet.getString("nombre"));
+                }
 
             }
             catch (Exception ex){
                 System.out.println("ERROR!");
+                ex.printStackTrace();
             }
 
 
