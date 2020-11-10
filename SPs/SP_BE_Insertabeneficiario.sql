@@ -5,21 +5,42 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SP_BE_InsertaBeneficiario] @PersonaId int, @CuentaId int, @ParentescoId int, @Porcentaje int, @InsertAt date, @outResultCode varchar output
+CREATE PROCEDURE [dbo].[SP_BE_InsertaBeneficiario] @PersonaDoc int, @CuentaNum int, @ParentescoNom varchar(30), @Porcentaje int, @InsertIn varchar(30), @outResultCode int output
 AS
 BEGIN
 SET NOCOUNT ON
 	BEGIN TRY
 		
-		SET @outResultCode = 0
-		IF NOT EXISTS (SELECT ID FROM dbo.persona WHERE valorDocIdent = @PersonaId) 
+		DECLARE 
+		@PersonaId INT,
+		@CuentaId INT,
+		@ParentescoId INT
+
+
+		IF NOT EXISTS (SELECT ID FROM dbo.persona WHERE valorDocIdent = @PersonaDoc) 
 			BEGIN
 				SET @outResultCode = 50002
 			END
-		IF NOT EXISTS (SELECT ID FROM dbo.cuentaAhorro WHERE numeroCuenta = @CuentaId)
+		IF NOT EXISTS (SELECT ID FROM dbo.cuentaAhorro WHERE numeroCuenta = @CuentaNum)
 			BEGIN
-				SET @outResultCode = 50002;
+				SET @outResultCode = 50003
 			END
+
+		SET @PersonaId = (SELECT ID FROM dbo.persona WHERE valorDocIdent = @PersonaDoc)
+		SET @CuentaId = (SELECT ID FROM dbo.cuentaAhorro WHERE numeroCuenta = @CuentaNum)
+		SET @ParentescoId = (SELECT ID FROM dbo.parentesco WHERE nombre = @ParentescoNom)
+
+		INSERT INTO dbo.beneficiario(porcentaje, personaId, cuentaId, parentescoId, insertBy, insertAt, insertIn)
+		VALUES(
+		@Porcentaje,
+		@PersonaId,
+		@CuentaId,
+		@ParentescoId,
+		SUSER_NAME(),
+		GETDATE(),
+		@InsertIn)
+
+		SELECT @outResultCode = 0
 
 	END TRY
 	BEGIN CATCH
@@ -34,7 +55,7 @@ SET NOCOUNT ON
 			ERROR_MESSAGE(),
 			GETDATE()
 		);
-		SET @outResultCode='50001';
+		SELECT @outResultCode = 50001
 
 	END CATCH
 

@@ -66,8 +66,23 @@ public class Beneficiario {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
-
     }
+
+//    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje){
+//        try {
+//            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiario ?");
+//
+//            callableStatement.registerOutParameter(1,Types.VARCHAR);
+//            ResultSet resultSet = callableStatement.executeQuery();
+//            while(resultSet.next()){
+//                listaParentezcos.add(resultSet.getString("nombre"));
+//                System.out.println(resultSet.getString("nombre"));}
+//        }
+//        catch (Exception ex){
+//            System.out.println("ERROR!");
+//            ex.printStackTrace();
+//        }
+//    }
 
     public static void main(String[] args){
         Beneficiario beneficiario = new Beneficiario();
