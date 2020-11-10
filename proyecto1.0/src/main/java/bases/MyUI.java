@@ -32,10 +32,7 @@ public class MyUI extends UI {
     protected void init(VaadinRequest vaadinRequest) {
     nav = new Navigator(this, this);
     nav.addView("LogIn", logIn.class);
-
     nav.navigateTo("LogIn");
-
-
 
     }
 
