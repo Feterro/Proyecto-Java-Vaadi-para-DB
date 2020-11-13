@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 bases\MyUI$MyUIServlet.class
+=======
+conexion\Conectividad.class
+bases\MyUI$MyUIServlet.class
+bases\logIn.class
+>>>>>>> Web
 bases\MyUI.class
