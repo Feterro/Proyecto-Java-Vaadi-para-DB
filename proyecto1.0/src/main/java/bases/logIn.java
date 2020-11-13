@@ -11,12 +11,14 @@ import com.vaadin.shared.ui.tabsheet.TabsheetState;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.ImageRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+import conexion.EstadoCuenta;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 //@StyleSheet("vaadin://login.css")
 public class logIn extends VerticalLayout implements View {
@@ -28,7 +30,7 @@ public class logIn extends VerticalLayout implements View {
     String nombreUsuario;
     String contr;
 
-    public logIn(){
+    public logIn() {
 
         usuario = new TextField("Usuario");
         usuario.setIcon(VaadinIcons.USER);
@@ -57,18 +59,19 @@ public class logIn extends VerticalLayout implements View {
         entrar.addClickListener(this::obtenerDatos);
 
     }
-    public void obtenerDatos(Button.ClickEvent event){
+
+    public void obtenerDatos(Button.ClickEvent event) {
         nombreUsuario = usuario.getValue();
         contr = contrasenna.getValue();
         loginP.setVisible(false);
         banco();
         //if usuario correcto:
-            //hacer visible nuevo papel y hacer invisoble panel anterior
+        //hacer visible nuevo papel y hacer invisoble panel anterior
         //else:
-            //avisar que está mamando
+        //avisar que está mamando
     }
 
-    public void banco(){
+    public void banco() {
         HorizontalLayout lay = new HorizontalLayout();
         TabSheet principal = new TabSheet();
         Button boton2 = new Button("Boton2");
@@ -190,10 +193,9 @@ public class logIn extends VerticalLayout implements View {
         eliminarBeneficiario.addComponent(eliminar, "top: 200px; left: 120px");
 
 
-
         //Principal
 
-        principal.addTab(beneficiarios,"BENEFICIARIOS");
+        principal.addTab(beneficiarios, "BENEFICIARIOS");
 
         beneficiarios.addTab(agregarBeneficiario, "AGREGAR BENEFICIARIO");
         beneficiarios.addTab(actualizarBeneficiario, "ACTUALIZAR BENEFICIARIO");
@@ -204,9 +206,26 @@ public class logIn extends VerticalLayout implements View {
         devolverse.setStyleName("primary");
 //        devolverse.addClickListener(this::atras);
 
+        AbsoluteLayout estadosCuenta = new AbsoluteLayout();
+        estadosCuenta.setWidth("1000px");
+        estadosCuenta.setHeight("500px");
+        Grid<Integer> grid = new Grid<>();
+
+        grid.addColumn(i -> i).setCaption("#");
+        grid.addColumn(i -> "1");
+        grid.setItems(IntStream.range(1, 21).boxed());
+
+//        Grid<EstadoCuenta> estados = new Grid<>(EstadoCuenta.class);
+//        estados.setWidth("700px");
 
 
-        principal.addTab(estadosCuenta(), "ESTADOS DE CUENTA");
+//        estados.addColumn("#");
+//        estados.addColumn("Estado Cuenta");
+//        estados.addColumn("Fecha");
+        estadosCuenta.addComponent(grid, "top: 100px; left: 100");
+
+
+        principal.addTab(estadosCuenta, "ESTADOS DE CUENTA");
 
         lay.addComponents(principal, devolverse);
         addComponents(lay);
@@ -214,30 +233,19 @@ public class logIn extends VerticalLayout implements View {
 
 
     }
+
+
 //
 //    public void atras(Button.ClickEvent event){
 //        loginP.setVisible(true);
 //        banco().setVisible(false);
 //
 //    }
-    public AbsoluteLayout estadosCuenta() {
-        AbsoluteLayout estadosCuenta = new AbsoluteLayout();
-        estadosCuenta.setWidth("1000px");
-        estadosCuenta.setHeight("500px");
-        Grid<String> estados = new Grid<>();
-        int i = 1;
-        while (i <= 10){
-            i++;
-        }
-
-        estados.addColumn("#");
-        estados.addColumn("Estado Cuenta");
-        estados.addColumn("Fecha");
-        estadosCuenta.addComponent(estados, "top: 100px; left: 500");
-
-        return estadosCuenta;
-
-    }
+//    public AbsoluteLayout estadosCuenta() {
+//
+//        return estadosCuenta;
+//
+//    }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {

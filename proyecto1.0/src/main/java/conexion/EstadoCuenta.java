@@ -3,67 +3,67 @@ package conexion;
 import java.util.Date;
 
 public class EstadoCuenta {
-    private int id;
-    private Date fechaIn;
-    private Date fechaFin;
-    private float saldoIn;
-    private float saldoFin;
+    private int Numero;
+    private Date Fecha_Inicio;
+    private Date Fecha_Final;
+    private float Saldo_Inicial;
+    private float Saldo_Final;
 
-    public EstadoCuenta(int id, Date fechaIn, Date fechaFin, float saldoIn, float saldoFin) {
-        this.id = id;
-        this.fechaIn = fechaIn;
-        this.fechaFin = fechaFin;
-        this.saldoIn = saldoIn;
-        this.saldoFin = saldoFin;
+    public EstadoCuenta(int Numero, Date Fecha_Inicio, Date Fecha_Final, float Saldo_Inicial, float Saldo_Final) {
+        this.Numero = Numero;
+        this.Fecha_Inicio = Fecha_Inicio;
+        this.Fecha_Final = Fecha_Final;
+        this.Saldo_Inicial = Saldo_Inicial;
+        this.Saldo_Final = Saldo_Final;
     }
 
     public EstadoCuenta() {
     }
 
-    public EstadoCuenta(int id, Date fechaIn, Date fechaFin) {
-        this.id = id;
-        this.fechaIn = fechaIn;
-        this.fechaFin = fechaFin;
+    public EstadoCuenta(int Numero, Date Fecha_Inicio, Date Fecha_Final) {
+        this.Numero = Numero;
+        this.Fecha_Inicio = Fecha_Inicio;
+        this.Fecha_Final = Fecha_Final;
     }
 
-    public int getId() {
-        return id;
+    public int getNumero() {
+        return Numero;
     }
 
-    public Date getFechaIn() {
-        return fechaIn;
+    public Date getFecha_Inicio() {
+        return Fecha_Inicio;
     }
 
-    public Date getFechaFin() {
-        return fechaFin;
+    public Date getFecha_Final() {
+        return Fecha_Final;
     }
 
-    public float getSaldoIn() {
-        return saldoIn;
+    public float getSaldo_Inicial() {
+        return Saldo_Inicial;
     }
 
-    public float getSaldoFin() {
-        return saldoFin;
+    public float getSaldo_Final() {
+        return Saldo_Final;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setNumero(int numero) {
+        this.Numero = numero;
     }
 
-    public void setFechaIn(Date fechaIn) {
-        this.fechaIn = fechaIn;
+    public void setFecha_Inicio(Date fecha_Inicio) {
+        this.Fecha_Inicio = fecha_Inicio;
     }
 
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
+    public void setFecha_Final(Date fecha_Final) {
+        this.Fecha_Final = fecha_Final;
     }
 
-    public void setSaldoIn(float saldoIn) {
-        this.saldoIn = saldoIn;
+    public void setSaldo_Inicial(float saldo_Inicial) {
+        this.Saldo_Inicial = saldo_Inicial;
     }
 
-    public void setSaldoFin(float saldoFin) {
-        this.saldoFin = saldoFin;
+    public void setSaldo_Final(float saldo_Final) {
+        this.Saldo_Final = saldo_Final;
     }
 }
 

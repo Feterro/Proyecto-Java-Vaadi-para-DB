@@ -94,7 +94,7 @@ public class Beneficiario {
 
     public static void main(String[] args){
         Beneficiario beneficiario = new Beneficiario();
-        String url = "jdbc:sqlserver://pc-fabrizio;databaseName=BDProyecto";
+        String url = "jdbc:sqlserver://Asus-VivoBook15;databaseName=BDProyecto";
         try {
             Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
             System.out.println("Conexion exitosa!");
