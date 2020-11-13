@@ -72,11 +72,11 @@ SELECT
 A.TipoCuentaAhorro.value('@Id', 'int') AS ID,
 A.TipoCuentaAhorro.value('@Nombre', 'varchar(50)') AS nombre,
 A.TipoCuentaAhorro.value('@SaldoMinimo', 'decimal(10,4)') AS saldoMinimo,
-A.TipoCuentaAhorro.value('@MultASaldoMin', 'decimal(10,4)') AS multASaldoMinimo,
+A.TipoCuentaAhorro.value('@MultaSaldoMin', 'decimal(10,4)') AS multASaldoMinimo,
 A.TipoCuentaAhorro.value('@CargoAnual', 'decimal(10,4)') AS cargoMens,
 A.TipoCuentaAhorro.value('@NumRetirosHumano', 'int') AS numRetirosHum,
 A.TipoCuentaAhorro.value('@NumRetirosAutomatico', 'int') AS numRetirosAuto,
-A.TipoCuentaAhorro.value('@interes', 'int') AS intereses,
+A.TipoCuentaAhorro.value('@Interes', 'int') AS intereses,
 A.TipoCuentaAhorro.value('@ComisionHumano', 'decimal(10,4)') AS comisionRetHum,
 A.TipoCuentaAhorro.value('@ComisionAutomatico', 'decimal(10,4)') AS comisionRetAuto,
 A.TipoCuentaAhorro.value('@IdTipoMoneda', 'int') AS tipoMonedaId
@@ -104,10 +104,10 @@ A.Persona.value('@TipoDocuIdentidad', 'int') AS tipoDocuIdentidad,
 A.Persona.value('@ValorDocumentoIdentidad', 'int') AS valorDocumentoIdentidad
 FROM(
 SELECT CAST(c AS XML) FROM 
-OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
+OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\Bases\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
 ) AS S(c)
 
-cross apply c.nodes('Datos/PersonAS/Persona') AS A(Persona)
+cross apply c.nodes('Datos/Personas/Persona') AS A(Persona)
 
 
 --SELECT * FROM dbo.persona
@@ -118,7 +118,7 @@ cross apply c.nodes('Datos/PersonAS/Persona') AS A(Persona)
 
 --INSERT XML en cuentaAhorro-----------------------------------------------------------
 
-DECLARE @cuentaTemp Table
+DECLARE @cuentaTemp TABLE
 (ID int identity,
 tipoCuenta int,
 fechaApretura date,
@@ -138,11 +138,11 @@ SELECT CAST(c AS XML) FROM
 OPENROWSET(BULK 'F:\Archivos Tec\Cuarto semestre\BASes\Datos_Tarea1.XML', SINGLE_BLOB) AS T(c)
 ) AS S(c)
 
-cross apply c.nodes('Datos/CuentAS/Cuenta') AS A(Cuenta)
+cross apply c.nodes('Datos/Cuentas/Cuenta') AS A(Cuenta)
 
 DECLARE @Lo int = 1
 DECLARE @Hi int
-set @Hi = (SELECT COUNT(*) FROM @cuentaTemp)
+SET @Hi = (SELECT COUNT(*) FROM @cuentaTemp)
 
 DECLARE @TipoCuentaId int
 DECLARE @FechaInicio date
@@ -151,21 +151,21 @@ DECLARE @NumCuenta int
 DECLARE @Saldo decimal(12,4)
 DECLARE @PersonaId int
 
-While (@Lo <= @Hi)
-Begin
+WHILE (@Lo <= @Hi)
+BEGIN
 
-set @TipoCuentaId = (SELECT tipoCuenta FROM @cuentaTemp where ID = @Lo)
-set @FechaInicio = (SELECT fechaApretura FROM @cuentaTemp where ID = @Lo)
-set @TempDocIdent = (SELECT tempdocIdent FROM @cuentaTemp where ID = @Lo)
-set @NumCuenta = (SELECT numCuenta FROM @cuentaTemp where ID = @Lo)
-set @Saldo = (SELECT saldo FROM @cuentaTemp where ID = @Lo)
-set @PersonaId = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDocIdent)
+SET @TipoCuentaId = (SELECT tipoCuenta FROM @cuentaTemp where ID = @Lo)
+SET @FechaInicio = (SELECT fechaApretura FROM @cuentaTemp where ID = @Lo)
+SET @TempDocIdent = (SELECT tempdocIdent FROM @cuentaTemp where ID = @Lo)
+SET @NumCuenta = (SELECT numCuenta FROM @cuentaTemp where ID = @Lo)
+SET @Saldo = (SELECT saldo FROM @cuentaTemp where ID = @Lo)
+SET @PersonaId = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDocIdent)
 
 INSERT INTO dbo.cuentaAhorro (tipoCuentaId, fechaApertura, personaId, numeroCuenta, saldo)
 values(@TipoCuentaId, @FechaInicio, @PersonaId, @NumCuenta, @Saldo)
 
-set @Lo = @Lo+1
-End;
+SET @Lo = @Lo+1
+END;
 
 --SELECT * FROM dbo.cuentaAhorro
 --DELETE FROM dbo.cuentaAhorro
@@ -174,7 +174,7 @@ End;
 
 
 --INSERT XML en beneficiario-------------------------
-DECLARE @benefTemp Table
+DECLARE @benefTemp TABLE
 (ID int identity,
 ParId int,
 tempdocIdent int,
@@ -196,7 +196,7 @@ cross apply c.nodes('Datos/Beneficiarios/Beneficiario') AS A(Benef)
 
 DECLARE @Lo2 int = 1
 DECLARE @Hi2 int
-set @Hi2 = (SELECT COUNT(*) FROM @benefTemp)
+SET @Hi2 = (SELECT COUNT(*) FROM @benefTemp)
 
 DECLARE @Parentezco int
 DECLARE @TempDocIden int
@@ -204,23 +204,23 @@ DECLARE @NumCuent int
 DECLARE @Porcentaje int
 DECLARE @CuentaId int
 DECLARE @PersonaId2 int
-DECLARE @Activo bit = 1
 
-While (@Lo2 <= @Hi2)
-Begin
 
-set @TempDocIden = (SELECT tempDocIdent FROM @benefTemp where ID = @Lo2)
-set @NumCuent = (SELECT numCuenta FROM @benefTemp where ID = @Lo2)
-set @Porcentaje = (SELECT porcentaje FROM @benefTemp where ID = @Lo2)
-set @Parentezco = (SELECT ParId FROM @benefTemp where ID = @Lo2)
-set @PersonaId2 = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDocIden)
-set @CuentaId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @NumCuent)
+WHILE (@Lo2 <= @Hi2)
+BEGIN
 
-INSERT INTO dbo.beneficiario(porcentaje, personaId, cuentaId, activo,parentescoId)
-values(@Porcentaje, @PersonaId2, @CuentaId, @Activo, @Parentezco)
+SET @TempDocIden = (SELECT tempDocIdent FROM @benefTemp where ID = @Lo2)
+SET @NumCuent = (SELECT numCuenta FROM @benefTemp where ID = @Lo2)
+SET @Porcentaje = (SELECT porcentaje FROM @benefTemp where ID = @Lo2)
+SET @Parentezco = (SELECT ParId FROM @benefTemp where ID = @Lo2)
+SET @PersonaId2 = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDocIden)
+SET @CuentaId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @NumCuent)
 
-set @Lo2 = @Lo2+1
-End;
+INSERT INTO dbo.beneficiario(porcentaje, personaId, cuentaId,parentescoId, insertBy)
+values(@Porcentaje, @PersonaId2, @CuentaId, @Parentezco, 'Script')
+
+SET @Lo2 = @Lo2+1
+END;
 
 --SELECT * FROM dbo.beneficiario
 --Delete FROM dbo.beneficiario
@@ -228,7 +228,7 @@ End;
 
 
 --INSERT XML en estadoCuenta-------------------------
-DECLARE @estadoCuenta Table
+DECLARE @estadoCuenta TABLE
 (ID int identity,
 numCuenta int,
 fechaIni date,
@@ -252,7 +252,7 @@ cross apply c.nodes('Datos/Estados_de_Cuenta/Estado_de_Cuenta') AS A(Estado)
 
 DECLARE @Lo3 int = 1
 DECLARE @Hi3 int
-set @Hi3 = (SELECT COUNT(*) FROM @estadoCuenta)
+SET @Hi3 = (SELECT COUNT(*) FROM @estadoCuenta)
 
 DECLARE @FechIn date
 DECLARE @NumCuen int
@@ -260,21 +260,21 @@ DECLARE @FechFin date
 DECLARE @SaldoIni decimal(12,4)
 DECLARE @SaldoFin decimal(12,4)
 DECLARE @numCuenId int
-While (@Lo3 <= @Hi3)
-Begin
+WHILE (@Lo3 <= @Hi3)
+BEGIN
 
-set @FechIn = (SELECT fechaIni FROM @estadoCuenta where ID = @Lo3)
-set @FechFin = (SELECT fechaFin FROM @estadoCuenta where ID = @Lo3)
-set @NumCuen = (SELECT numCuenta FROM @estadoCuenta where ID = @Lo3)
-set @SaldoIni = (SELECT saldoIni FROM @estadoCuenta where ID = @Lo3)
-set @SaldoFin  = (SELECT saldoFin FROM @estadoCuenta where ID = @Lo3)
-set @numCuenId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @NumCuen)
+SET @FechIn = (SELECT fechaIni FROM @estadoCuenta where ID = @Lo3)
+SET @FechFin = (SELECT fechaFin FROM @estadoCuenta where ID = @Lo3)
+SET @NumCuen = (SELECT numCuenta FROM @estadoCuenta where ID = @Lo3)
+SET @SaldoIni = (SELECT saldoIni FROM @estadoCuenta where ID = @Lo3)
+SET @SaldoFin  = (SELECT saldoFin FROM @estadoCuenta where ID = @Lo3)
+SET @numCuenId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @NumCuen)
 
 INSERT INTO dbo.estadoCuenta(fechaIni, fechaFin,cuentaAhorroId, saldoIni, saldoFin)
 values(@FechIn, @FechFin, @numCuenId, @SaldoIni, @SaldoFin)
 
-set @Lo3 = @Lo3+1
-End;
+SET @Lo3 = @Lo3+1
+END;
 
 --SELECT * FROM dbo.estadoCuenta
 --Delete FROM dbo.estadoCuenta
@@ -283,7 +283,7 @@ End;
 
 --INSERT XML en usuario-------------------------
 
-DECLARE @usuario Table
+DECLARE @usuario TABLE
 (ID int identity,
 nomUsuario varchar(50),
 contra varchar(50),
@@ -293,7 +293,7 @@ tempDoc int)
 INSERT INTO @usuario
 SELECT
 	A.Usuario.value('@User', 'varchar(50)') AS username,
-	A.Usuario.value('@PASs', 'varchar(50)') AS pASs,
+	A.Usuario.value('@Pass', 'varchar(50)') AS pASs,
 	A.Usuario.value('@EsAdministrador', 'bit') AS EsAdmin,
 	A.Usuario.value('@ValorDocumentoIdentidad', 'int') AS docide
 	
@@ -307,27 +307,27 @@ cross apply c.nodes('Datos/Usuarios/Usuario') AS A(Usuario)
 
 DECLARE @Lo4 int = 1
 DECLARE @Hi4 int
-set @Hi4 = (SELECT COUNT(*) FROM @usuario)
+SET @Hi4 = (SELECT COUNT(*) FROM @usuario)
 
 DECLARE @NomUsuario varchar(50)
 DECLARE @Contra varchar(50)
 DECLARE @EsAdmin bit
 DECLARE @TempDoc int
 DECLARE @tipDocId int
-While (@Lo4 <= @Hi4)
-Begin
+WHILE (@Lo4 <= @Hi4)
+BEGIN
 
-set @NomUsuario = (SELECT nomUsuario FROM @usuario where ID = @Lo4)
-set @Contra = (SELECT contra FROM @usuario where ID = @Lo4)
-set @EsAdmin = (SELECT esAdmin FROM @usuario where ID = @Lo4)
-set @TempDoc = (SELECT tempDoc FROM @usuario where ID = @Lo4)
-set @tipDocId = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDoc)
+SET @NomUsuario = (SELECT nomUsuario FROM @usuario where ID = @Lo4)
+SET @Contra = (SELECT contra FROM @usuario where ID = @Lo4)
+SET @EsAdmin = (SELECT esAdmin FROM @usuario where ID = @Lo4)
+SET @TempDoc = (SELECT tempDoc FROM @usuario where ID = @Lo4)
+SET @tipDocId = (SELECT ID FROM dbo.persona where valorDocIdent = @TempDoc)
 
 INSERT INTO dbo.usuario(personaId, tipoUsuario, nombreUsuario, contrASenna)
 values(@tipDocId, @EsAdmin, @NomUsuario, @Contra)
 
-set @Lo4 = @Lo4+1
-End;
+SET @Lo4 = @Lo4+1
+END;
 
 --SELECT * FROM dbo.usuario
 --Delete FROM dbo.usuario
@@ -336,7 +336,7 @@ End;
 
 --INSERT XML en puedeVer-------------------------
 
-DECLARE @visibilidad Table
+DECLARE @visibilidad TABLE
 (ID int identity,
 nomUsuario varchar(50),
 tempCuent int)
@@ -356,26 +356,28 @@ cross apply c.nodes('Datos/Usuarios_Ver/UsuarioPuedeVer') AS A(ver)
 
 DECLARE @Lo5 int = 1
 DECLARE @Hi5 int
-set @Hi5 = (SELECT COUNT(*) FROM @visibilidad)
+SET @Hi5 = (SELECT COUNT(*) FROM @visibilidad)
 
 DECLARE @NomUsuarioTemp varchar(50)
 DECLARE @tempCuenta int
 DECLARE @CuenId int
 DECLARE @UsuarioId int
-While (@Lo5 <= @Hi5)
-Begin
+WHILE (@Lo5 <= @Hi5)
+BEGIN
 
-set @NomUsuarioTemp = (SELECT nomUsuario FROM @visibilidad where ID = @Lo5)
-set @tempCuenta = (SELECT tempCuent FROM @visibilidad where ID = @Lo5)
-set @CuenId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @tempCuenta)
-set @UsuarioId = (SELECT ID FROM dbo.usuario where nombreUsuario = @NomUsuarioTemp)
+SET @NomUsuarioTemp = (SELECT nomUsuario FROM @visibilidad where ID = @Lo5)
+SET @tempCuenta = (SELECT tempCuent FROM @visibilidad where ID = @Lo5)
+SET @CuenId = (SELECT ID FROM dbo.cuentaAhorro where numeroCuenta = @tempCuenta)
+SET @UsuarioId = (SELECT ID FROM dbo.usuario where nombreUsuario = @NomUsuarioTemp)
 
 INSERT INTO dbo.puedeVer(usuarioId, cuentaAhorroId)
-values(@UsuarioId, @CuenId)
+VALUES(@UsuarioId, @CuenId)
 
-set @Lo5 = @Lo5+1
-End;
+SET @Lo5 = @Lo5+1
+END;
 
 --SELECT * FROM dbo.puedeVer
 --Delete FROM dbo.puedeVer
 --DBCC checkident('dbo.puedeVer',reseed,0)
+
+SET NOCOUNT OFF

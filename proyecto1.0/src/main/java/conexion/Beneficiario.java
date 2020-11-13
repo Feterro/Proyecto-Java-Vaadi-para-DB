@@ -1,6 +1,7 @@
 package conexion;
 import java.sql.*;
 import java.util.ArrayList;
+import java.net.InetAddress;
 
 public class Beneficiario {
 
@@ -60,7 +61,8 @@ public class Beneficiario {
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
                 listaParentezcos.add(resultSet.getString("nombre"));
-                System.out.println(resultSet.getString("nombre"));}
+                //System.out.println(resultSet.getString("nombre"));
+                 }
         }
         catch (Exception ex){
             System.out.println("ERROR!");
@@ -68,21 +70,27 @@ public class Beneficiario {
         }
     }
 
-//    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje){
-//        try {
-//            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiario ?");
-//
-//            callableStatement.registerOutParameter(1,Types.VARCHAR);
-//            ResultSet resultSet = callableStatement.executeQuery();
-//            while(resultSet.next()){
-//                listaParentezcos.add(resultSet.getString("nombre"));
-//                System.out.println(resultSet.getString("nombre"));}
-//        }
-//        catch (Exception ex){
-//            System.out.println("ERROR!");
-//            ex.printStackTrace();
-//        }
-//    }
+    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje){
+        try {
+            String ip = InetAddress.getLocalHost().toString();
+            String[] ipDividido =  ip.split("/");
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiario ?,?,?,?,?,?");
+            callableStatement.setInt(1, personaDoc);
+            callableStatement.setInt(2, cuentaNum);
+            callableStatement.setString(3, parentescoNom);
+            callableStatement.setInt(4, porcentaje);
+            callableStatement.setString(5, ipDividido[1]);
+            callableStatement.registerOutParameter(6,Types.INTEGER);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+
+                System.out.println(resultSet.getInt("N"));}
+        }
+        catch (Exception ex){
+            System.out.println("ERROR!");
+            ex.printStackTrace();
+        }
+    }
 
     public static void main(String[] args){
         Beneficiario beneficiario = new Beneficiario();
@@ -90,7 +98,8 @@ public class Beneficiario {
         try {
             Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
             System.out.println("Conexion exitosa!");
-            beneficiario.getListaParentescos(connection);
+            //beneficiario.getListaParentescos(connection);
+            beneficiario.insertaBeneficiarios(connection, 117370445, 11000001, "Hija",100);
         }
         catch (SQLException e) {
             System.out.println("Error al conectarse con la base de datos");
