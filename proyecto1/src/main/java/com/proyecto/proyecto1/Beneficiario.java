@@ -1,4 +1,4 @@
-package conexion;
+package com.proyecto.proyecto1;
 import java.sql.*;
 import java.util.ArrayList;
 import java.net.InetAddress;
@@ -90,7 +90,7 @@ public class Beneficiario extends Persona {
                 listaParentezcos.add(resultSet.getString("nombre"));
                 //System.out.println(resultSet.getString("nombre"));
                 setListaParentescos(listaParentezcos);
-                 }
+            }
         }
         catch (Exception ex){
             System.out.println("ERROR!");
@@ -166,7 +166,7 @@ public class Beneficiario extends Persona {
             while(resultSet.next()){
                 System.out.println(resultSet.getString("contrasenna"));
                 res =  resultSet.getString("contrasenna");
-                 }
+            }
         }
         catch (Exception ex){
             System.out.println("ERROR!");
@@ -275,7 +275,7 @@ public class Beneficiario extends Persona {
     }
 
     public void modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom,
-                                     int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+                                 int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
