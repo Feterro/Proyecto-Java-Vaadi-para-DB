@@ -127,7 +127,64 @@ public class Beneficiario extends Persona {
             while(resultSet.next()){
                 listaVis.add(resultSet.getString("numeroCuenta"));
                 System.out.println(resultSet.getString("numeroCuenta"));
+            }
+        }
+        catch (Exception ex){
+            System.out.println("ERROR!");
+            ex.printStackTrace();
+        }
+    }
+
+    public ArrayList<Beneficiario> getCedulasBeneficiarios(Connection connection, int numCuenta){
+        ArrayList<Beneficiario> listaBenCed = new ArrayList<>();
+        try {
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_EC_ObtenerCedulasBeneficiarios ?, ?");
+            callableStatement.setInt(1, numCuenta);
+            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+                Beneficiario beneficiario = new Beneficiario();
+                beneficiario.setValorDocIdent(resultSet.getInt("numeroCuenta"));
+                listaBenCed.add(beneficiario);
+                System.out.println(resultSet.getString("numeroCuenta"));
+            }
+        }
+        catch (Exception ex){
+            System.out.println("ERROR!");
+            ex.printStackTrace();
+        }
+        return listaBenCed;
+    }
+
+    public String getContrasenna(Connection connection, String nomUsuario){
+        String res = "";
+        try {
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_US_SolicitaContrasenna ?, ?");
+            callableStatement.setString(1, nomUsuario);
+            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+                System.out.println(resultSet.getString("contrasenna"));
+                res =  resultSet.getString("contrasenna");
                  }
+        }
+        catch (Exception ex){
+            System.out.println("ERROR!");
+            ex.printStackTrace();
+        }
+        return res;
+    }
+
+    public  void eliminarBeneficiario(Connection connection, int docIdent){
+
+        try {
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_EliminarBeneficiario ?, ?");
+            callableStatement.setInt(1, docIdent);
+            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+                System.out.println(resultSet.getString("N"));
+            }
         }
         catch (Exception ex){
             System.out.println("ERROR!");
@@ -186,6 +243,7 @@ public class Beneficiario extends Persona {
             ex.printStackTrace();
         }
     }
+
     public void getBeneficiarios(Connection connection){
         try {
             String ip = InetAddress.getLocalHost().toString();
@@ -247,17 +305,16 @@ public class Beneficiario extends Persona {
 
     public static void main(String[] args){
         Beneficiario beneficiario = new Beneficiario();
-        String url = "jdbc:sqlserver://PC-Fabrizio;databaseName=BDProyecto";
+        String url = "jdbc:sqlserver://localhost:1433;database=BDProyecto";
         try {
             Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
             System.out.println("Conexion exitosa!");
-            beneficiario.getBeneficiarios(connection);
+            beneficiario.eliminarBeneficiario(connection, 150205835);
             //beneficiario.modificaPersonas(connection, 7777777, 1212121212, "Hijo", 20, "Francesco Virgolini", "2029-12-12", 11111111, 22222222, "Cedula Nacional", "ppp@ppp");
         }
         catch (SQLException e) {
             System.out.println("Error al conectarse con la base de datos");
             e.printStackTrace();
         }
-
     }
 }
