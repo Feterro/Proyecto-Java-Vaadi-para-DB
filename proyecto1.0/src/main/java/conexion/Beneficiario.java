@@ -197,7 +197,7 @@ public class Beneficiario extends Persona {
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiario ?,?,?,?,?,?");
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiario ?, ?, ?, ?, ?, ?");
             callableStatement.setInt(1, personaDoc);
             callableStatement.setInt(2, cuentaNum);
             callableStatement.setString(3, parentescoNom);
@@ -220,7 +220,7 @@ public class Beneficiario extends Persona {
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_PE_InsertaBeneficiarioComplejo ?,?,?,?,?,?,?,?,?,?,?,?");
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiarioComplejo ?,?,?,?,?,?,?,?,?,?,?,?");
             callableStatement.setString(1, nombre);
             callableStatement.setInt(2, personaDoc);
             callableStatement.setDate(3, Date.valueOf(fechaNac));
@@ -303,13 +303,38 @@ public class Beneficiario extends Persona {
         }
     }
 
+    public ArrayList<EstadoCuenta> obtenerEstadosCuenta(Connection connection, int cuentaId){
+        ArrayList<EstadoCuenta> estadosCuenta = new ArrayList<>();
+        try{
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_EC_ObtenerEstadosCuenta ?, ?");
+            callableStatement.setInt(1, cuentaId);
+            callableStatement.registerOutParameter(2, Types.VARCHAR);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while (resultSet.next()){
+                EstadoCuenta estado = new EstadoCuenta();
+                estado.setFecha_Inicio(resultSet.getDate("fechaIni"));
+                estado.setFecha_Final(resultSet.getDate("fechaFin"));
+                estadosCuenta.add(estado);
+                System.out.println("Estado: " + estado.getFecha_Final() + " " + estado.getFecha_Inicio());
+
+            }
+
+        }
+        catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return estadosCuenta;
+    }
+
     public static void main(String[] args){
         Beneficiario beneficiario = new Beneficiario();
         String url = "jdbc:sqlserver://localhost:1433;database=BDProyecto";
         try {
-            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
+            Connection connection = DriverManager.getConnection(url,"BDP","gatoscools");
             System.out.println("Conexion exitosa!");
-            beneficiario.eliminarBeneficiario(connection, 150205835);
+            ArrayList<EstadoCuenta> estd = new ArrayList<>();
+            estd = beneficiario.obtenerEstadosCuenta(connection, 11000001);
+//            beneficiario.getBeneficiarios(connection);
             //beneficiario.modificaPersonas(connection, 7777777, 1212121212, "Hijo", 20, "Francesco Virgolini", "2029-12-12", 11111111, 22222222, "Cedula Nacional", "ppp@ppp");
         }
         catch (SQLException e) {
