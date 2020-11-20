@@ -2,13 +2,13 @@ package conexion;
 
 public class Persona {
 
-    private String nombre;
-    private String email;
-    private String fechaNac;
-    private int tel1;
-    private int tel2;
-    private String tipoDocIdent;
-    private int valorDocIdent;
+    public String nombre;
+    public String email;
+    public String fechaNac;
+    public int tel1;
+    public int tel2;
+    public String tipoDocIdent;
+    public int valorDocIdent;
 
     public Persona() {
         this.nombre = "";

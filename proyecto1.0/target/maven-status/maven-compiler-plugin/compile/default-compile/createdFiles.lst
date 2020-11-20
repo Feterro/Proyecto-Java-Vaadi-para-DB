@@ -1,3 +1,7 @@
+conexion\EstadoCuenta.class
 bases\MyUI$MyUIServlet.class
+conexion\Conector.class
+conexion\Persona.class
 bases\logIn.class
 bases\MyUI.class
+conexion\Beneficiario.class

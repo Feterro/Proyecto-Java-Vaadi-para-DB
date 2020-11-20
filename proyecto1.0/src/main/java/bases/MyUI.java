@@ -12,6 +12,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.LoginForm;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import conexion.Conector;
+
+import java.sql.*;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 

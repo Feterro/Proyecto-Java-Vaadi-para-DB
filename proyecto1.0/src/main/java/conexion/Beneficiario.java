@@ -7,12 +7,13 @@ public class Beneficiario extends Persona {
 
     private int porcentaje;
 
-    private int cuenta;
-    private String parentesco;
+    public int cuenta;
+    public String parentesco;
     private ArrayList<String> listaParentescos;
     private ArrayList<String> listaTipoDoc;
     private ArrayList<Integer> listaCuentasVisibles;
     private boolean activo;
+
 
     public Beneficiario() {
         this.porcentaje = 0;
@@ -80,7 +81,7 @@ public class Beneficiario extends Persona {
         this.activo = activo;
     }
 
-    public void getListaParentescos(Connection connection){
+    public ArrayList<String> getListaParentescos(Connection connection){
         ArrayList<String> listaParentezcos = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_PA_SolicitaParentezcos ?");
@@ -88,18 +89,18 @@ public class Beneficiario extends Persona {
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
                 listaParentezcos.add(resultSet.getString("nombre"));
-                //System.out.println(resultSet.getString("nombre"));
-                setListaParentescos(listaParentezcos);
-                 }
+                System.out.println(resultSet.getString("nombre"));
+
+            }
         }
         catch (Exception ex){
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
-
+        return listaParentezcos;
     }
 
-    public void getListaTipoDocIden(Connection connection){
+    public ArrayList<String> getListaTipoDocIden(Connection connection){
         ArrayList<String> listaTip = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_TDI_SolicitaTiposDocIdent ?");
@@ -108,16 +109,17 @@ public class Beneficiario extends Persona {
             while(resultSet.next()){
                 listaTip.add(resultSet.getString("tipoDoc"));
                 System.out.println(resultSet.getString("tipoDoc"));
-                setListaTipoDoc(listaTip);
+
             }
         }
         catch (Exception ex){
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return listaTip;
     }
 
-    public void getVisibles(Connection connection, String nomUsuario){
+    public ArrayList<String> getVisibles(Connection connection, String nomUsuario){
         ArrayList<String> listaVis = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_PV_SolicitaVisibles ?, ?");
@@ -126,27 +128,28 @@ public class Beneficiario extends Persona {
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
                 listaVis.add(resultSet.getString("numeroCuenta"));
-                System.out.println(resultSet.getString("numeroCuenta"));
+                System.out.println(resultSet.getInt("numeroCuenta"));
             }
         }
         catch (Exception ex){
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return listaVis;
     }
 
-    public ArrayList<Beneficiario> getCedulasBeneficiarios(Connection connection, int numCuenta){
-        ArrayList<Beneficiario> listaBenCed = new ArrayList<>();
+    public ArrayList<String> getCedulasBeneficiarios(Connection connection, int numCuenta){
+        ArrayList<String> listaBenCed = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_EC_ObtenerCedulasBeneficiarios ?, ?");
             callableStatement.setInt(1, numCuenta);
             callableStatement.registerOutParameter(2,Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
-                Beneficiario beneficiario = new Beneficiario();
-                beneficiario.setValorDocIdent(resultSet.getInt("numeroCuenta"));
-                listaBenCed.add(beneficiario);
-                System.out.println(resultSet.getString("numeroCuenta"));
+                int dev = resultSet.getInt("valorDocIdent");
+                listaBenCed.add(String.valueOf(dev));
+
+                System.out.println(resultSet.getString("valorDocIdent"));
             }
         }
         catch (Exception ex){
@@ -244,21 +247,23 @@ public class Beneficiario extends Persona {
         }
     }
 
-    public void getBeneficiarios(Connection connection){
+    public Beneficiario getBeneficiarios(Connection conection, int docIdent){
+        Beneficiario beneficiari= new Beneficiario();
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
-            CallableStatement callableStatement = connection.prepareCall("SP_BE_SolicitarPersonas ?");
-            callableStatement.registerOutParameter(1,Types.INTEGER);
+            CallableStatement callableStatement = conection.prepareCall("SP_BE_SolicitarPersonas ?,?");
+            callableStatement.setInt(1, docIdent);
+            callableStatement.registerOutParameter(2,Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
-                setNombre(resultSet.getString("nombre"));
-                setEmail(resultSet.getString("email"));
-                setFechaNac(resultSet.getString("nacimiento"));
-                setTel1(resultSet.getInt("telefono1"));
-                setTel2(resultSet.getInt("telefono2"));
-                setValorDocIdent(resultSet.getInt("valorDocIdent"));
-                setPorcentaje(resultSet.getInt("porcentaje"));
+                beneficiari.setNombre(resultSet.getString("nombre"));
+                beneficiari.setEmail(resultSet.getString("email"));
+                beneficiari.setFechaNac(resultSet.getString("nacimiento"));
+                beneficiari.setTel1(resultSet.getInt("telefono1"));
+                beneficiari.setTel2(resultSet.getInt("telefono2"));
+                beneficiari.setValorDocIdent(resultSet.getInt("valorDocIdent"));
+                beneficiari.setPorcentaje(resultSet.getInt("porcentaje"));
                 System.out.println(resultSet.getString("nombre"));
                 System.out.println(resultSet.getString("email"));
                 System.out.println(resultSet.getString("nacimiento"));
@@ -272,6 +277,7 @@ public class Beneficiario extends Persona {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return beneficiari;
     }
 
     public void modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom,
@@ -318,7 +324,6 @@ public class Beneficiario extends Persona {
                 System.out.println("Estado: " + estado.getFecha_Final() + " " + estado.getFecha_Inicio());
 
             }
-
         }
         catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -326,16 +331,32 @@ public class Beneficiario extends Persona {
         return estadosCuenta;
     }
 
-    public static void main(String[] args){
-        Beneficiario beneficiario = new Beneficiario();
-        String url = "jdbc:sqlserver://localhost:1433;database=BDProyecto";
+    public Connection getConection(){
+        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
+        Connection connection = null;
         try {
-            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
+            connection = DriverManager.getConnection(url,"JavaConexion","Admin");
             System.out.println("Conexion exitosa!");
         }
         catch (SQLException e) {
             System.out.println("Error al conectarse con la base de datos");
             e.printStackTrace();
         }
+        return connection;
+    }
+
+    public static void main(String[] args){
+        Beneficiario beneficiario = new Beneficiario();
+//        beneficiario.getBeneficiarios();
+        beneficiario.getVisibles(Conector.getInstance().connection, "fquiros");
+//        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
+//        try {
+//            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
+//            System.out.println("Conexion exitosa!");
+//        }
+//        catch (SQLException e) {
+//            System.out.println("Error al conectarse con la base de datos");
+//            e.printStackTrace();
+//        }
     }
 }

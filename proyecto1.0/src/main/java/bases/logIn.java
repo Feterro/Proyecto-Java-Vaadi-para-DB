@@ -11,9 +11,12 @@ import com.vaadin.shared.ui.tabsheet.TabsheetState;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.ImageRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+import conexion.Beneficiario;
+import conexion.Conector;
 import conexion.EstadoCuenta;
 
 import java.io.File;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,6 +32,28 @@ public class logIn extends VerticalLayout implements View {
     Button entrar;
     String nombreUsuario;
     String contr;
+    Beneficiario beneficiario = new Beneficiario();
+
+    TextField cedulaA;
+    TextField porc;
+    ComboBox <String> parentezcoA;
+    ComboBox <String> cuentas;
+    ComboBox <String> beneficiariosE;
+    int cuentaCombo;
+    ArrayList<String> Cuentas;
+    ComboBox<String> cuentaE;
+    TextField BeneDoc;
+    TextField nombre;
+    TextField cedula;
+    ComboBox <String> tipoDoc;
+    TextField fechaNac;
+    ComboBox <String> parentezco;
+    TextField porcentaje;
+    TextField email;
+    TextField tel1;
+    TextField tel2;
+
+
 
     public logIn() {
 
@@ -63,27 +88,26 @@ public class logIn extends VerticalLayout implements View {
     public void obtenerDatos(Button.ClickEvent event) {
         nombreUsuario = usuario.getValue();
         contr = contrasenna.getValue();
-        loginP.setVisible(false);
-        banco();
-        //if usuario correcto:
-        //hacer visible nuevo papel y hacer invisoble panel anterior
-        //else:
-        //avisar que está mamando
+        String contra = beneficiario.getContrasenna(Conector.getInstance().connection, nombreUsuario);
+        if (contr.equals(contra)){
+            loginP.setVisible(false);
+            banco();
+            System.out.println("esta bien");
+        }
+        else{
+            System.out.println("Esta mal");
+        }
     }
 
     public void banco() {
         HorizontalLayout lay = new HorizontalLayout();
         TabSheet principal = new TabSheet();
         Button boton2 = new Button("Boton2");
-        ArrayList<String> prueba = new ArrayList<>();
-        prueba.add("Parentezco 1");
-        prueba.add("Parentezco 2");
-        prueba.add("Parentezco 3");
 
-//        String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-//        FileResource resource = new FileResource(new File(basepath+"/WEB-INF/imagenes/fondoLogin.jpg"));
-//        Image image = new Image("Prueba", resource);
-//        lay.addComponent(image);
+        ArrayList<String> Parentezcos = beneficiario.getListaParentescos(Conector.getInstance().connection);
+        Cuentas = beneficiario.getVisibles(Conector.getInstance().connection, nombreUsuario);
+        ArrayList<String> tipos = beneficiario.getListaTipoDocIden(Conector.getInstance().connection);
+        ArrayList<String> bene = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, cuentaCombo);
 
         //Beneficiarios
         Accordion beneficiarios = new Accordion();
@@ -91,50 +115,66 @@ public class logIn extends VerticalLayout implements View {
         //Actualizar beneficiario
 
         AbsoluteLayout actualizarBeneficiario = new AbsoluteLayout();
+
         actualizarBeneficiario.setWidth("1000px");
         actualizarBeneficiario.setHeight("600px");
 
         Label datosPersonales = new Label("Datos Personales");
-        TextField nombre = new TextField("Nombre");
+        nombre = new TextField("Nombre");
         nombre.setIcon(VaadinIcons.USER_CHECK);
-        TextField cedula = new TextField("Documento identidad");
+        cedula = new TextField("Documento identidad");
         cedula.setIcon(VaadinIcons.TEXT_LABEL);
-        DateField fechaNac = new DateField("Fecha Nacimiento");
+        fechaNac = new TextField("Fecha Nacimiento");
         fechaNac.setIcon(VaadinIcons.CALENDAR_USER);
 
         Label relPorc = new Label("Relación y porcentaje");
-        ComboBox<String> parentezco = new ComboBox<>("Parentezo");
-        parentezco.setItems(prueba);
+        parentezco = new ComboBox<>("Parentezo");
+        parentezco.setItems(Parentezcos);
         parentezco.setValue("Sin selección");
         parentezco.setIcon(VaadinIcons.FAMILY);
         parentezco.setWidth("300px");
 
-        TextField porcentaje = new TextField("Porcentaje");
+        porcentaje = new TextField("Porcentaje");
         porcentaje.setIcon(VaadinIcons.DOLLAR);
         porcentaje.setWidth("300px");
 
         Label contacto = new Label("Contacto");
-        TextField email = new TextField("Email");
+        email = new TextField("Email");
         email.setIcon(VaadinIcons.ENVELOPE);
-        TextField tel1 = new TextField("Telefono 1");
+        tel1 = new TextField("Telefono 1");
         tel1.setIcon(VaadinIcons.PHONE);
-        TextField tel2 = new TextField("Telefono 2");
+        tel2 = new TextField("Telefono 2");
         tel2.setIcon(VaadinIcons.PHONE);
+
+        tipoDoc = new ComboBox<>("Tipo Documento Identidad");
+        tipoDoc.setItems(tipos);
 
         Button actualizar = new Button("ACTUALIZAR");
         actualizar.setIcon(VaadinIcons.UPLOAD);
         actualizar.setStyleName("primary");
+        actualizar.addClickListener(this::Actualiza);
 
-        actualizarBeneficiario.addComponent(datosPersonales, "top: 20px; left: 410px");
-        actualizarBeneficiario.addComponent(nombre, "top: 100px; left: 100px");
-        actualizarBeneficiario.addComponent(cedula, "top: 100px; left: 400px");
-        actualizarBeneficiario.addComponent(fechaNac, "top: 100px; right: 100px");
+        BeneDoc = new TextField("Documento de Identidad");
 
-        actualizarBeneficiario.addComponent(relPorc, "top: 200px; left: 430px");
-        actualizarBeneficiario.addComponent(parentezco, "top: 280px; left: 175px");
-        actualizarBeneficiario.addComponent(porcentaje, "top: 280px; right: 175px");
+        Button agarrar = new Button("SELECCIONAR");
+        agarrar.setIcon(VaadinIcons.UPLOAD);
+        agarrar.setStyleName("primary");
+        agarrar.addClickListener(this::SeleccionarInfo);
 
-        actualizarBeneficiario.addComponent(contacto, "top: 380px; left: 470px");
+
+        actualizarBeneficiario.addComponent(agarrar, "top: 20px; left: 410px");
+        actualizarBeneficiario.addComponent(BeneDoc, "top: 20px; left: 100px");
+        actualizarBeneficiario.addComponent(datosPersonales, "top: 70px; left: 410px");
+        actualizarBeneficiario.addComponent(nombre, "top: 170px; left: 50px");
+        actualizarBeneficiario.addComponent(cedula, "top: 170px; left: 250px");
+        actualizarBeneficiario.addComponent(fechaNac, "top: 170px; left: 700px");
+        actualizarBeneficiario.addComponent(tipoDoc,"top: 170px; left: 480px");
+
+        actualizarBeneficiario.addComponent(relPorc, "top: 250px; left: 430px");
+        actualizarBeneficiario.addComponent(parentezco, "top: 330px; left: 175px");
+        actualizarBeneficiario.addComponent(porcentaje, "top: 330px; right: 175px");
+
+        actualizarBeneficiario.addComponent(contacto, "top: 400px; left: 470px");
         actualizarBeneficiario.addComponent(email, "top: 460px; left: 100px");
         actualizarBeneficiario.addComponent(tel1, "top: 460px; left: 410px");
         actualizarBeneficiario.addComponent(tel2, "top: 460px; right: 100");
@@ -143,32 +183,40 @@ public class logIn extends VerticalLayout implements View {
 
         //Agregar beneficiario
         AbsoluteLayout agregarBeneficiario = new AbsoluteLayout();
+
         agregarBeneficiario.setWidth("1000px");
         agregarBeneficiario.setHeight("500px");
 
         Label agregarL = new Label("Complete los siguientes espacios para agregar un nuevo beneficiario");
         agregarL.setSizeFull();
 
-        TextField cedulaA = new TextField("Documento de identidad");
+        cedulaA = new TextField("Documento de identidad");
         cedulaA.setIcon(VaadinIcons.USER_CHECK);
 
-        ComboBox<String> parentezcoA = new ComboBox<>();
+        parentezcoA = new ComboBox<>("Parentezco");
         parentezcoA.setIcon(VaadinIcons.FAMILY);
-        parentezcoA.setItems(prueba);
+        parentezcoA.setItems(Parentezcos);
         parentezcoA.setValue("Sin selección");
 
-        TextField porc = new TextField("Porcentaje");
+        cuentas = new ComboBox<>("Cuentas");
+        cuentas.setIcon(VaadinIcons.DOLLAR);
+        cuentas.setItems(Cuentas);
+        cuentas.setValue("Sin selección");
+
+        porc = new TextField("Porcentaje");
         porc.setIcon(VaadinIcons.DOLLAR);
 
         Button agregar = new Button("AGREGAR");
         agregar.setIcon(VaadinIcons.ADD_DOCK);
         agregar.setStyleName("primary");
+        agregar.addClickListener(this::ActualizarBenef);
 
         agregarBeneficiario.addComponent(agregarL, "top: 25px; left: 100px");
         agregarBeneficiario.addComponent(cedulaA, "top: 100px; left: 100px");
         agregarBeneficiario.addComponent(parentezcoA, "top: 200px; left: 100px");
         agregarBeneficiario.addComponent(porc, "top: 300px; left: 100px");
-        agregarBeneficiario.addComponent(agregar, "top: 400px; left: 120px");
+        agregarBeneficiario.addComponent(agregar, "top: 400px; left: 300px");
+        agregarBeneficiario.addComponent(cuentas, "top: 400px; left: 100px");
 
 
         //Eliminar Beneficiario
@@ -176,21 +224,33 @@ public class logIn extends VerticalLayout implements View {
         eliminarBeneficiario.setHeight("500px");
         eliminarBeneficiario.setWidth("1000px");
 
-        ComboBox<String> beneficiariosE = new ComboBox<>("Beneficiarios");
+        cuentaE = new ComboBox<>("Cuentas");
+        cuentaE.setItems(Cuentas);
+
+        beneficiariosE = new ComboBox<>("Beneficiarios");
         beneficiariosE.setIcon(VaadinIcons.GROUP);
-        beneficiariosE.setItems(prueba);
+        beneficiariosE.setItems(bene);
         beneficiariosE.setValue("Sin selección");
 
         Button eliminar = new Button("ELIMINAR");
         eliminar.setIcon(VaadinIcons.CLOSE_CIRCLE);
         eliminar.addStyleName("primary");
+        eliminar.addClickListener(this::EliminarBeneficiario);
+
+        Button seleccionarE = new Button("Seleccionar");
+        seleccionarE.setIcon(VaadinIcons.CLOSE_CIRCLE);
+        seleccionarE.addStyleName("primary");
+        seleccionarE.addClickListener(this::SeleccionarCuenta);
 
         Label elim = new Label("Seleccione el beneficiario que desea eliminar");
         elim.setSizeFull();
 
-        eliminarBeneficiario.addComponent(elim, "top: 25px; left: 100px");
+        eliminarBeneficiario.addComponent(elim, "top: 200px; left: 120px");
         eliminarBeneficiario.addComponent(beneficiariosE, "top: 100px; left: 100px");
-        eliminarBeneficiario.addComponent(eliminar, "top: 200px; left: 120px");
+        eliminarBeneficiario.addComponent(eliminar, "top: 300px; left: 120px");
+        eliminarBeneficiario.addComponent(cuentaE, "top: 25px; left: 120px");
+        eliminarBeneficiario.addComponent(seleccionarE, "top: 25px; left: 400px");
+
 
 
         //Principal
@@ -247,8 +307,69 @@ public class logIn extends VerticalLayout implements View {
 //
 //    }
 
+    public void ActualizarBenef(Button.ClickEvent event){
+
+        int ced = Integer.parseInt(cedulaA.getValue());
+        int porce = Integer.parseInt(porc.getValue());
+        System.out.println(parentezcoA.getSelectedItem().get()+"mcago");
+        String parentezco = parentezcoA.getSelectedItem().get();
+        System.out.println(cuentas.getSelectedItem().get()+"mecago");
+        int cuenta = Integer.parseInt(cuentas.getSelectedItem().get());
+        System.out.println(ced);
+        System.out.println(porce);
+        System.out.println(parentezco);
+        System.out.println(cuenta);
+        beneficiario.insertaBeneficiarios(Conector.getInstance().connection, ced, cuenta,parentezco,porce);
+    }
+
+
+
+    public void SeleccionarCuenta(Button.ClickEvent event){
+        Cuentas = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, Integer.parseInt(cuentaE.getSelectedItem().get()));
+        beneficiariosE.setItems(Cuentas);
+    }
+
+    public void EliminarBeneficiario(Button.ClickEvent event){
+
+        int ced = Integer.parseInt(beneficiariosE.getSelectedItem().get());
+        beneficiario.eliminarBeneficiario(Conector.getInstance().connection, ced);
+    }
+
+    public void SeleccionarInfo(Button.ClickEvent event){
+
+        Beneficiario ben = new Beneficiario();
+        ben = ben.getBeneficiarios(Conector.getInstance().connection,Integer.parseInt(BeneDoc.getValue()));
+        nombre.setValue(ben.nombre);
+        cedula.setValue(String.valueOf(ben.valorDocIdent));
+        //tipoDoc.setValue(ben.tipoDocIdent);
+        //parentezco.setValue(ben.getParentesco());
+        porcentaje.setValue(String.valueOf(ben.getPorcentaje()));
+        email.setValue(ben.email);
+        tel1.setValue(String.valueOf(ben.tel1));
+        tel2.setValue(String.valueOf(ben.tel2));
+
+    }
+
+    public void Actualiza(Button.ClickEvent event){
+        System.out.println(Integer.parseInt(BeneDoc.getValue()));
+        System.out.println(Integer.parseInt(cedula.getValue()));
+        System.out.println(parentezco.getSelectedItem().get());
+        System.out.println(Integer.parseInt(porcentaje.getValue()));
+        System.out.println( nombre.getValue());
+        System.out.println(fechaNac.getValue());
+        System.out.println(Integer.parseInt(tel1.getValue()));
+        System.out.println(Integer.parseInt(tel2.getValue()));
+        System.out.println(tipoDoc.getSelectedItem().get());
+        System.out.println(email.getValue());
+        beneficiario.modificaPersonas(Conector.getInstance().connection, Integer.parseInt(BeneDoc.getValue()), Integer.parseInt(cedula.getValue()),parentezco.getSelectedItem().get(), Integer.parseInt(porcentaje.getValue()), nombre.getValue(),fechaNac.getValue(),Integer.parseInt(tel1.getValue()),Integer.parseInt(tel2.getValue()),tipoDoc.getSelectedItem().get(),email.getValue() );
+
+    }
+
+
+
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
 
     }
+
 }
