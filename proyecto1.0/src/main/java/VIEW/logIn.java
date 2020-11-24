@@ -1,26 +1,13 @@
-package bases;
+package VIEW;
 
-import com.vaadin.annotations.StyleSheet;
-import com.vaadin.annotations.Theme;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.*;
-import com.vaadin.shared.Connector;
-import com.vaadin.shared.ui.tabsheet.TabsheetState;
 import com.vaadin.ui.*;
-import com.vaadin.ui.renderers.ImageRenderer;
-import com.vaadin.ui.themes.ValoTheme;
 import conexion.Beneficiario;
 import conexion.Conector;
-import conexion.EstadoCuenta;
 
-import java.io.File;
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.stream.IntStream;
 
 //@StyleSheet("vaadin://login.css")
