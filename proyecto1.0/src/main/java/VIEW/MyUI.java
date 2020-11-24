@@ -25,9 +25,6 @@ public class MyUI extends UI {
     Navigator nav = new Navigator(this, this);
     nav.addView("Principal", Principal.class);
     nav.navigateTo("Principal");
-//    nav.addView("LogIn", logIn.class);
-//    nav.navigateTo("LogIn");
-
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
