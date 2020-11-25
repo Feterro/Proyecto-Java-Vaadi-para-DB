@@ -5,7 +5,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import conexion.Beneficiario;
-import conexion.Conector;
+import CONTROLLER.ControllerConexion;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -75,7 +75,7 @@ public class logIn extends VerticalLayout implements View {
     public void obtenerDatos(Button.ClickEvent event) {
         nombreUsuario = usuario.getValue();
         contr = contrasenna.getValue();
-        String contra = beneficiario.getContrasenna(Conector.getInstance().connection, nombreUsuario);
+        String contra = beneficiario.getContrasenna(ControllerConexion.getInstance().connection, nombreUsuario);
         if (contr.equals(contra)){
             loginP.setVisible(false);
             banco();
@@ -91,10 +91,10 @@ public class logIn extends VerticalLayout implements View {
         TabSheet principal = new TabSheet();
         Button boton2 = new Button("Boton2");
 
-        ArrayList<String> Parentezcos = beneficiario.getListaParentescos(Conector.getInstance().connection);
-        Cuentas = beneficiario.getVisibles(Conector.getInstance().connection, nombreUsuario);
-        ArrayList<String> tipos = beneficiario.getListaTipoDocIden(Conector.getInstance().connection);
-        ArrayList<String> bene = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, cuentaCombo);
+        ArrayList<String> Parentezcos = beneficiario.getListaParentescos(ControllerConexion.getInstance().connection);
+//        Cuentas = beneficiario.getVisibles(Conector.getInstance().connection, nombreUsuario);
+        ArrayList<String> tipos = beneficiario.getListaTipoDocIden(ControllerConexion.getInstance().connection);
+        ArrayList<String> bene = beneficiario.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, cuentaCombo);
 
         //Beneficiarios
         Accordion beneficiarios = new Accordion();
@@ -306,26 +306,26 @@ public class logIn extends VerticalLayout implements View {
         System.out.println(porce);
         System.out.println(parentezco);
         System.out.println(cuenta);
-        beneficiario.insertaBeneficiarios(Conector.getInstance().connection, ced, cuenta,parentezco,porce);
+        beneficiario.insertaBeneficiarios(ControllerConexion.getInstance().connection, ced, cuenta,parentezco,porce);
     }
 
 
 
     public void SeleccionarCuenta(Button.ClickEvent event){
-        Cuentas = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, Integer.parseInt(cuentaE.getSelectedItem().get()));
+        Cuentas = beneficiario.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, Integer.parseInt(cuentaE.getSelectedItem().get()));
         beneficiariosE.setItems(Cuentas);
     }
 
     public void EliminarBeneficiario(Button.ClickEvent event){
 
         int ced = Integer.parseInt(beneficiariosE.getSelectedItem().get());
-        beneficiario.eliminarBeneficiario(Conector.getInstance().connection, ced);
+        beneficiario.eliminarBeneficiario(ControllerConexion.getInstance().connection, ced);
     }
 
     public void SeleccionarInfo(Button.ClickEvent event){
 
         Beneficiario ben = new Beneficiario();
-        ben = ben.getBeneficiarios(Conector.getInstance().connection,Integer.parseInt(BeneDoc.getValue()));
+        ben = ben.getBeneficiarios(ControllerConexion.getInstance().connection,Integer.parseInt(BeneDoc.getValue()));
         nombre.setValue(ben.nombre);
         cedula.setValue(String.valueOf(ben.valorDocIdent));
         //tipoDoc.setValue(ben.tipoDocIdent);
@@ -348,7 +348,7 @@ public class logIn extends VerticalLayout implements View {
         System.out.println(Integer.parseInt(tel2.getValue()));
         System.out.println(tipoDoc.getSelectedItem().get());
         System.out.println(email.getValue());
-        beneficiario.modificaPersonas(Conector.getInstance().connection, Integer.parseInt(BeneDoc.getValue()), Integer.parseInt(cedula.getValue()),parentezco.getSelectedItem().get(), Integer.parseInt(porcentaje.getValue()), nombre.getValue(),fechaNac.getValue(),Integer.parseInt(tel1.getValue()),Integer.parseInt(tel2.getValue()),tipoDoc.getSelectedItem().get(),email.getValue() );
+        beneficiario.modificaPersonas(ControllerConexion.getInstance().connection, Integer.parseInt(BeneDoc.getValue()), Integer.parseInt(cedula.getValue()),parentezco.getSelectedItem().get(), Integer.parseInt(porcentaje.getValue()), nombre.getValue(),fechaNac.getValue(),Integer.parseInt(tel1.getValue()),Integer.parseInt(tel2.getValue()),tipoDoc.getSelectedItem().get(),email.getValue() );
 
     }
 

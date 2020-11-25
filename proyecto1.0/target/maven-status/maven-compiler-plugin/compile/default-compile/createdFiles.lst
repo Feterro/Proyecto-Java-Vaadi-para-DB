@@ -1,8 +1,11 @@
 conexion\EstadoCuenta.class
+CONTROLLER\ControllerUsuario.class
+CONTROLLER\ControllerUI.class
 VIEW\MyUI.class
 VIEW\MyUI$MyUIServlet.class
+CONTROLLER\ControllerConexion.class
+CONTROLLER\ControllerBeneficiario.class
 VIEW\logIn.class
-conexion\Conector.class
 conexion\Persona.class
 conexion\Beneficiario.class
 VIEW\Principal.class

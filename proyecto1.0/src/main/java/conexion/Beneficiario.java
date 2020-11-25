@@ -119,24 +119,7 @@ public class Beneficiario extends Persona {
         return listaTip;
     }
 
-    public ArrayList<String> getVisibles(Connection connection, String nomUsuario){
-        ArrayList<String> listaVis = new ArrayList<>();
-        try {
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_PV_SolicitaVisibles ?, ?");
-            callableStatement.setString(1, nomUsuario);
-            callableStatement.registerOutParameter(2,Types.VARCHAR);
-            ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
-                listaVis.add(resultSet.getString("numeroCuenta"));
-                System.out.println(resultSet.getInt("numeroCuenta"));
-            }
-        }
-        catch (Exception ex){
-            System.out.println("ERROR!");
-            ex.printStackTrace();
-        }
-        return listaVis;
-    }
+
 
     public ArrayList<String> getCedulasBeneficiarios(Connection connection, int numCuenta){
         ArrayList<String> listaBenCed = new ArrayList<>();
@@ -223,7 +206,7 @@ public class Beneficiario extends Persona {
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_PE_InsertaBeneficiarioComplejo ?,?,?,?,?,?,?,?,?,?,?,?");
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiarioComplejo ?,?,?,?,?,?,?,?,?,?,?,?");
             callableStatement.setString(1, nombre);
             callableStatement.setInt(2, personaDoc);
             callableStatement.setDate(3, Date.valueOf(fechaNac));
@@ -335,7 +318,7 @@ public class Beneficiario extends Persona {
         String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection(url,"JavaConexion","Admin");
+            connection = DriverManager.getConnection(url,"BDP","gatoscools");
             System.out.println("Conexion exitosa!");
         }
         catch (SQLException e) {
@@ -345,18 +328,18 @@ public class Beneficiario extends Persona {
         return connection;
     }
 
-    public static void main(String[] args){
-        Beneficiario beneficiario = new Beneficiario();
-//        beneficiario.getBeneficiarios();
-        beneficiario.getVisibles(Conector.getInstance().connection, "fquiros");
-//        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
-//        try {
-//            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
-//            System.out.println("Conexion exitosa!");
-//        }
-//        catch (SQLException e) {
-//            System.out.println("Error al conectarse con la base de datos");
-//            e.printStackTrace();
-//        }
-    }
+//    public static void main(String[] args){
+//        Beneficiario beneficiario = new Beneficiario();
+////        beneficiario.getBeneficiarios();
+//        beneficiario.getVisibles(Conector.getInstance().connection, "fquiros");
+////        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
+////        try {
+////            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
+////            System.out.println("Conexion exitosa!");
+////        }
+////        catch (SQLException e) {
+////            System.out.println("Error al conectarse con la base de datos");
+////            e.printStackTrace();
+////        }
+//    }
 }

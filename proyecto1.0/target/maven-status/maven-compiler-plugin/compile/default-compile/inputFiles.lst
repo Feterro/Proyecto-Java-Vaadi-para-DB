@@ -1,6 +1,10 @@
-F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\conexion\EstadoCuenta.java
-F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\bases\logIn.java
-F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\conexion\Beneficiario.java
-F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\conexion\Persona.java
-F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\conexion\Conector.java
-F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\bases\MyUI.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\CONTROLLER\ControllerConexion.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\conexion\Persona.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\VIEW\Principal.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\CONTROLLER\ControllerUsuario.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\VIEW\logIn.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\conexion\EstadoCuenta.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\CONTROLLER\ControllerBeneficiario.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\VIEW\MyUI.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\conexion\Beneficiario.java
+C:\Users\Crystel Montero\Documents\Universidad\2020\II semestre 2020\Bases de datos I\Proyectos\Git\Proyecto-Java-Vaadi-para-DB\proyecto1.0\src\main\java\CONTROLLER\ControllerUI.java
