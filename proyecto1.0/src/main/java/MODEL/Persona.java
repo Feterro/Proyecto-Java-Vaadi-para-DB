@@ -1,4 +1,4 @@
-package conexion;
+package MODEL;
 
 public class Persona {
 

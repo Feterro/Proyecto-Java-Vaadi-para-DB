@@ -1,6 +1,7 @@
 package VIEW;
 
 import CONTROLLER.ControllerUI;
+import MODEL.BeneficiariosTabla;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -10,10 +11,11 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.util.ArrayList;
 
-public class Principal extends VerticalLayout implements View {
+public class GUIBanco extends VerticalLayout implements View {
 
     //Controlador
     private ControllerUI controller = new ControllerUI();
+    private BeneficiariosTabla beneficiariosTabla = new BeneficiariosTabla();
 
     //Contenedores diferentes páginas
     private AbsoluteLayout contenedorLogIn;
@@ -31,7 +33,7 @@ public class Principal extends VerticalLayout implements View {
     private String numCuenta;
 
 
-    public Principal() {
+    public GUIBanco() {
         Login();
         Banco();
     }
@@ -203,12 +205,10 @@ public class Principal extends VerticalLayout implements View {
         Label bene = new Label("Datos de los beneficiarios actuales");
         bene.addStyleName(ValoTheme.LABEL_H2);
 
-//        Grid<String> beneficiarios = new Grid<>();
-//        beneficiarios.addColumn("NOMBRE");
-//        beneficiarios.addColumn("CÉDULA");
-//        beneficiarios.addColumn("PORCENTAJE");
-
-        ver.addComponents(bene);
+        Grid<BeneficiariosTabla> beneficiarios = new Grid<>(BeneficiariosTabla.class);
+        beneficiarios.setColumns("nombre", "documentoIdentidad", "porcentaje");
+        beneficiarios.setItems(controller.llenarTabla(Integer.parseInt(numCuenta)));
+        ver.addComponents(bene, beneficiarios);
         contenedor.addComponent(ver);
     }
 
