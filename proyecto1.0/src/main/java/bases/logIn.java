@@ -104,9 +104,9 @@ public class logIn extends VerticalLayout implements View {
         TabSheet principal = new TabSheet();
         Button boton2 = new Button("Boton2");
 
-        ArrayList<String> Parentezcos = beneficiario.getListaParentescos(Conector.getInstance().connection);
+        ArrayList<String> Parentezcos = beneficiario.getParentescos(Conector.getInstance().connection);
         Cuentas = beneficiario.getVisibles(Conector.getInstance().connection, nombreUsuario);
-        ArrayList<String> tipos = beneficiario.getListaTipoDocIden(Conector.getInstance().connection);
+        ArrayList<String> tipos = beneficiario.getTipoDoc(Conector.getInstance().connection);
         ArrayList<String> bene = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, cuentaCombo);
 
         //Beneficiarios
@@ -159,7 +159,7 @@ public class logIn extends VerticalLayout implements View {
         Button agarrar = new Button("SELECCIONAR");
         agarrar.setIcon(VaadinIcons.UPLOAD);
         agarrar.setStyleName("primary");
-        agarrar.addClickListener(this::SeleccionarInfo);
+        agarrar.addClickListener(this::EncontrarInfo);
 
 
         actualizarBeneficiario.addComponent(agarrar, "top: 20px; left: 410px");
@@ -325,7 +325,8 @@ public class logIn extends VerticalLayout implements View {
 
 
     public void SeleccionarCuenta(Button.ClickEvent event){
-        Cuentas = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, Integer.parseInt(cuentaE.getSelectedItem().get()));
+        int numCue =  Integer.parseInt(cuentaE.getSelectedItem().get());
+        Cuentas = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, numCue);
         beneficiariosE.setItems(Cuentas);
     }
 
@@ -335,14 +336,19 @@ public class logIn extends VerticalLayout implements View {
         beneficiario.eliminarBeneficiario(Conector.getInstance().connection, ced);
     }
 
-    public void SeleccionarInfo(Button.ClickEvent event){
+    public void EncontrarInfo(Button.ClickEvent event){
 
         Beneficiario ben = new Beneficiario();
-        ben = ben.getBeneficiarios(Conector.getInstance().connection,Integer.parseInt(BeneDoc.getValue()));
+        int cedOri = Integer.parseInt(BeneDoc.getValue());
+        ben = ben.getBeneficiarios(Conector.getInstance().connection, cedOri);
+        System.out.println(ben.getNombre());
+        System.out.println(String.valueOf(ben.getValorDocIdent()));
+        System.out.println(String.valueOf(ben.getPorcentaje()));
+        System.out.println(ben.getEmail());
+        System.out.println(String.valueOf(ben.getTel1()));
+        System.out.println(String.valueOf(ben.getTel2()));
         nombre.setValue(ben.nombre);
         cedula.setValue(String.valueOf(ben.valorDocIdent));
-        //tipoDoc.setValue(ben.tipoDocIdent);
-        //parentezco.setValue(ben.getParentesco());
         porcentaje.setValue(String.valueOf(ben.getPorcentaje()));
         email.setValue(ben.email);
         tel1.setValue(String.valueOf(ben.tel1));
