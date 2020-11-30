@@ -17,7 +17,6 @@ public class ControllerBeneficiario {
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
                 listaParentezcos.add(resultSet.getString("nombre"));
-                System.out.println(resultSet.getString("nombre"));
 
             }
         }
