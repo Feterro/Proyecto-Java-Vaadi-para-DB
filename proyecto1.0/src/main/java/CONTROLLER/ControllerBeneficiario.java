@@ -1,99 +1,41 @@
-<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
-package conexion;
+package CONTROLLER;
 import java.sql.*;
 import java.util.ArrayList;
 import java.net.InetAddress;
-
-public class Beneficiario extends Persona {
-
-    private int porcentaje;
-
-    public int cuenta;
-    public String parentesco;
-    //private ArrayList<String> listaParentescos;
-    //private ArrayList<String> listaTipoDoc;
-    //private ArrayList<Integer> listaCuentasVisibles;
-    private boolean activo;
-
-
-    public Beneficiario() {
-        this.porcentaje = 0;
-        this.cuenta = 1;
-        this.parentesco = "x";
-        this.activo = true;
-    }
-
-    public int getPorcentaje() {
-        return porcentaje;
-    }
-
-    public void setPorcentaje(int porcentaje) {
-        this.porcentaje = porcentaje;
-    }
-
-    public int getCuenta() {
-        return cuenta;
-    }
-
-    public void setCuenta(int cuenta) {
-        this.cuenta = cuenta;
-    }
-
-    public String getParentesco() {
-        return parentesco;
-    }
-
-    public void setParentesco(String parentesco) {
-        this.parentesco = parentesco;
-    }
-
-    public boolean isActivo() {
-        return activo;
-    }
-=======
-package CONTROLLER;
-
 import MODEL.Beneficiario;
 import MODEL.EstadoCuenta;
 
-import java.net.InetAddress;
-import java.sql.*;
-import java.util.ArrayList;
->>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
-
 public class ControllerBeneficiario {
 
-    public ArrayList<String> getParentescos(Connection connection){
+    public ArrayList<String> getParentescos(Connection connection) {
         ArrayList<String> listaParentezcos = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_PA_SolicitaParentezcos ?");
             callableStatement.registerOutParameter(1, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 listaParentezcos.add(resultSet.getString("nombre"));
 
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
         return listaParentezcos;
     }
 
-    public ArrayList<String> getTipoDoc(Connection connection){
+    public ArrayList<String> getTipoDoc(Connection connection) {
         ArrayList<String> listaTip = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_TDI_SolicitaTiposDocIdent ?");
-            callableStatement.registerOutParameter(1,Types.VARCHAR);
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 listaTip.add(resultSet.getString("tipoDoc"));
                 System.out.println(resultSet.getString("tipoDoc"));
 
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
@@ -101,91 +43,85 @@ public class ControllerBeneficiario {
     }
 
 
-
-    public ArrayList<String> getCedulasBeneficiarios(Connection connection, int numCuenta){
+    public ArrayList<String> getCedulasBeneficiarios(Connection connection, int numCuenta) {
         ArrayList<String> listaBenCed = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_EC_ObtenerCedulasBeneficiarios ?, ?");
             callableStatement.setInt(1, numCuenta);
-            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 int dev = resultSet.getInt("valorDocIdent");
                 listaBenCed.add(String.valueOf(dev));
 
                 System.out.println(resultSet.getString("valorDocIdent"));
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
         return listaBenCed;
     }
 
-<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
-=======
-    public String getContrasenna(Connection connection, String nomUsuario){
+
+    public String getContrasenna(Connection connection, String nomUsuario) {
         String res = "";
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_US_SolicitaContrasenna ?, ?");
             callableStatement.setString(1, nomUsuario);
-            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 System.out.println(resultSet.getString("contrasenna"));
-                res =  resultSet.getString("contrasenna");
+                res = resultSet.getString("contrasenna");
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
         return res;
     }
 
->>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
-    public  void eliminarBeneficiario(Connection connection, int docIdent){
+
+    public void eliminarBeneficiario(Connection connection, int docIdent) {
 
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_EliminarBeneficiario ?, ?");
             callableStatement.setInt(1, docIdent);
-            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 System.out.println(resultSet.getString("N"));
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
     }
 
-    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje){
+    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
         try {
             String ip = InetAddress.getLocalHost().toString();
-            String[] ipDividido =  ip.split("/");
+            String[] ipDividido = ip.split("/");
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiario ?, ?, ?, ?, ?, ?");
             callableStatement.setInt(1, personaDoc);
             callableStatement.setInt(2, cuentaNum);
             callableStatement.setString(3, parentescoNom);
             callableStatement.setInt(4, porcentaje);
             callableStatement.setString(5, ipDividido[1]);
-            callableStatement.registerOutParameter(6,Types.INTEGER);
+            callableStatement.registerOutParameter(6, Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
 
-                System.out.println(resultSet.getInt("N"));}
-        }
-        catch (Exception ex){
+                System.out.println(resultSet.getInt("N"));
+            }
+        } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
     }
 
-<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
-=======
+
     public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom,
                                      int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
         try {
@@ -215,7 +151,6 @@ public class ControllerBeneficiario {
         }
     }
 
->>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
     public Beneficiario getBeneficiarios(Connection conection, int docIdent){
         Beneficiario beneficiari= new Beneficiario();
         try {
@@ -249,8 +184,6 @@ public class ControllerBeneficiario {
         return beneficiari;
     }
 
-<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
-=======
     public void modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom,
                                  int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
         try {
@@ -280,7 +213,6 @@ public class ControllerBeneficiario {
         }
     }
 
->>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
     public ArrayList<EstadoCuenta> obtenerEstadosCuenta(Connection connection, int cuentaId){
         ArrayList<EstadoCuenta> estadosCuenta = new ArrayList<>();
         try{
@@ -302,38 +234,6 @@ public class ControllerBeneficiario {
         }
         return estadosCuenta;
     }
-
-<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
-
-
-//    public static void main(String[] args){
-//        Beneficiario beneficiario = new Beneficiario();
-//        beneficiario.getBeneficiarios();
-//        beneficiario.getVisibles(Conector.getInstance().connection, "fquiros");
-//        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
-//        try {
-//            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
-//            System.out.println("Conexion exitosa!");
-//        }
-//        catch (SQLException e) {
-//            System.out.println("Error al conectarse con la base de datos");
-//            e.printStackTrace();
-//        }
-//    }
 }
-=======
-    public Connection getConection(){
-        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(url,"BDP","gatoscools");
-            System.out.println("Conexion exitosa!");
-        }
-        catch (SQLException e) {
-            System.out.println("Error al conectarse con la base de datos");
-            e.printStackTrace();
-        }
-        return connection;
-    }
-}
->>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
+
+

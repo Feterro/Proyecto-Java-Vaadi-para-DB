@@ -76,6 +76,6 @@ public class ControllerUI {
     }
 
     public ArrayList<String> Parentezcos(){
-        return beneficiarioCon.getListaParentescos(ControllerConexion.getInstance().connection);
+        return beneficiarioCon.getParentescos(ControllerConexion.getInstance().connection);
     }
 }
