@@ -1,30 +1,16 @@
-package bases;
+package VIEW;
 
-import com.vaadin.annotations.StyleSheet;
-import com.vaadin.annotations.Theme;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.*;
-import com.vaadin.shared.Connector;
-import com.vaadin.shared.ui.tabsheet.TabsheetState;
 import com.vaadin.ui.*;
-import com.vaadin.ui.renderers.ImageRenderer;
-import com.vaadin.ui.themes.ValoTheme;
-import conexion.Beneficiario;
-import conexion.Conector;
-import conexion.EstadoCuenta;
+import MODEL.Beneficiario;
 
-import java.io.File;
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.stream.IntStream;
 
 //@StyleSheet("vaadin://login.css")
-public class logIn extends VerticalLayout implements View {
+public class anterior extends VerticalLayout implements View {
     TextField usuario;
     PasswordField contrasenna;
     Panel loginP;
@@ -55,7 +41,7 @@ public class logIn extends VerticalLayout implements View {
 
 
 
-    public logIn() {
+    public anterior() {
 
         usuario = new TextField("Usuario");
         usuario.setIcon(VaadinIcons.USER);
@@ -88,15 +74,15 @@ public class logIn extends VerticalLayout implements View {
     public void obtenerDatos(Button.ClickEvent event) {
         nombreUsuario = usuario.getValue();
         contr = contrasenna.getValue();
-        String contra = beneficiario.getContrasenna(Conector.getInstance().connection, nombreUsuario);
-        if (contr.equals(contra)){
-            loginP.setVisible(false);
-            banco();
-            System.out.println("esta bien");
-        }
-        else{
-            System.out.println("Esta mal");
-        }
+////        String contra = beneficiario.getContrasenna(ControllerConexion.getInstance().connection, nombreUsuario);
+//        if (contr.equals(contra)){
+//            loginP.setVisible(false);
+//            banco();
+//            System.out.println("esta bien");
+//        }
+//        else{
+//            System.out.println("Esta mal");
+//        }
     }
 
     public void banco() {
@@ -104,10 +90,17 @@ public class logIn extends VerticalLayout implements View {
         TabSheet principal = new TabSheet();
         Button boton2 = new Button("Boton2");
 
+<<<<<<< HEAD:proyecto1.0/src/main/java/bases/logIn.java
         ArrayList<String> Parentezcos = beneficiario.getParentescos(Conector.getInstance().connection);
         Cuentas = beneficiario.getVisibles(Conector.getInstance().connection, nombreUsuario);
         ArrayList<String> tipos = beneficiario.getTipoDoc(Conector.getInstance().connection);
         ArrayList<String> bene = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, cuentaCombo);
+=======
+//        ArrayList<String> Parentezcos = beneficiario.getListaParentescos(ControllerConexion.getInstance().connection);
+////        Cuentas = beneficiario.getVisibles(Conector.getInstance().connection, nombreUsuario);
+//        ArrayList<String> tipos = beneficiario.getListaTipoDocIden(ControllerConexion.getInstance().connection);
+//        ArrayList<String> bene = beneficiario.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, cuentaCombo);
+>>>>>>> GUI:proyecto1.0/src/main/java/VIEW/anterior.java
 
         //Beneficiarios
         Accordion beneficiarios = new Accordion();
@@ -129,7 +122,7 @@ public class logIn extends VerticalLayout implements View {
 
         Label relPorc = new Label("Relación y porcentaje");
         parentezco = new ComboBox<>("Parentezo");
-        parentezco.setItems(Parentezcos);
+//        parentezco.setItems(Parentezcos);
         parentezco.setValue("Sin selección");
         parentezco.setIcon(VaadinIcons.FAMILY);
         parentezco.setWidth("300px");
@@ -147,7 +140,7 @@ public class logIn extends VerticalLayout implements View {
         tel2.setIcon(VaadinIcons.PHONE);
 
         tipoDoc = new ComboBox<>("Tipo Documento Identidad");
-        tipoDoc.setItems(tipos);
+//        tipoDoc.setItems(tipos);
 
         Button actualizar = new Button("ACTUALIZAR");
         actualizar.setIcon(VaadinIcons.UPLOAD);
@@ -195,7 +188,7 @@ public class logIn extends VerticalLayout implements View {
 
         parentezcoA = new ComboBox<>("Parentezco");
         parentezcoA.setIcon(VaadinIcons.FAMILY);
-        parentezcoA.setItems(Parentezcos);
+//        parentezcoA.setItems(Parentezcos);
         parentezcoA.setValue("Sin selección");
 
         cuentas = new ComboBox<>("Cuentas");
@@ -229,7 +222,7 @@ public class logIn extends VerticalLayout implements View {
 
         beneficiariosE = new ComboBox<>("Beneficiarios");
         beneficiariosE.setIcon(VaadinIcons.GROUP);
-        beneficiariosE.setItems(bene);
+//        beneficiariosE.setItems(bene);
         beneficiariosE.setValue("Sin selección");
 
         Button eliminar = new Button("ELIMINAR");
@@ -319,26 +312,31 @@ public class logIn extends VerticalLayout implements View {
         System.out.println(porce);
         System.out.println(parentezco);
         System.out.println(cuenta);
-        beneficiario.insertaBeneficiarios(Conector.getInstance().connection, ced, cuenta,parentezco,porce);
+//        beneficiario.insertaBeneficiarios(ControllerConexion.getInstance().connection, ced, cuenta,parentezco,porce);
     }
 
 
 
     public void SeleccionarCuenta(Button.ClickEvent event){
+<<<<<<< HEAD:proyecto1.0/src/main/java/bases/logIn.java
         int numCue =  Integer.parseInt(cuentaE.getSelectedItem().get());
         Cuentas = beneficiario.getCedulasBeneficiarios(Conector.getInstance().connection, numCue);
+=======
+//        Cuentas = beneficiario.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, Integer.parseInt(cuentaE.getSelectedItem().get()));
+>>>>>>> GUI:proyecto1.0/src/main/java/VIEW/anterior.java
         beneficiariosE.setItems(Cuentas);
     }
 
     public void EliminarBeneficiario(Button.ClickEvent event){
 
         int ced = Integer.parseInt(beneficiariosE.getSelectedItem().get());
-        beneficiario.eliminarBeneficiario(Conector.getInstance().connection, ced);
+//        beneficiario.eliminarBeneficiario(ControllerConexion.getInstance().connection, ced);
     }
 
     public void EncontrarInfo(Button.ClickEvent event){
 
         Beneficiario ben = new Beneficiario();
+<<<<<<< HEAD:proyecto1.0/src/main/java/bases/logIn.java
         int cedOri = Integer.parseInt(BeneDoc.getValue());
         ben = ben.getBeneficiarios(Conector.getInstance().connection, cedOri);
         System.out.println(ben.getNombre());
@@ -347,6 +345,9 @@ public class logIn extends VerticalLayout implements View {
         System.out.println(ben.getEmail());
         System.out.println(String.valueOf(ben.getTel1()));
         System.out.println(String.valueOf(ben.getTel2()));
+=======
+//        ben = ben.getBeneficiarios(ControllerConexion.getInstance().connection,Integer.parseInt(BeneDoc.getValue()));
+>>>>>>> GUI:proyecto1.0/src/main/java/VIEW/anterior.java
         nombre.setValue(ben.nombre);
         cedula.setValue(String.valueOf(ben.valorDocIdent));
         porcentaje.setValue(String.valueOf(ben.getPorcentaje()));
@@ -367,7 +368,7 @@ public class logIn extends VerticalLayout implements View {
         System.out.println(Integer.parseInt(tel2.getValue()));
         System.out.println(tipoDoc.getSelectedItem().get());
         System.out.println(email.getValue());
-        beneficiario.modificaPersonas(Conector.getInstance().connection, Integer.parseInt(BeneDoc.getValue()), Integer.parseInt(cedula.getValue()),parentezco.getSelectedItem().get(), Integer.parseInt(porcentaje.getValue()), nombre.getValue(),fechaNac.getValue(),Integer.parseInt(tel1.getValue()),Integer.parseInt(tel2.getValue()),tipoDoc.getSelectedItem().get(),email.getValue() );
+//        beneficiario.modificaPersonas(ControllerConexion.getInstance().connection, Integer.parseInt(BeneDoc.getValue()), Integer.parseInt(cedula.getValue()),parentezco.getSelectedItem().get(), Integer.parseInt(porcentaje.getValue()), nombre.getValue(),fechaNac.getValue(),Integer.parseInt(tel1.getValue()),Integer.parseInt(tel2.getValue()),tipoDoc.getSelectedItem().get(),email.getValue() );
 
     }
 

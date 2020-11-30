@@ -1,4 +1,4 @@
-package conexion;
+package MODEL;
 
 import java.net.InetAddress;
 import java.sql.*;

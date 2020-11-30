@@ -1,26 +1,26 @@
-package conexion;
+package CONTROLLER;
 import java.sql.*;
 
-public class Conector {
+public class ControllerConexion {
 
-    private static Conector conexion;
+    private static ControllerConexion conexion;
     public Connection connection;
 
-    private Conector() {
+    private ControllerConexion() {
         crearConexion();
     }
 
-    public static Conector getInstance(){
+    public static ControllerConexion getInstance(){
         if(conexion == null){
-            conexion = new Conector();
+            conexion = new ControllerConexion();
         }
         return conexion;
     }
 
     public void  crearConexion(){
-        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
+        String url = "jdbc:sqlserver://localhost:1433;database=BDProyecto";
         try {
-            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
+            Connection connection = DriverManager.getConnection(url,"BDP","gatoscools");
             System.out.println("Conexion exitosa!");
             this.connection = connection;
         }

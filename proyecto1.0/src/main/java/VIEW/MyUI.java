@@ -1,20 +1,13 @@
-package bases;
+package VIEW;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.LoginForm;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import conexion.Conector;
-
-import java.sql.*;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -27,16 +20,11 @@ import java.sql.*;
 //@StyleSheet("src/main/webapp/VAADIN/themes/mytheme/login.css")
 public class MyUI extends UI {
 
-    Navigator nav;
-    logIn login = new logIn();
-
-
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-    nav = new Navigator(this, this);
-    nav.addView("LogIn", logIn.class);
-    nav.navigateTo("LogIn");
-
+    Navigator nav = new Navigator(this, this);
+    nav.addView("Principal", GUIBanco.class);
+    nav.navigateTo("Principal");
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

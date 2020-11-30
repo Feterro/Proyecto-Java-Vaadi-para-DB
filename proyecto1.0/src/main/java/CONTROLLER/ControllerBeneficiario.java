@@ -1,3 +1,4 @@
+<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
 package conexion;
 import java.sql.*;
 import java.util.ArrayList;
@@ -49,20 +50,27 @@ public class Beneficiario extends Persona {
     public boolean isActivo() {
         return activo;
     }
+=======
+package CONTROLLER;
 
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
+import MODEL.Beneficiario;
+import MODEL.EstadoCuenta;
+
+import java.net.InetAddress;
+import java.sql.*;
+import java.util.ArrayList;
+>>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
+
+public class ControllerBeneficiario {
 
     public ArrayList<String> getParentescos(Connection connection){
         ArrayList<String> listaParentezcos = new ArrayList<>();
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_PA_SolicitaParentezcos ?");
-            callableStatement.registerOutParameter(1,Types.VARCHAR);
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
                 listaParentezcos.add(resultSet.getString("nombre"));
-                System.out.println(resultSet.getString("nombre"));
 
             }
         }
@@ -92,24 +100,7 @@ public class Beneficiario extends Persona {
         return listaTip;
     }
 
-    public ArrayList<String> getVisibles(Connection connection, String nomUsuario){
-        ArrayList<String> listaVis = new ArrayList<>();
-        try {
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_PV_SolicitaVisibles ?, ?");
-            callableStatement.setString(1, nomUsuario);
-            callableStatement.registerOutParameter(2,Types.VARCHAR);
-            ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
-                listaVis.add(resultSet.getString("numeroCuenta"));
-                System.out.println(resultSet.getInt("numeroCuenta"));
-            }
-        }
-        catch (Exception ex){
-            System.out.println("ERROR!");
-            ex.printStackTrace();
-        }
-        return listaVis;
-    }
+
 
     public ArrayList<String> getCedulasBeneficiarios(Connection connection, int numCuenta){
         ArrayList<String> listaBenCed = new ArrayList<>();
@@ -132,6 +123,28 @@ public class Beneficiario extends Persona {
         return listaBenCed;
     }
 
+<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
+=======
+    public String getContrasenna(Connection connection, String nomUsuario){
+        String res = "";
+        try {
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_US_SolicitaContrasenna ?, ?");
+            callableStatement.setString(1, nomUsuario);
+            callableStatement.registerOutParameter(2,Types.VARCHAR);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+                System.out.println(resultSet.getString("contrasenna"));
+                res =  resultSet.getString("contrasenna");
+            }
+        }
+        catch (Exception ex){
+            System.out.println("ERROR!");
+            ex.printStackTrace();
+        }
+        return res;
+    }
+
+>>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
     public  void eliminarBeneficiario(Connection connection, int docIdent){
 
         try {
@@ -171,6 +184,38 @@ public class Beneficiario extends Persona {
         }
     }
 
+<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
+=======
+    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom,
+                                     int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+        try {
+            String ip = InetAddress.getLocalHost().toString();
+            String[] ipDividido =  ip.split("/");
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiarioComplejo ?,?,?,?,?,?,?,?,?,?,?,?");
+            callableStatement.setString(1, nombre);
+            callableStatement.setInt(2, personaDoc);
+            callableStatement.setDate(3, Date.valueOf(fechaNac));
+            callableStatement.setInt(4, tel1);
+            callableStatement.setInt(5, tel2);
+            callableStatement.setString(6, tipoDoc);
+            callableStatement.setString(7, correo);
+            callableStatement.setInt(8, cuentaNum);
+            callableStatement.setString(9, parentescoNom);
+            callableStatement.setInt(10, porcentaje);
+            callableStatement.setString(11, ipDividido[1]);
+            callableStatement.registerOutParameter(12,Types.INTEGER);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+
+                System.out.println(resultSet.getInt("N"));}
+        }
+        catch (Exception ex){
+            System.out.println("ERROR!");
+            ex.printStackTrace();
+        }
+    }
+
+>>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
     public Beneficiario getBeneficiarios(Connection conection, int docIdent){
         Beneficiario beneficiari= new Beneficiario();
         try {
@@ -204,6 +249,38 @@ public class Beneficiario extends Persona {
         return beneficiari;
     }
 
+<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
+=======
+    public void modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom,
+                                 int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+        try {
+            String ip = InetAddress.getLocalHost().toString();
+            String[] ipDividido =  ip.split("/");
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_PE_BE_ActualizarPersona ?,?,?,?,?,?,?,?,?,?,?,?");
+            callableStatement.setString(1, nombre);
+            callableStatement.setInt(2, personaDocOri);
+            callableStatement.setInt(3, personaDoc);
+            callableStatement.setDate(4, Date.valueOf(fechaNac));
+            callableStatement.setInt(5, tel1);
+            callableStatement.setInt(6, tel2);
+            callableStatement.setString(7, tipoDoc);
+            callableStatement.setString(8, correo);
+            callableStatement.setString(9, parentescoNom);
+            callableStatement.setInt(10, porcentaje);
+            callableStatement.setString(11, ipDividido[1]);
+            callableStatement.registerOutParameter(12,Types.INTEGER);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+
+                System.out.println(resultSet.getInt("N"));}
+        }
+        catch (Exception ex){
+            System.out.println("ERROR!");
+            ex.printStackTrace();
+        }
+    }
+
+>>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java
     public ArrayList<EstadoCuenta> obtenerEstadosCuenta(Connection connection, int cuentaId){
         ArrayList<EstadoCuenta> estadosCuenta = new ArrayList<>();
         try{
@@ -226,6 +303,7 @@ public class Beneficiario extends Persona {
         return estadosCuenta;
     }
 
+<<<<<<< HEAD:proyecto1.0/src/main/java/conexion/Beneficiario.java
 
 
 //    public static void main(String[] args){
@@ -243,3 +321,19 @@ public class Beneficiario extends Persona {
 //        }
 //    }
 }
+=======
+    public Connection getConection(){
+        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(url,"BDP","gatoscools");
+            System.out.println("Conexion exitosa!");
+        }
+        catch (SQLException e) {
+            System.out.println("Error al conectarse con la base de datos");
+            e.printStackTrace();
+        }
+        return connection;
+    }
+}
+>>>>>>> GUI:proyecto1.0/src/main/java/CONTROLLER/ControllerBeneficiario.java

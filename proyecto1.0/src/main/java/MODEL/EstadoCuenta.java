@@ -1,4 +1,4 @@
-package conexion;
+package MODEL;
 
 import java.util.Date;
 
