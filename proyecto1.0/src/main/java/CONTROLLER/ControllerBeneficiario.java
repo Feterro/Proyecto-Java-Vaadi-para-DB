@@ -99,7 +99,7 @@ public class ControllerBeneficiario {
         }
     }
 
-    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
+    public boolean insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido = ip.split("/");
@@ -115,10 +115,12 @@ public class ControllerBeneficiario {
 
                 System.out.println(resultSet.getInt("N"));
             }
+            return true;
         } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return false;
     }
 
 

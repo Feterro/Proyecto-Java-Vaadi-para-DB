@@ -3,12 +3,12 @@ package CONTROLLER;
 import MODEL.Beneficiario;
 import MODEL.BeneficiariosTabla;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 
 public class ControllerUI {
 
-    private ArrayList<BeneficiariosTabla> beneficiarios = mientras(); //igual al sp
+
+    private ArrayList<BeneficiariosTabla> beneficiarios; //igual al sp
 
     private ControllerBeneficiario beneficiarioCon = new ControllerBeneficiario();
     private ControllerUsuario usuarioCon = new ControllerUsuario();
@@ -28,21 +28,19 @@ public class ControllerUI {
         return usuarioCon.getVisibles(ControllerConexion.getInstance().connection, usuario);
     }
 
-    public ArrayList<BeneficiariosTabla> mientras(){
-        ArrayList<BeneficiariosTabla> beneficiarios = new ArrayList<>();
-        BeneficiariosTabla ben1 = new BeneficiariosTabla("Pedro Ignacio Solano", "12456", 10);
-        beneficiarios.add(ben1);
-        return beneficiarios;
+    public void setBeneficiarios(int cuenta){
+        ArrayList<String> cedulas = beneficiarioCon.getCedulasBeneficiarios(ControllerConexion.getInstance().connection,cuenta);
+        beneficiarios = new ArrayList<>();
+
+        for (String ced: cedulas){
+            Beneficiario beneficiario = beneficiarioCon.getBeneficiarios(ControllerConexion.getInstance().connection, Integer.parseInt(ced));
+            BeneficiariosTabla ben = new BeneficiariosTabla(beneficiario.getNombre(), String.valueOf(beneficiario.valorDocIdent), beneficiario.getPorcentaje());
+            beneficiarios.add(ben);
+        }
     }
 
     public ArrayList<BeneficiariosTabla> llenarTabla(int cuenta) {
-        mientras();
-        //agregar con el sp
-//        BeneficiariosTabla ben2 = new BeneficiariosTabla("Crystel Montero Obando", "5431215", 51);
-//        beneficiarios.add(ben2);
-//        BeneficiariosTabla ben3 = new BeneficiariosTabla("Fabrizio guapo Ferreto", "45456", 25);
-//        beneficiarios.add(ben3);
-
+        setBeneficiarios(cuenta);
         if (beneficiarios.size() < 3){
             int mas = 3 - beneficiarios.size();
             for (int i = 0; i < mas; i++){
@@ -53,7 +51,7 @@ public class ControllerUI {
         return beneficiarios;
     }
 
-    public int cantBene(ArrayList<BeneficiariosTabla> beneficiarios){
+    public int getCantActBene(ArrayList<BeneficiariosTabla> beneficiarios){
         int cant = 0;
 
         for (BeneficiariosTabla ben: beneficiarios){
@@ -65,17 +63,22 @@ public class ControllerUI {
         return cant;
     }
 
-    public float porcentaje(ArrayList<BeneficiariosTabla> beneficiarios){
+    public float getPorcentajeUsado(ArrayList<BeneficiariosTabla> beneficiarios){
         float porcentaje = 0;
 
         for (BeneficiariosTabla ben: beneficiarios){
-            porcentaje += porcentaje+ben.getPorcentaje();
+            porcentaje = porcentaje + ben.getPorcentaje();
         }
 
         return porcentaje;
     }
 
-    public ArrayList<String> Parentezcos(){
+    public ArrayList<String> getParentezcos(){
         return beneficiarioCon.getParentescos(ControllerConexion.getInstance().connection);
+    }
+
+    public boolean AgregarBeneficiario(int cedula, String parentezco, float porcentaje, int numeroCuen){
+        return beneficiarioCon.insertaBeneficiarios(ControllerConexion.getInstance().connection, cedula, numeroCuen, parentezco, (int) porcentaje);
+
     }
 }
