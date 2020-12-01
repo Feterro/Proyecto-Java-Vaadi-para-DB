@@ -32,7 +32,7 @@ public class ControllerBeneficiario {
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
                 listaTip.add(resultSet.getString("tipoDoc"));
-                System.out.println(resultSet.getString("tipoDoc"));
+//                System.out.println(resultSet.getString("tipoDoc"));
 
             }
         } catch (Exception ex) {
@@ -54,7 +54,7 @@ public class ControllerBeneficiario {
                 int dev = resultSet.getInt("valorDocIdent");
                 listaBenCed.add(String.valueOf(dev));
 
-                System.out.println(resultSet.getString("valorDocIdent"));
+//                System.out.println(resultSet.getString("valorDocIdent"));
             }
         } catch (Exception ex) {
             System.out.println("ERROR!");
@@ -72,7 +72,7 @@ public class ControllerBeneficiario {
             callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("contrasenna"));
+//                System.out.println(resultSet.getString("contrasenna"));
                 res = resultSet.getString("contrasenna");
             }
         } catch (Exception ex) {
@@ -90,9 +90,9 @@ public class ControllerBeneficiario {
             callableStatement.setInt(1, docIdent);
             callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
-            while (resultSet.next()) {
-                System.out.println(resultSet.getString("N"));
-            }
+//            while (resultSet.next()) {
+//                System.out.println(resultSet.getString("N"));
+//            }
         } catch (Exception ex) {
             System.out.println("ERROR!");
             ex.printStackTrace();
@@ -111,10 +111,10 @@ public class ControllerBeneficiario {
             callableStatement.setString(5, ipDividido[1]);
             callableStatement.registerOutParameter(6, Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
-            while (resultSet.next()) {
-
-                System.out.println(resultSet.getInt("N"));
-            }
+//            while (resultSet.next()) {
+//
+//                System.out.println(resultSet.getInt("N"));
+//            }
             return true;
         } catch (Exception ex) {
             System.out.println("ERROR!");
@@ -143,9 +143,9 @@ public class ControllerBeneficiario {
             callableStatement.setString(11, ipDividido[1]);
             callableStatement.registerOutParameter(12,Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
-
-                System.out.println(resultSet.getInt("N"));}
+//            while(resultSet.next()){
+//
+//                System.out.println(resultSet.getInt("N"));}
         }
         catch (Exception ex){
             System.out.println("ERROR!");
@@ -170,13 +170,13 @@ public class ControllerBeneficiario {
                 beneficiari.setTel2(resultSet.getInt("telefono2"));
                 beneficiari.setValorDocIdent(resultSet.getInt("valorDocIdent"));
                 beneficiari.setPorcentaje(resultSet.getInt("porcentaje"));
-                System.out.println(resultSet.getString("nombre"));
-                System.out.println(resultSet.getString("email"));
-                System.out.println(resultSet.getString("nacimiento"));
-                System.out.println(resultSet.getInt("telefono1"));
-                System.out.println(resultSet.getInt("telefono2"));
-                System.out.println(resultSet.getInt("valorDocIdent"));
-                System.out.println(resultSet.getInt("porcentaje"));
+//                System.out.println(resultSet.getString("nombre"));
+//                System.out.println(resultSet.getString("email"));
+//                System.out.println(resultSet.getString("nacimiento"));
+//                System.out.println(resultSet.getInt("telefono1"));
+//                System.out.println(resultSet.getInt("telefono2"));
+//                System.out.println(resultSet.getInt("valorDocIdent"));
+//                System.out.println(resultSet.getInt("porcentaje"));
             }
         }
         catch (Exception ex){
@@ -205,9 +205,9 @@ public class ControllerBeneficiario {
             callableStatement.setString(11, ipDividido[1]);
             callableStatement.registerOutParameter(12,Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
-
-                System.out.println(resultSet.getInt("N"));}
+//            while(resultSet.next()){
+//
+//                System.out.println(resultSet.getInt("N"));}
         }
         catch (Exception ex){
             System.out.println("ERROR!");
@@ -227,7 +227,7 @@ public class ControllerBeneficiario {
                 estado.setFecha_Inicio(resultSet.getDate("fechaIni"));
                 estado.setFecha_Final(resultSet.getDate("fechaFin"));
                 estadosCuenta.add(estado);
-                System.out.println("Estado: " + estado.getFecha_Final() + " " + estado.getFecha_Inicio());
+//                System.out.println("Estado: " + estado.getFecha_Final() + " " + estado.getFecha_Inicio());
 
             }
         }

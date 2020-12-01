@@ -300,8 +300,12 @@ public class GUIBanco extends VerticalLayout implements View {
         agregar.setIcon(VaadinIcons.ADD_DOCK);
         agregar.setStyleName("primary");
         agregar.setWidth("300px");
-        agregar.addClickListener(e-> agregarBeneficiario(Integer.parseInt(cedulaA.getValue()),parentezcoA.getSelectedItem().get(), Float.parseFloat(porc.getValue()), controller.getBeneficiarios()));
-
+        try {
+            agregar.addClickListener(e -> agregarBeneficiario(Integer.parseInt(cedulaA.getValue()), parentezcoA.getSelectedItem().get(), Float.parseFloat(porc.getValue()), controller.getBeneficiarios()));
+        }
+        catch (java.lang.NumberFormatException e){
+            agregar.addClickListener(i -> Notification.show("Alguno de los campos está vacío\nVerifique"));
+        }
         contenedorAgregar.addComponent(agregarL, "top: 25px; left: 100px");
         contenedorAgregar.addComponent(cedulaA, "top: 100px; left: 100px");
         contenedorAgregar.addComponent(parentezcoA, "top: 200px; left: 100px");
@@ -360,7 +364,7 @@ public class GUIBanco extends VerticalLayout implements View {
         System.out.println(cedula + " " + parentezo + " " + porcetanje + " " + beneficiarios);
         if (controller.getCantActBene(beneficiarios) < 3){
             if(controller.AgregarBeneficiario(cedula, parentezo, porcetanje, Integer.parseInt(numCuenta))){
-                Notification.show("Sirve");
+                Notification.show("Se agregó el beneficiario correctamente");
             }
         }
 
