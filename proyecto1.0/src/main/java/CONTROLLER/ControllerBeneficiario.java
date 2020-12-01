@@ -83,20 +83,22 @@ public class ControllerBeneficiario {
     }
 
 
-    public void eliminarBeneficiario(Connection connection, int docIdent) {
-
+    public int eliminarBeneficiario(Connection connection, int docIdent) {
+        int devolver = 0;
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_EliminarBeneficiario ?, ?");
             callableStatement.setInt(1, docIdent);
             callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
-//            while (resultSet.next()) {
-//                System.out.println(resultSet.getString("N"));
-//            }
+            while (resultSet.next()) {
+                devolver = resultSet.getInt("N");
+            }
         } catch (Exception ex) {
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return devolver;
     }
 
     public int insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
@@ -125,8 +127,8 @@ public class ControllerBeneficiario {
     }
 
 
-    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom,
-                                     int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+    public int insertaBeneficiariosComplejo(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+        int devolver = 0;
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
@@ -144,17 +146,20 @@ public class ControllerBeneficiario {
             callableStatement.setString(11, ipDividido[1]);
             callableStatement.registerOutParameter(12,Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
-//            while(resultSet.next()){
-//
-//                System.out.println(resultSet.getInt("N"));}
+            while(resultSet.next()){
+                devolver = resultSet.getInt("N");
+            }
         }
         catch (Exception ex){
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return devolver;
     }
 
     public Beneficiario getBeneficiarios(Connection conection, int docIdent){
+        //cambiar a que devuelva los activos no los que existen
         Beneficiario beneficiari= new Beneficiario();
         try {
             String ip = InetAddress.getLocalHost().toString();
@@ -187,8 +192,8 @@ public class ControllerBeneficiario {
         return beneficiari;
     }
 
-    public void modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom,
-                                 int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+    public int modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom, int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+        int devolver = 0;
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
@@ -206,14 +211,16 @@ public class ControllerBeneficiario {
             callableStatement.setString(11, ipDividido[1]);
             callableStatement.registerOutParameter(12,Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
-//            while(resultSet.next()){
-//
-//                System.out.println(resultSet.getInt("N"));}
+            while(resultSet.next()){
+                devolver = resultSet.getInt("N");
+            }
         }
         catch (Exception ex){
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return devolver;
     }
 
     public ArrayList<EstadoCuenta> obtenerEstadosCuenta(Connection connection, int cuentaId){

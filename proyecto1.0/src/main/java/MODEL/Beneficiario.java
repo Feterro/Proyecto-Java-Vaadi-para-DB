@@ -48,5 +48,9 @@ public class Beneficiario extends Persona {
     public boolean isActivo() {
         return activo;
     }
+
+    public void imprimir(){
+        System.out.println(getParentesco() + getTipoDocIdent());
+    }
 }
 

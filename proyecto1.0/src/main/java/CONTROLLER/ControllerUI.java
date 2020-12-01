@@ -83,4 +83,38 @@ public class ControllerUI {
         }
         return true;
     }
+
+    public boolean agregarBeneficiarioComplejo(int numCuenta, int cedula, String parentezco, String nombre, String tipDocIdent, String fechaNac, int porcentaje, String email, int tel1, int tel2){
+        if (beneficiarioCon.insertaBeneficiariosComplejo(ControllerConexion.getInstance().connection, cedula, numCuenta, parentezco, porcentaje, nombre, fechaNac, tel1, tel2, tipDocIdent, email) == 0){
+            return true;
+        }
+        return false;
+    }
+
+    public ArrayList<String> getTiposDoc() {
+        return beneficiarioCon.getTipoDoc(ControllerConexion.getInstance().connection);
+    }
+
+    public ArrayList<String> getCedulasBen(int cuenta){
+        return beneficiarioCon.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, cuenta);
+    }
+
+    public Beneficiario getBeneficiario(int ced){
+        return beneficiarioCon.getBeneficiarios(ControllerConexion.getInstance().connection, ced);
+    }
+
+    public boolean actualizarBen(int cedulaOri, int cedulaN, String nombre, String parentezco, String fechaNa, String tipoDocIndent, int porcentaje,String correo, int tel1, int tel2){
+        if (beneficiarioCon.modificaPersonas(ControllerConexion.getInstance().connection, cedulaOri, cedulaN, parentezco, porcentaje, nombre, fechaNa, tel1, tel2, tipoDocIndent, correo) == 0){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean eliminarBene(int cedula){
+        int devolver = beneficiarioCon.eliminarBeneficiario(ControllerConexion.getInstance().connection, cedula);
+        if(devolver == 0){
+            return true;
+        }
+        return false;
+    }
 }
