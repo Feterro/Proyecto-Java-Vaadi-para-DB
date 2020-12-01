@@ -78,7 +78,9 @@ public class ControllerUI {
     }
 
     public boolean AgregarBeneficiario(int cedula, String parentezco, float porcentaje, int numeroCuen){
-        return beneficiarioCon.insertaBeneficiarios(ControllerConexion.getInstance().connection, cedula, numeroCuen, parentezco, (int) porcentaje);
-
+        if (beneficiarioCon.insertaBeneficiarios(ControllerConexion.getInstance().connection, cedula, numeroCuen, parentezco, (int) porcentaje) != 0){
+            return false;
+        }
+        return true;
     }
 }

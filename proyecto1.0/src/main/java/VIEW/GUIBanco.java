@@ -2,7 +2,6 @@ package VIEW;
 
 import CONTROLLER.ControllerUI;
 import MODEL.BeneficiariosTabla;
-import com.vaadin.event.dd.acceptcriteria.Not;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -26,12 +25,18 @@ public class GUIBanco extends VerticalLayout implements View {
     private AbsoluteLayout contenedorTabsBanco;
     private AbsoluteLayout contenedorOpciones;
     private AbsoluteLayout ver;
+    private AbsoluteLayout contenedorAgregar;
 
     //Components
     private TextField usuario;
     private PasswordField contrasenna;
     private RadioButtonGroup<String> cuentas;
     private TabSheet menu;
+
+    private TextField cedulaA;
+    private ComboBox<String> parentezcoA;
+    private TextField porc;
+    private Button agregar;
 
 
     //Atributos para guardar
@@ -256,7 +261,7 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.setWidth("200px");
         volver.setHeight("50px");
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        volver.addClickListener(e->atrasBene(ver, contenedorOpciones));
+        volver.addClickListener(e-> atras(ver, contenedorOpciones));
 
         ver.addComponent(image, "top: 0px; left: 0px");
         ver.addComponent(bene, "top: 50px; left: 50px");
@@ -272,49 +277,167 @@ public class GUIBanco extends VerticalLayout implements View {
     public void AgregarBeneficiario(AbsoluteLayout opciones, AbsoluteLayout tabBene){
         opciones.setVisible(false);
 
-        AbsoluteLayout contenedorAgregar = new AbsoluteLayout();
+        contenedorAgregar = new AbsoluteLayout();
         contenedorAgregar.setWidth("1500px");
         contenedorAgregar.setHeight("700px");
 
-        Label agregarL = new Label("Complete los siguientes espacios para agregar un nuevo beneficiario");
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/FondoVerBene.png"));
+        Image image = new Image("", resource);
+        image.setWidth("1500px");
+        image.setHeight("700px");
+
+        Label agregarL = new Label("COMPLETE LOS ESPACIOS");
+        agregarL.addStyleName(ValoTheme.LABEL_BOLD);
+        agregarL.addStyleName(ValoTheme.LABEL_H2);
         agregarL.setSizeFull();
 
-        TextField cedulaA = new TextField("Documento de identidad");
+        cedulaA = new TextField("Documento de identidad");
         cedulaA.setIcon(VaadinIcons.USER_CHECK);
         cedulaA.setPlaceholder("Sin cedula");
         cedulaA.setWidth("300px");
+        cedulaA.setValue("0");
 
-        ComboBox<String> parentezcoA = new ComboBox<>("Parentezco");
+        parentezcoA = new ComboBox<>("Parentezco");
         parentezcoA.setIcon(VaadinIcons.FAMILY);
         parentezcoA.setPlaceholder("No seleccionado");
         parentezcoA.setItems(controller.getParentezcos());
         parentezcoA.setWidth("300px");
+        parentezcoA.setValue("No definido");
 
 
-        TextField porc = new TextField("Porcentaje");
+        porc = new TextField("Porcentaje");
         porc.setIcon(VaadinIcons.DOLLAR);
         porc.setPlaceholder("0");
         porc.setWidth("300px");
+        porc.setValue("0");
 
-        Button agregar = new Button("AGREGAR");
+        agregar = new Button("AGREGAR");
         agregar.setIcon(VaadinIcons.ADD_DOCK);
         agregar.setStyleName("primary");
         agregar.setWidth("300px");
-        try {
-            agregar.addClickListener(e -> agregarBeneficiario(Integer.parseInt(cedulaA.getValue()), parentezcoA.getSelectedItem().get(), Float.parseFloat(porc.getValue()), controller.getBeneficiarios()));
-        }
-        catch (java.lang.NumberFormatException e){
-            agregar.addClickListener(i -> Notification.show("Alguno de los campos está vacío\nVerifique"));
-        }
-        contenedorAgregar.addComponent(agregarL, "top: 25px; left: 100px");
-        contenedorAgregar.addComponent(cedulaA, "top: 100px; left: 100px");
-        contenedorAgregar.addComponent(parentezcoA, "top: 200px; left: 100px");
-        contenedorAgregar.addComponent(porc, "top: 300px; left: 100px");
-        contenedorAgregar.addComponent(agregar, "top: 400px; left: 100px");
+        agregar.addClickListener(e -> agregarBeneficiario(Integer.parseInt(cedulaA.getValue()), parentezcoA.getSelectedItem().get(), Float.parseFloat(porc.getValue()), controller.getBeneficiarios(), contenedorAgregar, tabBene));
+
+        Button atras = new Button("ATRÁS");
+        atras.setIcon(VaadinIcons.BACKSPACE_A);
+        atras.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        atras.addClickListener(j -> atras(contenedorAgregar, contenedorOpciones));
+
+        contenedorAgregar.addComponent(agregarL, "top: 50px; left: 100px");
+        contenedorAgregar.addComponent(cedulaA, "top: 200px; left: 100px");
+        contenedorAgregar.addComponent(parentezcoA, "top: 300px; left: 100px");
+        contenedorAgregar.addComponent(porc, "top: 400px; left: 100px");
+        contenedorAgregar.addComponent(agregar, "top: 500px; left: 100px");
+        contenedorAgregar.addComponent(atras, "top: 610px; right: 50px");
 
         tabBene.addComponent(contenedorAgregar);
     }
 
+    public void agregarBeneNuevo(AbsoluteLayout agregarBene, AbsoluteLayout tabBene){
+        agregarBene.setVisible(false);
+
+        AbsoluteLayout contenedorAgregarComplejo = new AbsoluteLayout();
+        contenedorAgregarComplejo.setWidth("1500px");
+        contenedorAgregarComplejo.setHeight("700px");
+
+        Label datosPersonales = new Label("Datos Personales");
+        TextField nombre = new TextField("Nombre");
+        nombre.setIcon(VaadinIcons.USER_CHECK);
+        TextField cedula = new TextField("Documento identidad");
+        cedula.setIcon(VaadinIcons.TEXT_LABEL);
+        TextField fechaNac = new TextField("Fecha Nacimiento");
+        fechaNac.setIcon(VaadinIcons.CALENDAR_USER);
+
+        Label relPorc = new Label("Relación y porcentaje");
+        ComboBox<String> parentezco = new ComboBox<>("Parentezo");
+        parentezco.setValue("Sin selección");
+        parentezco.setIcon(VaadinIcons.FAMILY);
+        parentezco.setWidth("300px");
+
+        TextField porcentaje = new TextField("Porcentaje");
+        porcentaje.setIcon(VaadinIcons.DOLLAR);
+        porcentaje.setWidth("300px");
+
+        Label contacto = new Label("Contacto");
+        TextField email = new TextField("Email");
+        email.setIcon(VaadinIcons.ENVELOPE);
+        TextField tel1 = new TextField("Telefono 1");
+        tel1.setIcon(VaadinIcons.PHONE);
+        TextField tel2 = new TextField("Telefono 2");
+        tel2.setIcon(VaadinIcons.PHONE);
+
+        ComboBox<String> tipoDoc = new ComboBox<>("Tipo Documento Identidad");
+
+        Button actualizar = new Button("ACTUALIZAR");
+        actualizar.setIcon(VaadinIcons.UPLOAD);
+        actualizar.setStyleName("primary");
+
+        TextField BeneDoc = new TextField("Documento de Identidad");
+
+        Button agarrar = new Button("SELECCIONAR");
+        agarrar.setIcon(VaadinIcons.UPLOAD);
+        agarrar.setStyleName("primary");
+
+        contenedorAgregarComplejo.addComponent(agarrar, "top: 20px; left: 410px");
+        contenedorAgregarComplejo.addComponent(BeneDoc, "top: 20px; left: 100px");
+        contenedorAgregarComplejo.addComponent(datosPersonales, "top: 70px; left: 410px");
+        contenedorAgregarComplejo.addComponent(nombre, "top: 170px; left: 50px");
+        contenedorAgregarComplejo.addComponent(cedula, "top: 170px; left: 250px");
+        contenedorAgregarComplejo.addComponent(fechaNac, "top: 170px; left: 700px");
+        contenedorAgregarComplejo.addComponent(tipoDoc,"top: 170px; left: 480px");
+
+        contenedorAgregarComplejo.addComponent(relPorc, "top: 250px; left: 430px");
+        contenedorAgregarComplejo.addComponent(parentezco, "top: 330px; left: 175px");
+        contenedorAgregarComplejo.addComponent(porcentaje, "top: 330px; right: 175px");
+
+        contenedorAgregarComplejo.addComponent(contacto, "top: 400px; left: 470px");
+        contenedorAgregarComplejo.addComponent(email, "top: 460px; left: 100px");
+        contenedorAgregarComplejo.addComponent(tel1, "top: 460px; left: 410px");
+        contenedorAgregarComplejo.addComponent(tel2, "top: 460px; right: 100");
+
+        contenedorAgregarComplejo.addComponent(actualizar, "top: 550px; left: 430px");
+
+        tabBene.addComponent(contenedorAgregarComplejo, "top: 0px, left: 0px");
+
+
+    }
+
+    public void preguntar(AbsoluteLayout agregarCont){
+        cedulaA.setEnabled(false);
+        porc.setEnabled(false);
+        parentezcoA.setEnabled(false);
+        agregar.setEnabled(false);
+
+        Label notificacion = new Label("La persona no está en la base de datos. No se pudo agregar");
+        notificacion.addStyleName(ValoTheme.LABEL_FAILURE);
+
+        Label pregunta = new Label("¿Desea agregarla?");
+        pregunta.addStyleName(ValoTheme.LABEL_BOLD);
+
+        Button si = new Button("SI");
+        si.setIcon(VaadinIcons.CHECK);
+        si.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+        si.setWidth("250px");
+        Button no = new Button("NO");
+        no.setIcon(VaadinIcons.CLOSE_SMALL);
+        no.setWidth("250px");
+        no.addStyleName(ValoTheme.BUTTON_DANGER);
+        no.addClickListener(e -> {
+            notificacion.setVisible(false);
+            pregunta.setVisible(false);
+            si.setVisible(false);
+            no.setVisible(false);
+            cedulaA.setEnabled(true);
+            porc.setEnabled(true);
+            parentezcoA.setEnabled(true);
+            agregar.setEnabled(true);
+        });
+
+        agregarCont.addComponent(notificacion, "top: 200px; left: 650px");
+        agregarCont.addComponent(pregunta, "top: 250px; left: 825px");
+        agregarCont.addComponent(si, "top: 300px; left: 625px");
+        agregarCont.addComponent(no, "top: 300px; left: 900px");
+
+    }
     //Métodos de los botones
 
     private void SeleccionarCuenta(Button.ClickEvent event) {
@@ -354,20 +477,33 @@ public class GUIBanco extends VerticalLayout implements View {
         }
     }
 
-    public void atrasBene(AbsoluteLayout ver, AbsoluteLayout opciones){
-        ver.setVisible(false);
+    public void atras(AbsoluteLayout actual, AbsoluteLayout opciones){
+        actual.setVisible(false);
         opciones.setVisible(true);
 
     }
 
-    public void agregarBeneficiario(int cedula, String parentezo, float porcetanje, ArrayList<BeneficiariosTabla> beneficiarios){
-        System.out.println(cedula + " " + parentezo + " " + porcetanje + " " + beneficiarios);
-        if (controller.getCantActBene(beneficiarios) < 3){
-            if(controller.AgregarBeneficiario(cedula, parentezo, porcetanje, Integer.parseInt(numCuenta))){
-                Notification.show("Se agregó el beneficiario correctamente");
+    public void agregarBeneficiario(int cedula, String parentezo, float porcetanje, ArrayList<BeneficiariosTabla> beneficiarios, AbsoluteLayout agregar, AbsoluteLayout tabBene){
+        if (controller.getPorcentajeUsado(beneficiarios)+porcetanje<=100) {
+            if (cedula != 0 && !parentezo.equals("No definido") && porcetanje != 0) {
+                if (controller.getCantActBene(beneficiarios) < 3) {
+                    if (controller.AgregarBeneficiario(cedula, parentezo, porcetanje, Integer.parseInt(numCuenta))) {
+                        Notification.show("Se agregó el beneficiario correctamente");
+                    }
+                    else{
+                        preguntar(agregar);
+                    }
+                }
+                else{
+                    Notification.show("Ya existe la cantidad máxima de beneficiarios\nElimine alguno para agregar uno nuevo");
+                }
+            } else {
+                Notification.show("Alguno de los campos está vacío\nVerifique");
             }
         }
-
+        else{
+            Notification.show("El porcentaje asignado supera más del 100%");
+        }
     }
 
     @Override

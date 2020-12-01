@@ -99,7 +99,8 @@ public class ControllerBeneficiario {
         }
     }
 
-    public boolean insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
+    public int insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
+        int devolver = 0;
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido = ip.split("/");
@@ -111,16 +112,16 @@ public class ControllerBeneficiario {
             callableStatement.setString(5, ipDividido[1]);
             callableStatement.registerOutParameter(6, Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
-//            while (resultSet.next()) {
-//
-//                System.out.println(resultSet.getInt("N"));
-//            }
-            return true;
+            while (resultSet.next()) {
+                devolver = resultSet.getInt("N");
+            }
+
         } catch (Exception ex) {
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
-        return false;
+        return devolver;
     }
 
 
