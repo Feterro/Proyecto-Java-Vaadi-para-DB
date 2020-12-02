@@ -3,13 +3,16 @@ package VIEW;
 import CONTROLLER.ControllerUI;
 import MODEL.Beneficiario;
 import MODEL.BeneficiariosTabla;
-import com.vaadin.event.dd.acceptcriteria.Not;
+import MODEL.EstadoCuenta;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
+
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ public class GUIBanco extends VerticalLayout implements View {
 
     //Listas
     private ArrayList<BeneficiariosTabla> beneficiariosTablaL;
+    private ArrayList<EstadoCuenta> estadoCuentas;
 
     //Contenedores diferentes páginas
     private AbsoluteLayout contenedorLogIn;
@@ -29,6 +33,8 @@ public class GUIBanco extends VerticalLayout implements View {
     private AbsoluteLayout contenedorOpciones;
     private AbsoluteLayout ver;
     private AbsoluteLayout contenedorAgregar;
+    private AbsoluteLayout actualizarBene;
+    private AbsoluteLayout preguntaC;
 
     //Components
     private TextField usuario;
@@ -41,12 +47,18 @@ public class GUIBanco extends VerticalLayout implements View {
     private TextField porc;
     private Button agregar;
 
+    private Label cuentaL;
+
+    private Grid<EstadoCuenta> estados;
+
+
 
     //Atributos para guardar
     private String nombreUsuario;
     private String contra;
     private String numCuenta;
-
+    private int cantEstados = 0;
+    private int estadoActual = 0;
 
     public GUIBanco() {
         Login();
@@ -97,6 +109,7 @@ public class GUIBanco extends VerticalLayout implements View {
         contenedorLogIn.addComponent(panelInicioSesion, "top: 300px; left: 100px");
         contenedorLogIn.addComponent(inicio, "top: 125px; left: 150px");
         addComponent(contenedorLogIn);
+
     }
 
     public void Banco(){
@@ -116,7 +129,7 @@ public class GUIBanco extends VerticalLayout implements View {
         menu.addStyleName(ValoTheme.TABSHEET_FRAMED);
         Cuentas();
         Beneficiarios();
-
+        estadosCuenta();
         return menu;
 
     }
@@ -164,6 +177,8 @@ public class GUIBanco extends VerticalLayout implements View {
         contenedorBeneficiarios.setWidth("1500px");
         contenedorBeneficiarios.setHeight("700px");
 
+        cuentaL = new Label("Está en la cuenta número: " + numCuenta);
+
         contenedorOpciones = new AbsoluteLayout();
         contenedorOpciones.setWidth("1500px");
         contenedorOpciones.setHeight("700px");
@@ -204,8 +219,8 @@ public class GUIBanco extends VerticalLayout implements View {
         eliminarBeneficiarios.setHeight("50px");
         eliminarBeneficiarios.addClickListener(e -> eliminarBeneficiario(contenedorOpciones, contenedorBeneficiarios));
 
-
         contenedorOpciones.addComponent(image, "top: 0px; left: 0px");
+        contenedorOpciones.addComponent(cuentaL, "top: 50px; right: 50px");
         contenedorOpciones.addComponent(opciones, "top: 50px; left: 100px");
         contenedorOpciones.addComponent(verBeneficiarios, "top: 170px; left: 100px");
         contenedorOpciones.addComponent(agregarBeneficiarios, "top: 270px; left: 100px");
@@ -242,9 +257,10 @@ public class GUIBanco extends VerticalLayout implements View {
         beneficiariosTablaL = controller.llenarTabla(Integer.parseInt(numCuenta));
         beneficiarios.setItems(beneficiariosTablaL);
 
-        float porcentaje = controller.getPorcentajeUsado(beneficiariosTablaL);
+        int porcentaje = controller.getPorcentajeUsado(beneficiariosTablaL);
+        Notification.show(String.valueOf(porcentaje));
 
-        float sobrante = 100 - porcentaje;
+        int sobrante = 100 - porcentaje;
 
 
         Label resumen = new Label("RESUMEN DATOS");
@@ -317,7 +333,7 @@ public class GUIBanco extends VerticalLayout implements View {
         agregar.setIcon(VaadinIcons.ADD_DOCK);
         agregar.setStyleName("primary");
         agregar.setWidth("300px");
-        agregar.addClickListener(e -> agregarBeneficiario(Integer.parseInt(cedulaA.getValue()), parentezcoA.getSelectedItem().get(), Float.parseFloat(porc.getValue()), controller.getBeneficiarios(), contenedorAgregar, tabBene));
+        agregar.addClickListener(e -> agregarBeneficiario(Integer.parseInt(cedulaA.getValue()), parentezcoA.getSelectedItem().get(), Integer.parseInt(porc.getValue()), controller.getBeneficiarios(), contenedorAgregar, tabBene));
 
         Button atras = new Button("ATRÁS");
         atras.setIcon(VaadinIcons.BACKSPACE_A);
@@ -334,7 +350,7 @@ public class GUIBanco extends VerticalLayout implements View {
         tabBene.addComponent(contenedorAgregar);
     }
 
-    public void agregarBeneNuevo(AbsoluteLayout tabBene){
+    public void agregarBeneNuevo(AbsoluteLayout tabBene, int cedulaPuesta, String parentezcoPuesto, int porcenataje){
         contenedorAgregar.setVisible(false);
 
         AbsoluteLayout contenedorAgregarComplejo = new AbsoluteLayout();
@@ -363,6 +379,7 @@ public class GUIBanco extends VerticalLayout implements View {
         cedula.setIcon(VaadinIcons.TEXT_LABEL);
         cedula.setWidth("300px");
         cedula.setPlaceholder("Sin cedula");
+        cedula.setValue(String.valueOf(cedulaPuesta));
 
         DateField fechaNac = new DateField("Fecha Nacimiento");
         fechaNac.setIcon(VaadinIcons.CALENDAR_USER);
@@ -378,11 +395,13 @@ public class GUIBanco extends VerticalLayout implements View {
         parentezco.setIcon(VaadinIcons.FAMILY);
         parentezco.setWidth("300px");
         parentezco.setItems(controller.getParentezcos());
+        parentezco.setValue(parentezcoPuesto);
 
         TextField porcentaje = new TextField("Porcentaje");
         porcentaje.setIcon(VaadinIcons.DOLLAR);
         porcentaje.setWidth("300px");
         porcentaje.setPlaceholder("0%");
+        porcentaje.setValue(String.valueOf(porcenataje));
 
         Label contacto = new Label("Contacto");
         contacto.addStyleName(ValoTheme.LABEL_BOLD);
@@ -403,12 +422,12 @@ public class GUIBanco extends VerticalLayout implements View {
         tel2.setWidth("300px");
         tel2.setPlaceholder("888888");
 
-        Button agregar = new Button("AGREGAR");
-        agregar.setIcon(VaadinIcons.ADD_DOCK);
-        agregar.setStyleName(ValoTheme.BUTTON_PRIMARY);
-        agregar.setWidth("300px");
-        agregar.setHeight("50px");
-        agregar.addClickListener(e ->{
+        Button agregarNuevo = new Button("AGREGAR");
+        agregarNuevo.setIcon(VaadinIcons.ADD_DOCK);
+        agregarNuevo.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        agregarNuevo.setWidth("300px");
+        agregarNuevo.setHeight("50px");
+        agregarNuevo.addClickListener(e ->{
             if(controller.getPorcentajeUsado(controller.getBeneficiarios())+Integer.parseInt(porcentaje.getValue()) <=100){
                 if (controller.getCantActBene(controller.getBeneficiarios())<3){
                     boolean devolvio = controller.agregarBeneficiarioComplejo(Integer.parseInt(numCuenta), Integer.parseInt(cedula.getValue()),parentezco.getSelectedItem().get(), nombre.getValue(), tipoDoc.getSelectedItem().get(), fechaNac.getValue().toString(), Integer.parseInt(porcentaje.getValue()), email.getValue(), Integer.parseInt(tel1.getValue()),Integer.parseInt(tel2.getValue()));
@@ -433,7 +452,17 @@ public class GUIBanco extends VerticalLayout implements View {
         Button atras = new Button("ATRÁS");
         atras.setIcon(VaadinIcons.BACKSPACE_A);
         atras.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        atras.addClickListener(j -> atras(contenedorAgregar, contenedorOpciones));
+        atras.addClickListener(j -> {
+            atras(contenedorAgregarComplejo, contenedorAgregar);
+            preguntaC.setVisible(false);
+            cedulaA.setEnabled(true);
+            porc.setEnabled(true);
+            parentezcoA.setEnabled(true);
+            agregar.setEnabled(true);
+            cedulaA.clear();
+            porc.clear();
+            parentezcoA.clear();
+        });
 
         contenedorAgregarComplejo.addComponent(datos, "top: 50px; left: 50px");
         contenedorAgregarComplejo.addComponent(datosPersonales, "top: 100px; left: 650px");
@@ -451,15 +480,15 @@ public class GUIBanco extends VerticalLayout implements View {
         contenedorAgregarComplejo.addComponent(tel1, "top: 500px; left: 600px");
         contenedorAgregarComplejo.addComponent(tel2, "top: 500px; right: 250px");
 
-        contenedorAgregarComplejo.addComponent(agregar, "top: 600px; left: 600px");
+        contenedorAgregarComplejo.addComponent(agregarNuevo, "top: 600px; left: 600px");
         contenedorAgregarComplejo.addComponent(atras, "top: 610px; right: 50px");
 
         tabBene.addComponent(contenedorAgregarComplejo, "top: 0px, left: 0px");
 
     }
 
-    public void preguntar(AbsoluteLayout agregarCont, AbsoluteLayout tabBene){
-        AbsoluteLayout preguntaC = new AbsoluteLayout();
+    public void preguntar(AbsoluteLayout agregarCont, AbsoluteLayout tabBene, int cedula, String parentezco, int porcentaje){
+        preguntaC = new AbsoluteLayout();
         preguntaC.setWidth("700px");
         preguntaC.setHeight("500px");
 
@@ -478,7 +507,7 @@ public class GUIBanco extends VerticalLayout implements View {
         si.setIcon(VaadinIcons.CHECK);
         si.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         si.setWidth("250px");
-        si.addClickListener(e -> agregarBeneNuevo(tabBene));
+        si.addClickListener(e -> agregarBeneNuevo(tabBene, cedula, parentezco, porcentaje));
 
         Button no = new Button("NO");
         no.setIcon(VaadinIcons.CLOSE_SMALL);
@@ -507,7 +536,7 @@ public class GUIBanco extends VerticalLayout implements View {
     public void actualizarBeneficiario(AbsoluteLayout opciones, AbsoluteLayout tabBene){
         opciones.setVisible(false);
 
-        AbsoluteLayout actualizarBene = new AbsoluteLayout();
+        actualizarBene = new AbsoluteLayout();
         actualizarBene.setHeight("700px");
         actualizarBene.setWidth("1500px");
 
@@ -524,7 +553,7 @@ public class GUIBanco extends VerticalLayout implements View {
         confirmar.setIcon(VaadinIcons.CHECK_CIRCLE);
         confirmar.setWidth("300px");
         confirmar.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        confirmar.addClickListener(e -> actualizarBeneficiarios(actualizarBene,tabBene, Integer.parseInt(beneficiarios.getSelectedItem().get())));
+        confirmar.addClickListener(e -> actualizarBeneficiarios(actualizarBene,tabBene, Integer.parseInt(beneficiarios.getSelectedItem().get()), beneficiarios));
 
         Button atras = new Button("ATRÁS");
         atras.setIcon(VaadinIcons.BACKSPACE_A);
@@ -539,7 +568,7 @@ public class GUIBanco extends VerticalLayout implements View {
         tabBene.addComponent(actualizarBene);
     }
 
-    public void actualizarBeneficiarios(AbsoluteLayout act1, AbsoluteLayout tabBene, int cedulaG){
+    public void actualizarBeneficiarios(AbsoluteLayout act1, AbsoluteLayout tabBene, int cedulaG, ComboBox<String> beneficiarios){
         act1.setVisible(false);
 
         Beneficiario beneficiario = controller.getBeneficiario(cedulaG);
@@ -622,7 +651,10 @@ public class GUIBanco extends VerticalLayout implements View {
         Button atras = new Button("ATRÁS");
         atras.setIcon(VaadinIcons.BACKSPACE_A);
         atras.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        atras.addClickListener(e -> atras(actualizarBen, contenedorAgregar));
+        atras.addClickListener(e -> {
+            atras(actualizarBen, actualizarBene);
+            beneficiarios.clear();
+        });
 
         Button actualizar = new Button("ACTUALIZAR");
         actualizar.setIcon(VaadinIcons.UPLOAD);
@@ -687,6 +719,8 @@ public class GUIBanco extends VerticalLayout implements View {
             boolean devolver = controller.eliminarBene(Integer.parseInt(beneficiariosE.getSelectedItem().get()));
             if(devolver){
                 Notification.show("Se eliminó el beneficiario correctamente");
+                beneficiariosE.clear();
+                beneficiariosE.setItems(controller.getCedulasBen(Integer.parseInt(numCuenta)));
             }
             else{
                 Notification.show("Hubo un error con la eliminación\nIntentelo más tarde");
@@ -706,14 +740,108 @@ public class GUIBanco extends VerticalLayout implements View {
         tabBene.addComponent(contenedorEliminar);
     }
 
+    public void estadosCuenta() {
+        AbsoluteLayout estadosCuentaContenedor = new AbsoluteLayout();
+        estadosCuentaContenedor.setWidth("1500px");
+        estadosCuentaContenedor.setHeight("700px");
+
+        Label datos = new Label("ESTADOS MÁS RECIENTES");
+        datos.addStyleName(ValoTheme.LABEL_H2);
+
+        estados = new Grid<>(EstadoCuenta.class);
+        estados.setWidth("700px");
+        estados.setHeight("343px");
+        estados.getColumn("numero").setCaption("#");
+        estados.getColumn("fechaInicio").setCaption("FECHA INICIO");
+        estados.getColumn("fechaFinal").setCaption("FECHA FINAL");
+
+
+        ArrayList<Integer> idsR = new ArrayList<>();
+        idsR.add(1);idsR.add(2);idsR.add(3);idsR.add(4);idsR.add(5);idsR.add(6);idsR.add(7);idsR.add(8);
+        RadioButtonGroup<Integer> ids = new RadioButtonGroup<>();
+        ids.setItems(idsR);
+        ids.addStyleName(ValoTheme.CHECKBOX_LARGE);
+
+        Button selecionar = new Button("VER DETALLES");
+        selecionar.setIcon(VaadinIcons.FILE_TEXT);
+        selecionar.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        selecionar.setWidth("300px");
+        selecionar.setHeight("50px");
+
+
+        Button mas = new Button();
+        mas.setIcon(VaadinIcons.FORWARD);
+        mas.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        mas.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        mas.setWidth("300px");
+        mas.setHeight("50px");
+        mas.addClickListener(e -> {
+            if(cantEstados>=8){
+                ids.setItems(idsRB(estadoActual, estadoActual+8));
+                estados.setItems(estadoCuentas.subList(estadoActual, estadoActual+8));
+                cantEstados = cantEstados - 8;
+                estadoActual = estadoActual + 8;
+            }
+            else if(cantEstados<=8){
+                estados.setItems(estadoCuentas.subList(estadoActual, -1));
+            }
+            else{
+                Notification.show("No hay más estado que mostrar");
+            }
+
+        });
+
+        Button atras = new Button();
+        atras.setIcon(VaadinIcons.BACKWARDS);
+        atras.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        atras.setWidth("300px");
+        atras.setHeight("50px");
+        atras.addClickListener(e->{
+            if(estadoActual >= 8){
+                ids.setItems(idsRB(estadoActual-8, estadoActual));
+                estados.setItems(estadoCuentas.subList(estadoActual-8, estadoActual));
+                estadoActual = estadoActual-8;
+                cantEstados = cantEstados + 8;
+            }
+            else{
+                Notification.show("No hay estados anteriores");
+            }
+        });
+
+
+        estadosCuentaContenedor.addComponent(datos, "top: 25px; left: 50px");
+        estadosCuentaContenedor.addComponent(estados, "top: 100px; left: 400px");
+        estadosCuentaContenedor.addComponent(ids, "top:130px; left: 1120px");
+        estadosCuentaContenedor.addComponent(atras, "top: 463; left: 425px");
+        estadosCuentaContenedor.addComponent(mas, "top: 463px; left: 775px");
+        estadosCuentaContenedor.addComponent(selecionar, "top: 540; left: 600px");
+
+        menu.addTab(estadosCuentaContenedor,"ESTADOS CUENTA").setEnabled(false);
+    }
+    public ArrayList<Integer> idsRB(int inicio, int fin){
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (int i = inicio; i<fin; i++){
+            ids.add(i+1);
+        }
+        return ids;
+    }
     //Métodos de los botones
 
     public void SeleccionarCuenta(Button.ClickEvent event) {
         numCuenta = cuentas.getSelectedItem().get();
         if (!numCuenta.equals("No seleccionado")){
             menu.getTab(1).setEnabled(true);
+            menu.getTab(2).setEnabled(true);
             Notification.show("Actualmente está usando la cuenta:\n       "+numCuenta);
+            cuentaL.setCaption("Está en la cuenta: " + numCuenta);
             controller.setBeneficiarios(Integer.parseInt(numCuenta));
+            estadoCuentas = controller.getEstadosCuenta(Integer.parseInt(numCuenta));
+            cantEstados = estadoCuentas.size();
+            estados.setItems(estadoCuentas.subList(0,8));
+            cantEstados = cantEstados - 8;
+            estadoActual = estadoActual + 8;
+
 
             //Agregar las otras tabs
         }
@@ -751,14 +879,14 @@ public class GUIBanco extends VerticalLayout implements View {
 
     }
 
-    public void agregarBeneficiario(int cedula, String parentezo, float porcetanje, ArrayList<BeneficiariosTabla> beneficiarios, AbsoluteLayout agregar, AbsoluteLayout tabBene){
+    public void agregarBeneficiario(int cedula, String parentezo, int porcetanje, ArrayList<BeneficiariosTabla> beneficiarios, AbsoluteLayout agregar, AbsoluteLayout tabBene){
         if (controller.getPorcentajeUsado(beneficiarios)+porcetanje<=100) {
             if (controller.getCantActBene(beneficiarios) < 3) {
                 if (controller.AgregarBeneficiario(cedula, parentezo, porcetanje, Integer.parseInt(numCuenta))) {
                     Notification.show("Se agregó el beneficiario correctamente");
                 }
                 else{
-                    preguntar(agregar, tabBene);
+                    preguntar(agregar, tabBene, cedula, parentezo, porcetanje);
                 }
             }
             else{

@@ -2,8 +2,12 @@ package CONTROLLER;
 
 import MODEL.Beneficiario;
 import MODEL.BeneficiariosTabla;
+import MODEL.EstadoCuenta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
 
 public class ControllerUI {
 
@@ -12,6 +16,7 @@ public class ControllerUI {
 
     private ControllerBeneficiario beneficiarioCon = new ControllerBeneficiario();
     private ControllerUsuario usuarioCon = new ControllerUsuario();
+    private ControllerEstadosCuenta estadosCuenta = new ControllerEstadosCuenta();
 
     public ControllerUI(){}
 
@@ -63,11 +68,11 @@ public class ControllerUI {
         return cant;
     }
 
-    public float getPorcentajeUsado(ArrayList<BeneficiariosTabla> beneficiarios){
-        float porcentaje = 0;
+    public int getPorcentajeUsado(ArrayList<BeneficiariosTabla> beneficiarios){
+        int porcentaje = 0;
 
         for (BeneficiariosTabla ben: beneficiarios){
-            porcentaje = porcentaje + ben.getPorcentaje();
+            porcentaje = (int) (porcentaje + ben.getPorcentaje());
         }
 
         return porcentaje;
@@ -116,5 +121,31 @@ public class ControllerUI {
             return true;
         }
         return false;
+    }
+
+
+
+    public ArrayList<EstadoCuenta> getEstadosCuenta(int cuenta){
+        ArrayList<EstadoCuenta> estados = estadosCuenta.obtenerEstadosCuenta(ControllerConexion.getInstance().connection, cuenta);
+        ArrayList<Date> fechaInicio = new ArrayList<>();
+        ArrayList<EstadoCuenta> estadosOrdenados =  new ArrayList<>();
+        for (EstadoCuenta estado: estados){
+            fechaInicio.add(estado.getFechaInicio());
+        }
+        Arrays.sort(new ArrayList[]{estados});
+        for(Date fecha: fechaInicio){
+            for (EstadoCuenta estado: estados){
+                if(estado.getFechaInicio().equals(fecha)){
+                    EstadoCuenta estad = new EstadoCuenta(estado.getNumero(), fecha, estado.getFechaFinal());
+                    estadosOrdenados.add(estad);
+                }
+            }
+        }
+        int num = 1;
+        for (EstadoCuenta estado: estadosOrdenados){
+            estado.setNumero(num);
+            num++;
+        }
+        return estadosOrdenados;
     }
 }

@@ -1,9 +1,10 @@
-CONTROLLER\ControllerUsuario.class
-CONTROLLER\ControllerUI.class
+CONTROLLER\ControllerEstadosCuenta.class
 MODEL\EstadoCuenta.class
-VIEW\MyUI.class
 VIEW\MyUI$MyUIServlet.class
 CONTROLLER\ControllerConexion.class
+CONTROLLER\ControllerUsuario.class
+CONTROLLER\ControllerUI.class
+VIEW\MyUI.class
 CONTROLLER\ControllerBeneficiario.class
 VIEW\GUIBanco.class
 MODEL\Persona.class

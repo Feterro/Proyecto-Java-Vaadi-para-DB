@@ -222,28 +222,6 @@ public class ControllerBeneficiario {
         }
         return devolver;
     }
-
-    public ArrayList<EstadoCuenta> obtenerEstadosCuenta(Connection connection, int cuentaId){
-        ArrayList<EstadoCuenta> estadosCuenta = new ArrayList<>();
-        try{
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_EC_ObtenerEstadosCuenta ?, ?");
-            callableStatement.setInt(1, cuentaId);
-            callableStatement.registerOutParameter(2, Types.VARCHAR);
-            ResultSet resultSet = callableStatement.executeQuery();
-            while (resultSet.next()){
-                EstadoCuenta estado = new EstadoCuenta();
-                estado.setFecha_Inicio(resultSet.getDate("fechaIni"));
-                estado.setFecha_Final(resultSet.getDate("fechaFin"));
-                estadosCuenta.add(estado);
-//                System.out.println("Estado: " + estado.getFecha_Final() + " " + estado.getFecha_Inicio());
-
-            }
-        }
-        catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return estadosCuenta;
-    }
 }
 
 
