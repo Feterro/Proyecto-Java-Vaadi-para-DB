@@ -86,7 +86,7 @@ A.TipoCuentaAhorro.value('@Nombre', 'varchar(50)') AS nombre,
 A.TipoCuentaAhorro.value('@SaldoMinimo', 'decimal(10,4)') AS saldoMinimo,
 A.TipoCuentaAhorro.value('@MultaSaldoMin', 'decimal(10,4)') AS multASaldoMinimo,
 A.TipoCuentaAhorro.value('@CargoMensual', 'decimal(10,4)') AS cargoMens,
-A.TipoCuentaAhorro.value('@NumRetirosHumano', 'int') AS numRetirosHum,
+A.TipoCuentaAhorro.value('@NumRetiroHumano', 'int') AS numRetirosHum,
 A.TipoCuentaAhorro.value('@NumRetirosAutomatico', 'int') AS numRetirosAuto,
 A.TipoCuentaAhorro.value('@Interes', 'int') AS intereses,
 A.TipoCuentaAhorro.value('@ComisionHumano', 'decimal(10,4)') AS comisionRetHum,
@@ -120,5 +120,5 @@ OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB
 
 cross apply c.nodes('Catalogos/Tipo_Movimientos/Tipo_Movimiento') AS A(TipoCuentaAhorro)
 
-SELECT * FROM dbo.TipoMovimiento
---Delete FROM dbo.tipoCuentaAhorro
+--SELECT * FROM dbo.TipoMovimiento
+--Delete FROM dbo.TipoMovimiento

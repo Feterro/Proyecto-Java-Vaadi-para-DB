@@ -8,9 +8,16 @@ DECLARE
 @fechasSimulacion date = '2020-11-29',
 @fechaActual date = '2020-07-01'
 
-WHILE (@fechaActual <= @fechasSimulacion)
+DECLARE 
+@lo1 int = 1,
+@hi1 int = 1,
+@lo3 int = 1,
+@hi3 int = 1
+
+WHILE(@fechaActual <= @fechasSimulacion)
 BEGIN
 	
+
 --INSERT XML en persona-----------------------------------------------------------
 
 	--DECLARE @fechaActual date = '2020-07-01'
@@ -37,14 +44,12 @@ BEGIN
 	@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2 _Pruebas.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Persona') AS A(Persona) 
 
 	--SELECT * FROM dbo.persona
-	--DELETE FROM [dbo].[persona]
-	--DBCC checkident('dbo.persona',reseed,0)
 
 --INSERT XML en cuentaAhorro-----------------------------------------------------------
 
@@ -59,7 +64,8 @@ BEGIN
 	cantHum int,
 	cantAuto int)
 
-	INSERT INTO @cuentaTemp(tipoCuenta,
+	INSERT INTO @cuentaTemp(
+	tipoCuenta,
 	fechaApretura,
 	tempdocIdent,
 	numCuenta)
@@ -71,7 +77,7 @@ BEGIN
 		A.Cuenta.value('@NumeroCuenta', 'int') AS numCuenta
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2 _Pruebas.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Cuenta') AS A(Cuenta)
@@ -87,34 +93,25 @@ BEGIN
 	FROM  @cuentaTemp
 	INNER JOIN dbo.persona ON tempdocIdent = dbo.persona.valorDocIdent 
 
-	DECLARE @lo2 int = 1, 
-	@hi2 int = (SELECT COUNT(*) FROM @cuentaTemp)
+	INSERT INTO dbo.cuentaAhorro(
+	tipoCuentaId,
+	fechaApertura,
+	personaId,
+	numeroCuenta,
+	cantHumano,
+	cantAuto)
 
-	WHILE (@lo2 <= @hi2)
-	BEGIN
+	SELECT tipoCuenta,
+	fechaApretura, 
+	tempdocIdent, 
+	numCuenta, 
+	cantHum, 
+	cantAuto 
+	FROM @cuentaTemp 
 
-		INSERT INTO dbo.cuentaAhorro (tipoCuentaId,
-		fechaApertura,
-		personaId,
-		numeroCuenta,
-		cantHumano,
-		cantAuto)
-
-		SELECT tipoCuenta,
-		fechaApretura, 
-		tempdocIdent, 
-		numCuenta, 
-		cantHum, 
-		cantAuto 
-		FROM @cuentaTemp 
-		WHERE @lo2 = ID
-
-		SET @lo2 = @lo2 + 1
-	END
+	DELETE FROM @cuentaTemp
 
 	--SELECT * FROM dbo.cuentaAhorro
-	--DELETE FROM dbo.cuentaAhorro
-	--DBCC checkident('dbo.cuentaAhorro',reseed,0)
 
 --INSERT XML en beneficiario-----------------------------------------------------------
 
@@ -125,56 +122,52 @@ BEGIN
 	ParId int,
 	tempdocIdent int,
 	numCuentatemp int,
-	porcentaje int)
+	porcentaje int,
+	insertAt date, 
+	insertBy varchar(50))
 	
 	INSERT INTO @benefTemp(ParId,
 	tempdocIdent,
 	numCuentatemp,
-	porcentaje)
+	porcentaje,
+	insertAt,
+	insertBy)
 	SELECT
 		A.Benef.value('@ParentezcoId', 'int') AS ParId,
 		A.Benef.value('@ValorDocumentoIdentidadBeneficiario', 'int') AS tempDocIdent,
 		A.Benef.value('@NumeroCuenta', 'int') AS numCuenta,
-		A.Benef.value('@Porcentaje', 'int') AS porcentaje
+		A.Benef.value('@Porcentaje', 'int') AS porcentaje,
+		@fechaActual,
+		SUSER_NAME()
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2 _Pruebas.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Beneficiario') AS A(Benef)
-
-	DECLARE @benefTemp1 TABLE
-	(ID int identity,
-	ParId int,
-	tempdocIdent int,
-	numCuentatemp int,
-	porcentaje int,
-	insertBy varchar(50),
-	insertAt date)
-
-	INSERT INTO @benefTemp1(ParId,
-	tempdocIdent,
-	numCuentatemp,
-	porcentaje)
-
-	SELECT ParId, dbo.persona.ID, numCuentatemp, porcentaje FROM @benefTemp
+	
+	UPDATE @benefTemp
+	SET tempdocIdent = dbo.persona.ID
+	FROM  @benefTemp
 	INNER JOIN dbo.persona ON tempdocIdent = dbo.persona.valorDocIdent
 
 	INSERT INTO dbo.beneficiario(parentescoId,
 	personaId,
 	cuentaId,
-	porcentaje)
+	porcentaje,
+	insertAt,
+	insertBy)
 
-	SELECT ParId, tempdocIdent, dbo.cuentaAhorro.ID, porcentaje FROM @benefTemp1
+	SELECT ParId, tempdocIdent, dbo.cuentaAhorro.ID, porcentaje, insertAt, insertBy FROM @benefTemp
 	INNER JOIN dbo.cuentaAhorro ON numCuentatemp = dbo.cuentaAhorro.numeroCuenta
 
+	DELETE FROM @benefTemp
+
 	--SELECT * FROM dbo.beneficiario
-	--Delete FROM dbo.beneficiario
-	--DBCC checkident('dbo.beneficiario',reseed,0)
 
 --INSERT XML en Usuarios-----------------------------------------------------------
 
-	--DECLARE @fechaActual date = '2020-07-04'
+	--DECLARE @fechaActual date = '2020-07-01'
 
 	DECLARE @userTemp TABLE
 	(ID int identity,
@@ -204,17 +197,16 @@ BEGIN
 	personaId,
 	tipoUsuario)
 
-	SELECT nomUsu, pass, valorDocIdent, esAdmin FROM @userTemp
+	SELECT nomUsu, pass, dbo.persona.ID, esAdmin FROM @userTemp
 	INNER JOIN dbo.persona ON docId = dbo.persona.valorDocIdent
 
+	DELETE FROM @userTemp
 
-	--SELECT * FROM dbo.beneficiario
-	--Delete FROM dbo.beneficiario
-	--DBCC checkident('dbo.beneficiario',reseed,0)
+	--SELECT * FROM dbo.usuario
 
 --INSERT XML en puedeVer-----------------------------------------------------------
 
-	--DECLARE @fechaActual date = '2020-07-04'
+	--DECLARE @fechaActual date = '2020-07-01'
 
 	DECLARE @verTemp TABLE
 	(ID int identity,
@@ -239,18 +231,15 @@ BEGIN
 	FROM  @verTemp
 	INNER JOIN dbo.cuentaAhorro ON cuen = dbo.cuentaAhorro.numeroCuenta
 
-	INSERT INTO dbo.usuario(nombreUsuario,
-	contrasenna,
-	personaId,
-	tipoUsuario)
+	INSERT INTO dbo.puedeVer(usuarioId,
+	cuentaAhorroId)
 
-	SELECT dbo.usuario.nombreUsuario, cuen FROM  @verTemp
+	SELECT dbo.usuario.ID, cuen FROM  @verTemp
 	INNER JOIN dbo.usuario ON usu = dbo.usuario.nombreUsuario
 
+	DELETE FROM @verTemp
 
-	--SELECT * FROM dbo.beneficiario
-	--Delete FROM dbo.beneficiario
-	--DBCC checkident('dbo.beneficiario',reseed,0)
+	--SELECT * FROM dbo.puedeVer
 
 --Procesamiento de Movimientos-----------------------------------------------------------
 	
@@ -260,7 +249,7 @@ BEGIN
 	(ID int identity,
 	tipoMov int,
 	cuentaAhorrotemp int,
-	monto decimal(12,4),
+	monto decimal(19,4),
 	descripcion varchar(100),
 	debito varchar(20),
 	fechaMov date)
@@ -273,12 +262,12 @@ BEGIN
 	SELECT
 		A.Mov.value('@Tipo', 'int') AS ParId,
 		A.Mov.value('@CodigoCuenta', 'int') AS tempDocIdent,
-		A.Mov.value('@Monto', 'decimal(12,4)') AS numCuenta,
+		A.Mov.value('@Monto', 'decimal(19,4)') AS numCuenta,
 		A.Mov.value('@Descripcion', 'varchar(100)') AS porcentaje,
 		@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2 _Pruebas.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Movimientos') AS A(Mov)
@@ -293,17 +282,18 @@ BEGIN
 	FROM  @movTemp
 	INNER JOIN dbo.TipoMovimiento ON tipoMov = dbo.TipoMovimiento.Id
 	
-	DECLARE  
-	@lo1 int = 1, 
-	@hi1 int = (SELECT COUNT(*) FROM @movTemp),
-	@montoDepo decimal(12,4),
+	DECLARE   
+	@montoDepo decimal(19,4),
 	@esDebito varchar(30),
 	@tipoMov int,
 	@cuentaPertenece int,
-	@saldoIncumplido decimal(12,4),
+	@saldoIncumplido decimal(19,4),
 	@tipCue int,
-	@salMin decimal(12,4)
+	@salMin decimal(19,4),
+	@multaIncum decimal(19,4),
+	@incum bit = 0
 
+	SET @hi1 = (SELECT COUNT(*) FROM @movTemp) + @lo1-1
 
 	WHILE(@lo1<=@hi1)
 	BEGIN
@@ -315,37 +305,52 @@ BEGIN
 
 
 		IF @esDebito = 'Debito'
+		BEGIN
 			UPDATE dbo.cuentaAhorro
 			SET saldo = saldo - @montoDepo
 			WHERE ID = @cuentaPertenece;
+		END
 
 		ELSE
+		BEGIN
 			UPDATE dbo.cuentaAhorro
 			SET saldo = saldo + @montoDepo
 			WHERE ID = @cuentaPertenece;
+		END
 
 		IF @tipoMov = 2
+		BEGIN
 			UPDATE dbo.cuentaAhorro
 			SET cantAuto = cantAuto - 1
 			WHERE ID = @cuentaPertenece;
+		END
 		
 		IF @tipoMov = 3
+		BEGIN
 			UPDATE dbo.cuentaAhorro
 			SET cantHumano = cantHumano - 1
 			WHERE ID = @cuentaPertenece;
+		END
 
 		SET @saldoIncumplido = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece);
 		SET @tipCue = (SELECT tipoCuentaId FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece);
 		SET @salMin = (SELECT saldMin FROM dbo.tipoCuentaAhorro WHERE ID = @tipCue);
+		SET @multaIncum = (SELECT saldMin FROM dbo.tipoCuentaAhorro WHERE ID = @tipCue);
+		SET @incum = (SELECT incumpleSalMin FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece)
 
-		IF @saldoIncumplido < @salMin
+
+		IF (@saldoIncumplido < @salMin) AND (@incum = 0)
+		BEGIN
 			UPDATE dbo.cuentaAhorro
 			SET incumpleSalMin = 1
 			WHERE ID = @cuentaPertenece;
+		END
 	
 
 		SET @lo1 = @lo1 + 1
 	END
+
+	SET @lo1 = @hi1+1
 
 	INSERT INTO dbo.movimiento(tipoMovimientoId,
 	cuentaAhorroId,
@@ -355,126 +360,186 @@ BEGIN
 
 	SELECT tipoMov, cuentaAhorrotemp, monto, descripcion, fechaMov FROM @movTemp
 
+	DELETE FROM @movTemp
+
 	--SELECT * FROM dbo.movimiento
-	--Delete FROM dbo.movimiento
-	--DBCC checkident('dbo.movimiento',reseed,0)
 
 --Procesamiento de Estados de Cuenta---------------------------------------------
-	
-	--DECLARE @fechaActual date = '2020-08-31'
 
-	DECLARE @cuentasCierre TABLE (
-	ID INT IDENTITY NOT NULL,
-	cuentaId INT NOT NULL,
-	tipoCue int NOT NULL,
-	hizoHum int,
-	hizoAuto int,
-	incumplio bit,
-	multHum decimal(12,4),
-	multAuto decimal(12,4),
-	multMin decimal(12,4),
-	inter decimal(12,4),
-	mensMontServ decimal(12,4))
-
-
-	INSERT INTO @cuentasCierre(
-	cuentaId,
-	tipoCue)
-
-	SELECT ID, tipoCuentaId FROM dbo.cuentaAhorro
-	WHERE DAY(fechaApertura) = (DAY(DATEADD(DAY,1,@fechaActual))) 
-
-	UPDATE @cuentasCierre
-	SET hizoHum = cantHumano,
-	hizoAuto = cantAuto,
-	incumplio = incumpleSalMin
-	FROM  @cuentasCierre
-	INNER JOIN dbo.cuentaAhorro ON cuentaId = dbo.cuentaAhorro.ID
-
-	UPDATE @cuentasCierre
-	SET multHum = montoComHum,
-	multAuto = montoComAuto,
-	multMin = multSalMin,
-	inter = tasaIntAnu,
-	mensMontServ = montMensCargServ
-	FROM  @cuentasCierre
-	INNER JOIN dbo.tipoCuentaAhorro ON tipoCue = dbo.tipoCuentaAhorro.ID
-
-	
-	DECLARE @lo3 int = 1, 
-	@hi3 int = (SELECT COUNT(*) FROM @cuentaTemp),
-	@IdBus int,
-	@salFin decimal(12, 4),
-	@tipoCuent int,
-	@hizoHum int,
-	@hizoAuto int,
-	@incumplio bit,
-	@multHum decimal(12,4),
-	@multAuto decimal(12,4),
-	@multIncum decimal(12,4),
-	@inter decimal(12,4),
-	@mensCargServ decimal(12,4)
-
-
-	WHILE (@lo3 <= @hi3)
+	IF EXISTS(SELECT ID, tipoCuentaId FROM dbo.cuentaAhorro
+	WHERE DAY(fechaApertura) = (DAY(DATEADD(DAY,1,@fechaActual))))
 	BEGIN
 
-		SET @IdBus = (SELECT cuentaId FROM @cuentasCierre WHERE ID = @lo3)
-		SET @salFin = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @IdBus)
-		SET @hizoHum = (SELECT hizoHum FROM @cuentasCierre WHERE ID = @lo3)
-		SET @hizoAuto = (SELECT hizoAuto FROM @cuentasCierre WHERE ID = @lo3)
-		SET @incumplio = (SELECT incumplio FROM @cuentasCierre WHERE ID = @lo3)
-		SET @multHum = (SELECT multHum FROM @cuentasCierre WHERE ID = @lo3)
-		SET @multAuto = (SELECT multAuto FROM @cuentasCierre WHERE ID = @lo3)
-		SET @multIncum = (SELECT multMin FROM @cuentasCierre WHERE ID = @lo3)
-		SET @mensCargServ = (SELECT mensMontServ FROM @cuentasCierre WHERE ID = @lo3)
-		SET @inter = (SELECT inter FROM @cuentasCierre WHERE ID = @lo3)
+		DECLARE @cuentasCierre TABLE (
+		ID INT IDENTITY NOT NULL,
+		cuentaId INT NOT NULL,
+		tipoCue int NOT NULL,
+		hizoHum int,
+		hizoAuto int,
+		incumplio bit,
+		multHum decimal(19,4),
+		multAuto decimal(19,4),
+		multMin decimal(19,4),
+		inter decimal(19,4),
+		mensMontServ decimal(19,4))
 
-		IF @hizoAuto < 0 
+
+		INSERT INTO @cuentasCierre(
+		cuentaId,
+		tipoCue,
+		hizoHum,
+		hizoAuto,
+		incumplio)
+
+		SELECT ID, tipoCuentaId,cantHumano,cantAuto,incumpleSalMin FROM dbo.cuentaAhorro
+		WHERE DAY(fechaApertura) = (DAY(DATEADD(DAY,1,@fechaActual))) 
+
+		UPDATE @cuentasCierre
+		SET multHum = montoComHum,
+		multAuto = montoComAuto,
+		multMin = multSalMin,
+		inter = tasaIntAnu,
+		mensMontServ = montMensCargServ
+		FROM  @cuentasCierre
+		INNER JOIN dbo.tipoCuentaAhorro ON tipoCue = dbo.tipoCuentaAhorro.ID
+
+
+		DECLARE 
+		@IdBus int,
+		@salFin decimal(19, 4),
+		@tipoCuent int,
+		@hizoHum int,
+		@hizoAuto int,
+		@incumplio bit,
+		@multHum decimal(19,4),
+		@multAuto decimal(19,4),
+		@multIncum decimal(19,4),
+		@inter decimal(19,4),
+		@mensCargServ decimal(19,4)
+
+		SET @hi3 = (SELECT COUNT(*) FROM @cuentasCierre) + @lo3 - 1
+
+		WHILE (@lo3 <= @hi3)
+		BEGIN
+
+			SET @IdBus = (SELECT cuentaId FROM @cuentasCierre WHERE ID = @lo3)
+			SET @salFin = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @IdBus)
+			SET @hizoHum = (SELECT hizoHum FROM @cuentasCierre WHERE ID = @lo3)
+			SET @hizoAuto = (SELECT hizoAuto FROM @cuentasCierre WHERE ID = @lo3)
+			SET @incumplio = (SELECT incumplio FROM @cuentasCierre WHERE ID = @lo3)
+			SET @multHum = (SELECT multHum FROM @cuentasCierre WHERE ID = @lo3)
+			SET @multAuto = (SELECT multAuto FROM @cuentasCierre WHERE ID = @lo3)
+			SET @multIncum = (SELECT multMin FROM @cuentasCierre WHERE ID = @lo3)
+			SET @mensCargServ = (SELECT mensMontServ FROM @cuentasCierre WHERE ID = @lo3)
+			SET @inter = (SELECT inter FROM @cuentasCierre WHERE ID = @lo3)
+
+			IF @hizoAuto < 0
+			BEGIN
+				INSERT INTO dbo.movimiento(
+				tipoMovimientoId,
+				cuentaAhorroId,
+				fechaMovimiento,
+				descripcion,
+				monto)
+				VALUES(
+				9,
+				@IdBus,
+				@fechaActual,
+				'Multa por sobrepaso en cantidad de operaciones en cajero automatico',
+				@multAuto)
+				UPDATE dbo.cuentaAhorro SET
+				saldo = saldo - @multAuto WHERE
+				ID = @IdBus
+			END
+
+			IF @hizoHum < 0
+			BEGIN
+				INSERT INTO dbo.movimiento(
+				tipoMovimientoId,
+				cuentaAhorroId,
+				fechaMovimiento,
+				descripcion,
+				monto)
+				VALUES(
+				8,
+				@IdBus,
+				@fechaActual,
+				'Multa por sobrepaso en cantidad de operaciones en ventanilla',
+				@multHum)
+				UPDATE dbo.cuentaAhorro SET
+				saldo = saldo - @multHum WHERE
+				ID = @IdBus
+			END
+
+			IF @incumplio = 1
+			BEGIN
+				UPDATE dbo.cuentaAhorro SET
+				saldo = saldo - @multIncum WHERE
+				ID = @IdBus
+			END
+
 			UPDATE dbo.cuentaAhorro SET
-			saldo = saldo - @multAuto WHERE
+			saldo = saldo + (@inter/12) WHERE
+			ID = @IdBus
+			
+			INSERT INTO dbo.movimiento(
+			tipoMovimientoId,
+			cuentaAhorroId,
+			fechaMovimiento,
+			descripcion,
+			monto)
+			VALUES(
+			7,
+			@IdBus,
+			@fechaActual,
+			'Intereses',
+			@multHum)--CAMBIAR!!!!!!!
+
+			UPDATE dbo.cuentaAhorro SET
+			saldo = saldo - @mensCargServ WHERE
 			ID = @IdBus
 
-		IF @hizoHum < 0 
-			UPDATE dbo.cuentaAhorro SET
-			saldo = saldo - @multHum WHERE
-			ID = @IdBus
+			UPDATE dbo.estadoCuenta SET
+			fechaFin = @fechaActual,
+			saldoFin = @salFin WHERE
+			cuentaAhorroId = @IdBus AND fechaFin IS NULL
 
-		IF @incumplio = 1
-			UPDATE dbo.cuentaAhorro SET
-			saldo = saldo - @multIncum WHERE
-			ID = @IdBus
+			INSERT INTO dbo.estadoCuenta(
+			fechaIni,
+			cuentaAhorroId,
+			saldoIni,
+			saldoFin)
+			VALUES(
+			DATEADD(DAY,1,@fechaActual),
+			@IdBus,
+			@salFin,
+			@salFin)
 
-		UPDATE dbo.cuentaAhorro SET
-		saldo = saldo + (@inter/12) WHERE
-		ID = @IdBus
+			SET @lo3 = @lo3 + 1
 
-		UPDATE dbo.cuentaAhorro SET
-		saldo = saldo - @mensCargServ WHERE
-		ID = @IdBus
-
-		UPDATE dbo.estadoCuenta SET
-		fechaFin = @fechaActual,
-		saldoFin = @salFin WHERE
-		cuentaAhorroId = @IdBus AND fechaFin = NULL
-
-		INSERT INTO dbo.estadoCuenta(
-		fechaIni,
-		cuentaAhorroId,
-		saldoIni,
-		saldoFin)
-		VALUES(
-		@fechaActual,
-		@IdBus,
-		@salFin,
-		@salFin)
-
-	END
-
+			IF @lo3 > @hi3
+				SET @lo3 = @hi3+1
+		END
+		DELETE FROM @cuentasCierre
 	--SELECT * FROM dbo.estadoCuenta
-	--Delete FROM dbo.estadoCuenta
-	--DBCC checkident('dbo.estadoCuenta',reseed,0)
+	END
+	SET @fechaActual = (SELECT(DATEADD(DAY,1,@fechaActual)))
 
-	SET @fechaActual = (DATEADD(DAY,1,@fechaActual))
 END
+
+
+--Delete FROM dbo.estadoCuenta
+--DBCC checkident('dbo.estadoCuenta',reseed,0)
+--Delete FROM dbo.movimiento
+--DBCC checkident('dbo.movimiento',reseed,0)
+--Delete FROM dbo.puedeVer
+--DBCC checkident('dbo.puedeVer',reseed,0)
+--Delete FROM dbo.usuario
+--DBCC checkident('dbo.usuario',reseed,0)
+--Delete FROM dbo.beneficiario
+--DBCC checkident('dbo.beneficiario',reseed,0)
+--DELETE FROM dbo.cuentaAhorro
+--DBCC checkident('dbo.cuentaAhorro',reseed,0)
+--DELETE FROM dbo.persona
+--DBCC checkident('dbo.persona',reseed,0)
 

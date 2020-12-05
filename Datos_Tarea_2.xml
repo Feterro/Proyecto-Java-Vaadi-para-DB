@@ -21,7 +21,7 @@
 	</FechaOperacion>
 	<FechaOperacion Fecha="2020-07-02">
 	   <Persona TipoDocuIdentidad="1" Nombre="Jose Artavia Rivera" ValorDocumentoIdentidad="149892757" FechaNacimiento="1986-08-05" Email="artaviajose8871@hotmail.com" Telefono1="62803162" Telefono2="21907897"/>
-	   <Persona TipoDocuIdentidad="1" Nombre="oscar Muñoz Arroyo" ValorDocumentoIdentidad="132200129" FechaNacimiento="1981-12-15" Email="muñozoscar6143@hotmail.com" Telefono1="83071212" Telefono2="26995983"/>
+	   <Persona TipoDocuIdentidad="1" Nombre="Oscar Muñoz Arroyo" ValorDocumentoIdentidad="132200129" FechaNacimiento="1981-12-15" Email="muñozoscar6143@hotmail.com" Telefono1="83071212" Telefono2="26995983"/>
 	   <Cuenta ValorDocumentoIdentidadDelCliente="149892757" TipoCuentaId="1" NumeroCuenta="11834714"/>
 	   <Beneficiario NumeroCuenta="11834714" ValorDocumentoIdentidadBeneficiario="132200129" ParentezcoId="9" Porcentaje="79" />
 	   <Movimientos Tipo="5" CodigoCuenta="11834714" Monto="80673703.00" Descripcion="Banco Central" />
