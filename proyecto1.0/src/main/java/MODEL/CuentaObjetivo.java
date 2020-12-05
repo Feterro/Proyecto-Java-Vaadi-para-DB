@@ -1,6 +1,9 @@
 package MODEL;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Collections;
 
 public class CuentaObjetivo {
 
@@ -10,17 +13,27 @@ public class CuentaObjetivo {
     private float cuota;
     private float saldo;
     private float intereses;
-    private int numCuenta;
+    private int numCuentaAsociada;
+    private String numCuenta;
 
     public CuentaObjetivo() {}
 
-    public CuentaObjetivo(String objetivo, Date fechaInicio, Date fechaFinal, float cuota, float saldo, float intereses, int numCuenta) {
+    public CuentaObjetivo(String numCuenta, String objetivo, Date fechaInicio, Date fechaFinal, float cuota, float saldo, float intereses, int numCuentaAsociada) {
+        this.numCuenta = numCuenta;
         this.objetivo = objetivo;
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
         this.cuota = cuota;
         this.saldo = saldo;
         this.intereses = intereses;
+        this.numCuentaAsociada = numCuentaAsociada;
+    }
+
+    public String getNumCuenta() {
+        return numCuenta;
+    }
+
+    public void setNumCuenta(String numCuenta) {
         this.numCuenta = numCuenta;
     }
 
@@ -72,11 +85,20 @@ public class CuentaObjetivo {
         this.intereses = intereses;
     }
 
-    public int getNumCuenta() {
-        return numCuenta;
+    public int getNumCuentaAsociada() {
+        return numCuentaAsociada;
     }
 
-    public void setNumCuenta(int numCuenta) {
-        this.numCuenta = numCuenta;
+    public void setNumCuentaAsociada(int numCuentaAsociada) {
+        this.numCuentaAsociada = numCuentaAsociada;
     }
+
+    public String generarNumero(ArrayList<String> numeros){
+        Collections.sort(numeros);
+        int ultimoNumero = Integer.parseInt(numeros.get(numeros.size()-1));
+        int nuevoNumCuenta = ultimoNumero + 1;
+        String numFinal =  String.format("%05d", nuevoNumCuenta);
+        return numFinal;
+    }
+
 }

@@ -796,6 +796,11 @@ public class GUIBanco extends VerticalLayout implements View {
         estadosCuentaContenedor.setWidth("1500px");
         estadosCuentaContenedor.setHeight("700px");
 
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/EstadosCuenta.png"));
+        Image image = new Image("", resource);
+        image.setWidth("1500px");
+        image.setHeight("700px");
+
         Label datos = new Label("ESTADOS MÁS RECIENTES");
         datos.addStyleName(ValoTheme.LABEL_H2);
 
@@ -820,6 +825,7 @@ public class GUIBanco extends VerticalLayout implements View {
         ids.setItems(idsR);
         ids.addStyleName(ValoTheme.CHECKBOX_LARGE);
 
+
         Button selecionar = new Button("VER DETALLES");
         selecionar.setIcon(VaadinIcons.FILE_TEXT);
         selecionar.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -832,7 +838,7 @@ public class GUIBanco extends VerticalLayout implements View {
 
 
         Button mas = new Button();
-        mas.setIcon(VaadinIcons.FORWARD);
+        mas.setIcon(VaadinIcons.ANGLE_DOUBLE_RIGHT);
         mas.addStyleName(ValoTheme.BUTTON_PRIMARY);
         mas.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         mas.setWidth("300px");
@@ -852,7 +858,7 @@ public class GUIBanco extends VerticalLayout implements View {
         });
 
         Button atras = new Button();
-        atras.setIcon(VaadinIcons.BACKWARDS);
+        atras.setIcon(VaadinIcons.ANGLE_DOUBLE_LEFT);
         atras.addStyleName(ValoTheme.BUTTON_PRIMARY);
         atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         atras.setWidth("300px");
@@ -868,7 +874,7 @@ public class GUIBanco extends VerticalLayout implements View {
             }
         });
 
-
+        estadosCuentaContenedor.addComponent(image);
         estadosCuentaContenedor.addComponent(datos, "top: 25px; left: 50px");
         estadosCuentaContenedor.addComponent(estados, "top: 100px; left: 400px");
         estadosCuentaContenedor.addComponent(ids, "top:130px; left: 1120px");
@@ -876,6 +882,7 @@ public class GUIBanco extends VerticalLayout implements View {
         estadosCuentaContenedor.addComponent(mas, "top: 463px; left: 775px");
         estadosCuentaContenedor.addComponent(selecionar, "top: 540; left: 600px");
         estadosCuentaContenedor.addComponent(cuenta, "top: 50px; right: 50px");
+
 
         menu.addTab(estadosCuentaContenedor, "ESTADOS CUENTA").setEnabled(false);
     }
