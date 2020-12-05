@@ -3,67 +3,57 @@ package MODEL;
 import java.util.Date;
 
 public class EstadoCuenta {
-    private int Numero;
-    private Date Fecha_Inicio;
-    private Date Fecha_Final;
-    private float Saldo_Inicial;
-    private float Saldo_Final;
+    private int numero;
+    private Date fechaInicio;
+    private Date fechaFinal;
+//    private float Saldo_Inicial;
+//    private float Saldo_Final;
 
-    public EstadoCuenta(int Numero, Date Fecha_Inicio, Date Fecha_Final, float Saldo_Inicial, float Saldo_Final) {
-        this.Numero = Numero;
-        this.Fecha_Inicio = Fecha_Inicio;
-        this.Fecha_Final = Fecha_Final;
-        this.Saldo_Inicial = Saldo_Inicial;
-        this.Saldo_Final = Saldo_Final;
-    }
 
-    public EstadoCuenta() {
-    }
-
-    public EstadoCuenta(int Numero, Date Fecha_Inicio, Date Fecha_Final) {
-        this.Numero = Numero;
-        this.Fecha_Inicio = Fecha_Inicio;
-        this.Fecha_Final = Fecha_Final;
+    public EstadoCuenta(int Numero, Date fechaInicio, Date fechaFinal) {
+        this.numero = Numero;
+        this.fechaInicio = fechaInicio;
+        this.fechaFinal = fechaFinal;
     }
 
     public int getNumero() {
-        return Numero;
+        return numero;
     }
 
-    public Date getFecha_Inicio() {
-        return Fecha_Inicio;
+    public Date getFechaInicio() {
+        return fechaInicio;
     }
 
-    public Date getFecha_Final() {
-        return Fecha_Final;
+    public Date getFechaFinal() {
+        return fechaFinal;
     }
 
-    public float getSaldo_Inicial() {
-        return Saldo_Inicial;
-    }
-
-    public float getSaldo_Final() {
-        return Saldo_Final;
-    }
+//    public float getSaldo_Inicial() {
+//        return Saldo_Inicial;
+//    }
+//
+//    public float getSaldo_Final() {
+//        return Saldo_Final;
+//    }
 
     public void setNumero(int numero) {
-        this.Numero = numero;
+        this.numero = numero;
     }
 
-    public void setFecha_Inicio(Date fecha_Inicio) {
-        this.Fecha_Inicio = fecha_Inicio;
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
-    public void setFecha_Final(Date fecha_Final) {
-        this.Fecha_Final = fecha_Final;
+    public void setFechaFinal(Date fechaFinal) {
+        this.fechaFinal = fechaFinal;
     }
 
-    public void setSaldo_Inicial(float saldo_Inicial) {
-        this.Saldo_Inicial = saldo_Inicial;
-    }
-
-    public void setSaldo_Final(float saldo_Final) {
-        this.Saldo_Final = saldo_Final;
-    }
+//    public void setSaldo_Inicial(float saldo_Inicial) {
+//        this.Saldo_Inicial = saldo_Inicial;
+//    }
+//
+//    public void setSaldo_Final(float saldo_Final) {
+//        this.Saldo_Final = saldo_Final;
+//    }
 }
 

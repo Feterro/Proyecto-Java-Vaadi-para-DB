@@ -32,7 +32,7 @@ public class ControllerBeneficiario {
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
                 listaTip.add(resultSet.getString("tipoDoc"));
-                System.out.println(resultSet.getString("tipoDoc"));
+//                System.out.println(resultSet.getString("tipoDoc"));
 
             }
         } catch (Exception ex) {
@@ -54,7 +54,7 @@ public class ControllerBeneficiario {
                 int dev = resultSet.getInt("valorDocIdent");
                 listaBenCed.add(String.valueOf(dev));
 
-                System.out.println(resultSet.getString("valorDocIdent"));
+//                System.out.println(resultSet.getString("valorDocIdent"));
             }
         } catch (Exception ex) {
             System.out.println("ERROR!");
@@ -72,7 +72,7 @@ public class ControllerBeneficiario {
             callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("contrasenna"));
+//                System.out.println(resultSet.getString("contrasenna"));
                 res = resultSet.getString("contrasenna");
             }
         } catch (Exception ex) {
@@ -83,23 +83,26 @@ public class ControllerBeneficiario {
     }
 
 
-    public void eliminarBeneficiario(Connection connection, int docIdent) {
-
+    public int eliminarBeneficiario(Connection connection, int docIdent) {
+        int devolver = 0;
         try {
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_EliminarBeneficiario ?, ?");
             callableStatement.setInt(1, docIdent);
             callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("N"));
+                devolver = resultSet.getInt("N");
             }
         } catch (Exception ex) {
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return devolver;
     }
 
-    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
+    public int insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje) {
+        int devolver = 0;
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido = ip.split("/");
@@ -112,18 +115,20 @@ public class ControllerBeneficiario {
             callableStatement.registerOutParameter(6, Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
-
-                System.out.println(resultSet.getInt("N"));
+                devolver = resultSet.getInt("N");
             }
+
         } catch (Exception ex) {
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return devolver;
     }
 
 
-    public void insertaBeneficiarios(Connection connection, int personaDoc, int cuentaNum, String parentescoNom,
-                                     int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+    public int insertaBeneficiariosComplejo(Connection connection, int personaDoc, int cuentaNum, String parentescoNom, int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+        int devolver = 0;
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
@@ -142,16 +147,19 @@ public class ControllerBeneficiario {
             callableStatement.registerOutParameter(12,Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
-
-                System.out.println(resultSet.getInt("N"));}
+                devolver = resultSet.getInt("N");
+            }
         }
         catch (Exception ex){
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
+        return devolver;
     }
 
     public Beneficiario getBeneficiarios(Connection conection, int docIdent){
+        //cambiar a que devuelva los activos no los que existen
         Beneficiario beneficiari= new Beneficiario();
         try {
             String ip = InetAddress.getLocalHost().toString();
@@ -168,13 +176,13 @@ public class ControllerBeneficiario {
                 beneficiari.setTel2(resultSet.getInt("telefono2"));
                 beneficiari.setValorDocIdent(resultSet.getInt("valorDocIdent"));
                 beneficiari.setPorcentaje(resultSet.getInt("porcentaje"));
-                System.out.println(resultSet.getString("nombre"));
-                System.out.println(resultSet.getString("email"));
-                System.out.println(resultSet.getString("nacimiento"));
-                System.out.println(resultSet.getInt("telefono1"));
-                System.out.println(resultSet.getInt("telefono2"));
-                System.out.println(resultSet.getInt("valorDocIdent"));
-                System.out.println(resultSet.getInt("porcentaje"));
+//                System.out.println(resultSet.getString("nombre"));
+//                System.out.println(resultSet.getString("email"));
+//                System.out.println(resultSet.getString("nacimiento"));
+//                System.out.println(resultSet.getInt("telefono1"));
+//                System.out.println(resultSet.getInt("telefono2"));
+//                System.out.println(resultSet.getInt("valorDocIdent"));
+//                System.out.println(resultSet.getInt("porcentaje"));
             }
         }
         catch (Exception ex){
@@ -184,8 +192,8 @@ public class ControllerBeneficiario {
         return beneficiari;
     }
 
-    public void modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom,
-                                 int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+    public int modificaPersonas(Connection connection, int personaDocOri, int personaDoc, String parentescoNom, int porcentaje, String nombre, String fechaNac, int tel1, int tel2, String tipoDoc, String correo){
+        int devolver = 0;
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
@@ -204,35 +212,15 @@ public class ControllerBeneficiario {
             callableStatement.registerOutParameter(12,Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
             while(resultSet.next()){
-
-                System.out.println(resultSet.getInt("N"));}
+                devolver = resultSet.getInt("N");
+            }
         }
         catch (Exception ex){
+            devolver = 1;
             System.out.println("ERROR!");
             ex.printStackTrace();
         }
-    }
-
-    public ArrayList<EstadoCuenta> obtenerEstadosCuenta(Connection connection, int cuentaId){
-        ArrayList<EstadoCuenta> estadosCuenta = new ArrayList<>();
-        try{
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_EC_ObtenerEstadosCuenta ?, ?");
-            callableStatement.setInt(1, cuentaId);
-            callableStatement.registerOutParameter(2, Types.VARCHAR);
-            ResultSet resultSet = callableStatement.executeQuery();
-            while (resultSet.next()){
-                EstadoCuenta estado = new EstadoCuenta();
-                estado.setFecha_Inicio(resultSet.getDate("fechaIni"));
-                estado.setFecha_Final(resultSet.getDate("fechaFin"));
-                estadosCuenta.add(estado);
-                System.out.println("Estado: " + estado.getFecha_Final() + " " + estado.getFecha_Inicio());
-
-            }
-        }
-        catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return estadosCuenta;
+        return devolver;
     }
 }
 
