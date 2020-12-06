@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-<<<<<<< HEAD
-    <data-source source="LOCAL" name="BDProyecto@localhost" uuid="668c8f08-4764-4d93-af71-1551e9201bb3">
-=======
-    <data-source source="LOCAL" name="BDProyecto@localhost" uuid="72eb4529-474c-44bb-b2dc-67797346bdc5">
->>>>>>> GUIF
+    <data-source source="LOCAL" name="BDProyecto1@localhost" uuid="4349c203-973c-4890-9447-abafd23fe526">
       <driver-ref>sqlserver.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
-      <jdbc-url>jdbc:sqlserver://localhost:1599;database=BDProyecto</jdbc-url>
+      <jdbc-url>jdbc:sqlserver://localhost:1433;database=BDProyecto1</jdbc-url>
     </data-source>
   </component>
 </project>

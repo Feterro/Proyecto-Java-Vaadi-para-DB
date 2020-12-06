@@ -2,12 +2,14 @@ CONTROLLER\ControllerEstadosCuenta.class
 MODEL\EstadoCuenta.class
 VIEW\MyUI$MyUIServlet.class
 CONTROLLER\ControllerConexion.class
+MODEL\Movimiento.class
 CONTROLLER\ControllerUsuario.class
 CONTROLLER\ControllerUI.class
 VIEW\MyUI.class
 CONTROLLER\ControllerBeneficiario.class
 VIEW\GUIBanco.class
 MODEL\CuentaObjetivo.class
+CONTROLLER\ControllerMovimiento.class
 MODEL\Persona.class
 MODEL\BeneficiariosTabla.class
 MODEL\Beneficiario.class

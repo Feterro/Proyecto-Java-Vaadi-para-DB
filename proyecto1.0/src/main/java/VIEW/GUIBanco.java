@@ -1,10 +1,7 @@
 package VIEW;
 
 import CONTROLLER.ControllerUI;
-import MODEL.Beneficiario;
-import MODEL.BeneficiariosTabla;
-import MODEL.CuentaObjetivo;
-import MODEL.EstadoCuenta;
+import MODEL.*;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -22,7 +19,6 @@ public class GUIBanco extends VerticalLayout implements View {
 
     //Controlador
     private ControllerUI controller = new ControllerUI();
-    private BeneficiariosTabla beneficiariosTabla = new BeneficiariosTabla();
 
     //Listas
     private ArrayList<BeneficiariosTabla> beneficiariosTablaL;
@@ -55,8 +51,8 @@ public class GUIBanco extends VerticalLayout implements View {
 
     private Grid<EstadoCuenta> estados;
     private Grid<CuentaObjetivo> cuentasObjetivo;
-
     private ComboBox<String> numCuentasObjetivo = new ComboBox<>();
+    private RadioButtonGroup<Integer> ids;
 
 
     //Atributos para guardar
@@ -793,7 +789,12 @@ public class GUIBanco extends VerticalLayout implements View {
     }
 
     public void estadosCuenta() {
+
         AbsoluteLayout estadosCuentaContenedor = new AbsoluteLayout();
+        estadosCuentaContenedor.setWidth("1500px");
+        estadosCuentaContenedor.setHeight("700px");
+
+        AbsoluteLayout estadoCuenta = new AbsoluteLayout();
         estadosCuentaContenedor.setWidth("1500px");
         estadosCuentaContenedor.setHeight("700px");
 
@@ -813,6 +814,7 @@ public class GUIBanco extends VerticalLayout implements View {
         estados.getColumn("fechaFinal").setCaption("FECHA FINAL");
 
 
+
         ArrayList<Integer> idsR = new ArrayList<>();
         idsR.add(1);
         idsR.add(2);
@@ -822,16 +824,19 @@ public class GUIBanco extends VerticalLayout implements View {
         idsR.add(6);
         idsR.add(7);
         idsR.add(8);
-        RadioButtonGroup<Integer> ids = new RadioButtonGroup<>();
+
+        ids = new RadioButtonGroup<>();
         ids.setItems(idsR);
         ids.addStyleName(ValoTheme.CHECKBOX_LARGE);
-
 
         Button selecionar = new Button("VER DETALLES");
         selecionar.setIcon(VaadinIcons.FILE_TEXT);
         selecionar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         selecionar.setWidth("300px");
         selecionar.setHeight("50px");
+        selecionar.addClickListener(e->{
+            movimientos(estadosCuentaContenedor, estadoCuenta, ids.getSelectedItem().get());
+        });
 
         cuenta = new Label();
         cuenta.addStyleName(ValoTheme.LABEL_H4);
@@ -853,7 +858,7 @@ public class GUIBanco extends VerticalLayout implements View {
             } else if (cantEstados <= 8) {
                 estados.setItems(estadoCuentas.subList(estadoActual, -1));
             } else {
-                Notification.show("No hay más estado que mostrar");
+                Notification.show("No hay más estados que mostrar");
             }
 
         });
@@ -875,16 +880,15 @@ public class GUIBanco extends VerticalLayout implements View {
             }
         });
 
-        estadosCuentaContenedor.addComponent(image);
-        estadosCuentaContenedor.addComponent(datos, "top: 25px; left: 50px");
-        estadosCuentaContenedor.addComponent(estados, "top: 100px; left: 400px");
-        estadosCuentaContenedor.addComponent(ids, "top:130px; left: 1120px");
-        estadosCuentaContenedor.addComponent(atras, "top: 463; left: 425px");
-        estadosCuentaContenedor.addComponent(mas, "top: 463px; left: 775px");
-        estadosCuentaContenedor.addComponent(selecionar, "top: 540; left: 600px");
-        estadosCuentaContenedor.addComponent(cuenta, "top: 50px; right: 50px");
-
-
+        estadoCuenta.addComponent(image);
+        estadoCuenta.addComponent(datos, "top: 25px; left: 50px");
+        estadoCuenta.addComponent(estados, "top: 100px; left: 400px");
+        estadoCuenta.addComponent(ids, "top:130px; left: 1120px");
+        estadoCuenta.addComponent(atras, "top: 463; left: 425px");
+        estadoCuenta.addComponent(mas, "top: 463px; left: 775px");
+        estadoCuenta.addComponent(selecionar, "top: 540; left: 600px");
+        estadoCuenta.addComponent(cuenta, "top: 50px; right: 50px");
+        estadosCuentaContenedor.addComponent(estadoCuenta);
         menu.addTab(estadosCuentaContenedor, "ESTADOS CUENTA").setEnabled(false);
     }
 
@@ -894,6 +898,47 @@ public class GUIBanco extends VerticalLayout implements View {
             ids.add(i + 1);
         }
         return ids;
+    }
+
+    public void movimientos(AbsoluteLayout contenedorEstados, AbsoluteLayout estadoCuenta, int id){
+        Notification.show(String.valueOf(id));
+        estadoCuenta.setVisible(false);
+
+        Label datos = new Label("DATOS ESTADO CUENTA");
+        datos.addStyleName(ValoTheme.LABEL_H2);
+        EstadoCuenta estadoActual = estadoCuentas.get(id-1);
+        String fechaIn = String.valueOf(estadoActual.getFechaInicio());
+        String fechaFin = String.valueOf(estadoActual.getFechaFinal());
+
+        Label fechas = new Label("Estado del " + fechaIn + " al " + fechaFin);
+        fechas.addStyleName(ValoTheme.LABEL_H3);
+
+        AbsoluteLayout movimientos = new AbsoluteLayout();
+        movimientos.setWidth("1500px");
+        movimientos.setHeight("700px");
+
+        Grid<Movimiento> movimiento = new Grid<>(Movimiento.class);
+        movimiento.setWidth("1000px");
+        movimiento.setHeight("400px");
+        movimiento.setColumnOrder("fechaMov", "tipo", "descripcion", "monto");
+        movimiento.getColumn("fechaMov").setCaption("FECHA MOVIMIENTO");
+        movimiento.getColumn("tipo").setCaption("TIPO");
+        movimiento.getColumn("descripcion").setCaption("DESCRIPCIÓN");
+        movimiento.getColumn("monto").setCaption("MONTO $");
+
+        TextField filter = new TextField();
+        filter.setPlaceholder("FILTRO POR DESCRIPCIÓN");
+        filter.setWidth("250px");
+
+
+
+
+        movimientos.addComponent(movimiento, "top: 200px; left: 250px");
+        movimientos.addComponent(filter, "top: 150px; left: 250px");
+        movimientos.addComponent(datos, "top: 25px; left: 650px");
+        movimientos.addComponent(fechas, "top: 75px; left: 625px");
+        contenedorEstados.addComponent(movimientos);
+
     }
 
     public void cuentasObjetivo() {
@@ -1243,6 +1288,7 @@ public class GUIBanco extends VerticalLayout implements View {
     public void SeleccionarCuenta(Button.ClickEvent event) {
         numCuenta = cuentas.getSelectedItem().get();
         if (!numCuenta.equals("No seleccionado")){
+            System.out.println("Entra");
             menu.getTab(1).setEnabled(true);
             menu.getTab(2).setEnabled(true);
             menu.getTab(3).setEnabled(true);
@@ -1260,9 +1306,20 @@ public class GUIBanco extends VerticalLayout implements View {
             }
             estadoCuentas = controller.getEstadosCuenta(Integer.parseInt(numCuenta));
             cantEstados = estadoCuentas.size();
-            estados.setItems(estadoCuentas.subList(0,8));
-            cantEstados = cantEstados - 8;
-            estadoActual = estadoActual + 8;
+            if (estadoCuentas.size() <=8){
+                estados.setItems(estadoCuentas);
+                ArrayList<Integer> numeros = new ArrayList<>();
+                for(int i = 0; i<estadoCuentas.size(); i++){
+                    numeros.add(i+1);
+                }
+                ids.setItems(numeros);
+                ids.setSelectedItem(1);
+            }
+            else{
+                estados.setItems(estadoCuentas.subList(0,8));
+                cantEstados = cantEstados - 8;
+                estadoActual = estadoActual + 8;
+            }
             controller.setNumerosCuenta(Integer.parseInt(numCuenta));
 
 
