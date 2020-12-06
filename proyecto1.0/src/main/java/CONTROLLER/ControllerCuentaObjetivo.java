@@ -4,41 +4,22 @@ import MODEL.CuentaObjetivo;
 import com.vaadin.ui.AbsoluteLayout;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ControllerCuentaObjetivo {
 
     public ControllerCuentaObjetivo(){}
 
-    public int actualizarCuentaObjetivo(Connection conection, String numCuenta, String objetivo, Date fechaFin, float cuota) {
-        int devolver = 0;
-        try {
-            CallableStatement callableStatement = conection.prepareCall("SP_CO_actualizarCuentaObjetivo ?, ?, ?, ?, ?");
-            callableStatement.setString(1, objetivo);
-            callableStatement.setDate(2, fechaFin);
-            callableStatement.setFloat(3, cuota);
-            callableStatement.setString(4, numCuenta);
-            callableStatement.registerOutParameter(5, Types.INTEGER);
-            ResultSet resultSet = callableStatement.executeQuery();
-            while(resultSet.next()){
-                devolver = resultSet.getInt("N");
-            }
-        } catch (Exception e) {
-            devolver = 1;
-            e.printStackTrace();
-        }
-        return devolver;
-    }
-
-    public int crearCuentaObjetivo(Connection connection, int numCuentaAso, String objetivo, Date fechaInicio, Date fechaFin, float cuota, String numCuenta){
+    public int crearCuentaObjetivo(Connection connection, int numCuentaAso, String objetivo, String fechaInicio, String fechaFin, float cuota, String numCuenta){
         int devolver = 0;
 
         try {
             CallableStatement callableStatement = connection.prepareCall("SP_CO_CrearCuentaObjetivo ?, ?, ?, ?, ?, ?, ?");
             callableStatement.setInt(1, numCuentaAso);
             callableStatement.setString(2, objetivo);
-            callableStatement.setDate(3, fechaInicio);
-            callableStatement.setDate(4, fechaFin);
+            callableStatement.setDate(3, Date.valueOf(fechaInicio));
+            callableStatement.setDate(4, Date.valueOf(fechaFin));
             callableStatement.setFloat(5, cuota);
             callableStatement.setString(6, numCuenta);
             callableStatement.registerOutParameter(7, Types.INTEGER);
@@ -53,6 +34,26 @@ public class ControllerCuentaObjetivo {
             e.printStackTrace();
         }
 
+        return devolver;
+    }
+
+    public int actualizarCuentaObjetivo(Connection conection, String numCuenta, String objetivo, String fechaFin, float cuota) {
+        int devolver = 0;
+        try {
+            CallableStatement callableStatement = conection.prepareCall("SP_CO_actualizarCuentaObjetivo ?, ?, ?, ?, ?");
+            callableStatement.setString(1, objetivo);
+            callableStatement.setDate(2, Date.valueOf(fechaFin));
+            callableStatement.setFloat(3, cuota);
+            callableStatement.setString(4, numCuenta);
+            callableStatement.registerOutParameter(5, Types.INTEGER);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while(resultSet.next()){
+                devolver = resultSet.getInt("N");
+            }
+        } catch (Exception e) {
+            devolver = 1;
+            e.printStackTrace();
+        }
         return devolver;
     }
 
@@ -109,6 +110,7 @@ public class ControllerCuentaObjetivo {
                 cuentaObjetivo.setFechaInicio(resultSet.getDate("fechaIn"));
                 cuentaObjetivo.setFechaFinal(resultSet.getDate("fechaFin"));
                 cuentaObjetivo.setSaldo(resultSet.getFloat("saldo"));
+                cuentaObjetivo.setObjetivo(resultSet.getString("objetivo"));
             }
         }
         catch (Exception e){
