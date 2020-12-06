@@ -11,6 +11,8 @@ DECLARE
 DECLARE 
 @lo1 int = 1,
 @hi1 int = 1,
+@lo2 int = 1,
+@hi2 int = 1,
 @lo3 int = 1,
 @hi3 int = 1
 
@@ -231,11 +233,32 @@ BEGIN
 	FROM  @verTemp
 	INNER JOIN dbo.cuentaAhorro ON cuen = dbo.cuentaAhorro.numeroCuenta
 
-	INSERT INTO dbo.puedeVer(usuarioId,
-	cuentaAhorroId)
+	UPDATE @verTemp
+	SET usu = dbo.usuario.ID
+	FROM  @verTemp
+	INNER JOIN dbo.usuario ON usu = nombreUsuario
 
-	SELECT dbo.usuario.ID, cuen FROM  @verTemp
-	INNER JOIN dbo.usuario ON usu = dbo.usuario.nombreUsuario
+	DECLARE @usuAux int, @cuenAux int
+
+	SET @hi2 = (SELECT COUNT(*) FROM @verTemp) + @lo2 - 1
+	WHILE (@lo2 <= @hi2)
+	BEGIN
+		
+		SET @usuAux = (SELECT usu from @verTemp WHERE ID = @lo2)
+		SET @cuenAux = (SELECT cuen from @verTemp WHERE ID = @lo2)
+
+		IF (NOT EXISTS (SELECT usuarioId FROM dbo.puedeVer WHERE usuarioId = @usuAux AND cuentaAhorroId = @cuenAux))
+		BEGIN
+
+			INSERT INTO dbo.puedeVer(usuarioId, cuentaAhorroId)
+			SELECT usu, cuen FROM  @verTemp
+			WHERE ID = @lo2
+		END
+
+		SET @lo2 = @lo2 + 1
+	END
+
+	SET @lo2 = @hi2+1
 
 	DELETE FROM @verTemp
 
