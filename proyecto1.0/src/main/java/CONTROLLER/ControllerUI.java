@@ -161,6 +161,12 @@ public class ControllerUI {
         return movimientos;
     }
 
+    public ArrayList<Movimiento> getMovimientos(int numCuenta, String fechaIn, String fechaFin, String  descripcion){
+        ArrayList<Movimiento> movimientos = movimiento.obtenerEstadosCuenta(ControllerConexion.getInstance().connection, numCuenta, fechaIn, fechaFin, descripcion);
+        return movimientos;
+    }
+
+
     public void setNumerosCuenta(int numCuenta){
         this.numerosCuentaObjetivo = cuentaObjetivo.obtenerNumerosCuentaObjetivo(ControllerConexion.getInstance().connection, numCuenta);
     }

@@ -901,7 +901,6 @@ public class GUIBanco extends VerticalLayout implements View {
     }
 
     public void movimientos(AbsoluteLayout contenedorEstados, AbsoluteLayout estadoCuenta, int id){
-        Notification.show(String.valueOf(id));
         estadoCuenta.setVisible(false);
 
         Label datos = new Label("DATOS ESTADO CUENTA");
@@ -925,18 +924,41 @@ public class GUIBanco extends VerticalLayout implements View {
         movimiento.getColumn("tipo").setCaption("TIPO");
         movimiento.getColumn("descripcion").setCaption("DESCRIPCIÓN");
         movimiento.getColumn("monto").setCaption("MONTO $");
-
-//        movimiento.setItems(controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin));
+        ArrayList<Movimiento> movimientosDetalles = controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin);
+        movimiento.setItems(movimientosDetalles);
 
         TextField filter = new TextField();
         filter.setPlaceholder("FILTRO POR DESCRIPCIÓN");
         filter.setWidth("250px");
 
 
+        Button buscar = new Button();
+        buscar.setWidth("20px");
+        buscar.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        buscar.setIcon(VaadinIcons.SEARCH);
+        buscar.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        buscar.addClickListener(e-> {
+            if(!filter.isEmpty()) {
+               movimiento.setItems(controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin, filter.getValue()));
+            }
+            if (filter.isEmpty())
+                movimiento.setItems(movimientosDetalles);
+        });
+
+        Button volver = new Button("ATRÁS");
+        volver.setIcon(VaadinIcons.BACKSPACE_A);
+        volver.setWidth("200px");
+        volver.setHeight("50px");
+        volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        volver.addClickListener(e -> atras(movimientos, estadoCuenta));
+
+
         movimientos.addComponent(movimiento, "top: 200px; left: 250px");
         movimientos.addComponent(filter, "top: 150px; left: 250px");
+        movimientos.addComponent(buscar, "top: 150px; left: 510px");
         movimientos.addComponent(datos, "top: 25px; left: 650px");
         movimientos.addComponent(fechas, "top: 75px; left: 625px");
+        movimientos.addComponent(volver, "top: 610px; right: 50px");
         contenedorEstados.addComponent(movimientos);
 
     }
