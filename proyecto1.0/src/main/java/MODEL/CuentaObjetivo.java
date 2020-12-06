@@ -18,17 +18,6 @@ public class CuentaObjetivo {
 
     public CuentaObjetivo() {}
 
-    public CuentaObjetivo(String numCuenta, String objetivo, Date fechaInicio, Date fechaFinal, float cuota, float saldo, float intereses, int numCuentaAsociada) {
-        this.numCuenta = numCuenta;
-        this.objetivo = objetivo;
-        this.fechaInicio = fechaInicio;
-        this.fechaFinal = fechaFinal;
-        this.cuota = cuota;
-        this.saldo = saldo;
-        this.intereses = intereses;
-        this.numCuentaAsociada = numCuentaAsociada;
-    }
-
     public String getNumCuenta() {
         return numCuenta;
     }
@@ -91,6 +80,10 @@ public class CuentaObjetivo {
 
     public void setNumCuentaAsociada(int numCuentaAsociada) {
         this.numCuentaAsociada = numCuentaAsociada;
+    }
+
+    public String imprimir(){
+        return "Numero cuenta " + getNumCuenta() +"\nObjetivo: "+ getObjetivo()+ "\nCuota: " + getCuota()+ "\nFecha final: " + getFechaFinal()+ "\nFecha incio: " + getFechaInicio()+"\nIntereses: " + getIntereses()+ "\nCuentaAsociada: " + getNumCuentaAsociada()+ "\nSaldo: " + getSaldo();
     }
 
     public String generarNumero(ArrayList<String> numeros){

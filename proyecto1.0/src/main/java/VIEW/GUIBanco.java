@@ -10,15 +10,13 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.ui.*;
-import com.vaadin.ui.components.colorpicker.ColorPickerPopup;
 import com.vaadin.ui.themes.ValoTheme;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
-
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class GUIBanco extends VerticalLayout implements View {
 
@@ -56,6 +54,9 @@ public class GUIBanco extends VerticalLayout implements View {
     private Label cuentaOB;
 
     private Grid<EstadoCuenta> estados;
+    private Grid<CuentaObjetivo> cuentasObjetivo;
+
+    private ComboBox<String> numCuentasObjetivo = new ComboBox<>();
 
 
     //Atributos para guardar
@@ -930,7 +931,11 @@ public class GUIBanco extends VerticalLayout implements View {
         modificar.setHeight("50px");
         modificar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         modificar.setIcon(VaadinIcons.EDIT);
-        modificar.addClickListener(e -> modificarCuenOb(cuentasObjetivo, cuentasObjetivoOpciones));
+        modificar.addClickListener(e -> {
+            numCuentasObjetivo.setItems(controller.getNumerosCuentaObjetivo());
+            modificarCuenOb(cuentasObjetivo, cuentasObjetivoOpciones);
+
+        });
 
         Button desactivar = new Button("DESACTIVAR");
         desactivar.setWidth("300px");
@@ -962,17 +967,20 @@ public class GUIBanco extends VerticalLayout implements View {
         Label datos = new Label("DETALLES CUENTAS");
         datos.addStyleName(ValoTheme.LABEL_H2);
 
-        Grid<CuentaObjetivo> cuentasObjetivo = new Grid<>(CuentaObjetivo.class);
+        cuentasObjetivo = new Grid<>(CuentaObjetivo.class);
         cuentasObjetivo.removeColumn("intereses");
-        cuentasObjetivo.removeColumn("numCuenta");
-        cuentasObjetivo.setColumnOrder("objetivo", "fechaInicio", "fechaFinal", "cuota", "saldo");
+        cuentasObjetivo.removeColumn("numCuentaAsociada");
+        cuentasObjetivo.setColumnOrder("numCuenta", "objetivo", "fechaInicio", "fechaFinal", "cuota", "saldo");
+        cuentasObjetivo.getColumn("numCuenta").setCaption("CUENTA #");
         cuentasObjetivo.getColumn("objetivo").setCaption("OBJETIVO");
         cuentasObjetivo.getColumn("fechaInicio").setCaption("FECHA INICIO");
         cuentasObjetivo.getColumn("fechaFinal").setCaption("FECHA FINALIZACIÓN");
         cuentasObjetivo.getColumn("cuota").setCaption("CUOTA MENSUAL");
         cuentasObjetivo.getColumn("saldo").setCaption("SALDO ACTUAL");
-        cuentasObjetivo.setWidth("700px");
+        cuentasObjetivo.setWidth("1000px");
         cuentasObjetivo.setHeight("350px");
+        cuentasObjetivo.setItems(controller.verDetalles());
+
 
         Button atras = new Button();
         atras.setWidth("200px");
@@ -994,9 +1002,9 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.addClickListener(e -> atras(ver, cuentasObjOpciones));
 
         ver.addComponent(datos, "top: 50px; left: 50px");
-        ver.addComponent(cuentasObjetivo, "top: 150px; left: 350px");
-        ver.addComponent(atras, "top: 525px; left: 475px");
-        ver.addComponent(adelante, "top: 525px; left: 725px");
+        ver.addComponent(cuentasObjetivo, "top: 150px; left: 250px");
+        ver.addComponent(atras, "top: 525px; left: 525px");
+        ver.addComponent(adelante, "top: 525px; left: 775px");
         ver.addComponent(volver, "top: 610px; right: 50px");
 
         cuentasObjetivoCon.addComponent(ver);
@@ -1032,6 +1040,41 @@ public class GUIBanco extends VerticalLayout implements View {
         cuota.setWidth("300px");
         cuota.setPlaceholder("1000$");
 
+        Button crearB = new Button("CREAR");
+        crearB.setWidth("300px");
+        crearB.setIcon(VaadinIcons.HAMMER);
+        crearB.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        crearB.setHeight("50px");
+        crearB.addClickListener(e -> {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date fechaFinal = formatter.parse(fechaFin.getValue().toString());
+                Date fechaInicio = formatter.parse(fechaIn.getValue().toString());
+                String hoy = formatter.format(new Date());
+                Date hoyD = formatter.parse(hoy);
+
+                if(fechaInicio.after(hoyD) || fechaInicio.equals(hoyD)){
+                    if (fechaFinal.after(fechaInicio)){
+                       if(controller.crearCuentaObj(Integer.parseInt(numCuenta), objetivo.getValue(), fechaIn.getValue().toString(), fechaFin.getValue().toString(), Float.parseFloat(cuota.getValue()))){
+                           Notification.show("La cuenta fue creada con éxito!");
+                           controller.setNumerosCuenta(Integer.parseInt(numCuenta));
+                       }
+                       else{
+                           Notification.show("Hubo un problema creando la cuenta, intente de nuevo");
+                       }
+                    }
+                    else{
+                        Notification.show("La fecha de finalización está antes que la fecha de inicio");
+                    }
+                }
+                else{
+                    Notification.show("La fecha de inicio no puede ser una fecha anterior a la fecha de hoy");
+                }
+            } catch (ParseException parseException) {
+                parseException.printStackTrace();
+            }
+        });
+
         Button volver = new Button("ATRÁS");
         volver.setIcon(VaadinIcons.BACKSPACE_A);
         volver.setWidth("200px");
@@ -1044,6 +1087,7 @@ public class GUIBanco extends VerticalLayout implements View {
         crear.addComponent(fechaIn, "top: 350px; left: 450px");
         crear.addComponent(fechaFin, "top: 350px; left: 800px");
         crear.addComponent(cuota, "top: 500px; left: 600px");
+        crear.addComponent(crearB, "top: 600px; left: 600px");
         crear.addComponent(volver, "top: 610px; right: 50px");
 
         cuentasObjetivoCon.addComponent(crear);
@@ -1077,9 +1121,10 @@ public class GUIBanco extends VerticalLayout implements View {
         cuota.setPlaceholder("1000$");
         cuota.setEnabled(false);
 
-        ComboBox<String> cuentas = new ComboBox<>("Cuentas");
-        cuentas.setWidth("300px");
-        cuentas.setIcon(VaadinIcons.CLIPBOARD_TEXT);
+        numCuentasObjetivo.setCaption("Cuentas");
+        numCuentasObjetivo.setWidth("300px");
+        numCuentasObjetivo.setIcon(VaadinIcons.CLIPBOARD_TEXT);
+        numCuentasObjetivo.setPlaceholder("CUENTAS OBJETIVO");
 
         Button editar = new Button("EDITAR CUENTA");
         editar.setWidth("300px");
@@ -1087,6 +1132,31 @@ public class GUIBanco extends VerticalLayout implements View {
         editar.setIcon(VaadinIcons.FLIGHT_TAKEOFF);
         editar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         editar.setEnabled(false);
+        editar.addClickListener(e-> {
+            try {
+
+                Date fechaFinD = new SimpleDateFormat("yyyy-MM-dd").parse(fechaFin.getValue().toString());
+                CuentaObjetivo cuenta = controller.llenarCamposAct(numCuentasObjetivo.getSelectedItem().get());
+                Date fechaIn = new SimpleDateFormat("yyyy-MM-dd").parse(cuenta.getFechaInicio().toString());
+
+                System.out.println("Fin: " + fechaFinD);
+                System.out.println("Inicio: " +fechaIn);
+                if(fechaFinD.after(fechaIn)){
+                    if(controller.actualizarCuentaObj(numCuentasObjetivo.getSelectedItem().get(), objetivo.getValue(), fechaFin.getValue().toString(), Float.parseFloat(cuota.getValue()))){
+                        Notification.show("La cuenta se actualizó exitosamente!");
+                        controller.setNumerosCuenta(Integer.parseInt(numCuenta));
+                    }
+                    else{
+                        Notification.show("Hubo un problema con la actualización\nIntente de nuevo");
+                    }
+                }
+                else
+                    Notification.show("La fecha de finalización no puede ser antes que la fecha de inicio");
+            } catch (ParseException parseException) {
+                parseException.printStackTrace();
+            }
+
+        });
 
         Button seleccionar = new Button("SELECCIONAR");
         seleccionar.setIcon(VaadinIcons.SELECT);
@@ -1097,6 +1167,11 @@ public class GUIBanco extends VerticalLayout implements View {
             cuota.setEnabled(true);
             fechaFin.setEnabled(true);
             editar.setEnabled(true);
+            CuentaObjetivo cuentaObjetivo = controller.llenarCamposAct(numCuentasObjetivo.getSelectedItem().get());
+            objetivo.setValue(cuentaObjetivo.getObjetivo());
+            fechaFin.setValue(LocalDate.parse(cuentaObjetivo.getFechaFinal().toString()));
+            cuota.setValue(String.valueOf(cuentaObjetivo.getCuota()));
+            cuentaObjetivo.imprimir();
         });
 
 
@@ -1107,7 +1182,7 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         volver.addClickListener(e -> atras(modificar, cuentasObjOpciones));
 
-        modificar.addComponent(cuentas, "top: 200px; left: 400px");
+        modificar.addComponent(numCuentasObjetivo, "top: 200px; left: 400px");
         modificar.addComponent(seleccionar, "top: 200px; left: 750px");
         modificar.addComponent(datosObj, "top: 50px; left: 100px");
         modificar.addComponent(objetivo, "top: 350px; left: 150px");
@@ -1132,11 +1207,21 @@ public class GUIBanco extends VerticalLayout implements View {
         ComboBox<String> cuenDes = new ComboBox<>("Cuentas");
         cuenDes.setWidth("300px");
         cuenDes.setIcon(VaadinIcons.SELECT);
+        cuenDes.setItems(controller.getNumerosCuentaObjetivo());
 
         Button desactivarB = new Button("DESACTIVAR");
         desactivarB.setIcon(VaadinIcons.FROWN_O);
         desactivarB.addStyleName(ValoTheme.BUTTON_PRIMARY);
         desactivarB.setWidth("300px");
+        desactivarB.addClickListener(e-> {
+            if(controller.desactivarCuentaObj(cuenDes.getSelectedItem().get())){
+                Notification.show("La cuenta fue desactivada exitosamente");
+                controller.setNumerosCuenta(Integer.parseInt(numCuenta));
+            }
+            else{
+                Notification.show("No se pudo desactivar la cuenta\nIntente de nuevo");
+            }
+        });
 
         Button volver = new Button("ATRÁS");
         volver.setIcon(VaadinIcons.BACKSPACE_A);
@@ -1178,11 +1263,10 @@ public class GUIBanco extends VerticalLayout implements View {
             estados.setItems(estadoCuentas.subList(0,8));
             cantEstados = cantEstados - 8;
             estadoActual = estadoActual + 8;
+            controller.setNumerosCuenta(Integer.parseInt(numCuenta));
 
 
-            //Agregar las otras tabs
         }
-        //Desbloquear las otras tabs si es diferente de no seleccionado
     }
 
 

@@ -2,23 +2,32 @@ package CONTROLLER;
 
 import MODEL.Beneficiario;
 import MODEL.BeneficiariosTabla;
+import MODEL.CuentaObjetivo;
 import MODEL.EstadoCuenta;
 
+import java.awt.image.AreaAveragingScaleFilter;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 
 public class ControllerUI {
 
 
     private ArrayList<BeneficiariosTabla> beneficiarios; //igual al sp
+    private ArrayList<String> numerosCuentaObjetivo;
 
     private ControllerBeneficiario beneficiarioCon = new ControllerBeneficiario();
     private ControllerUsuario usuarioCon = new ControllerUsuario();
     private ControllerEstadosCuenta estadosCuenta = new ControllerEstadosCuenta();
+    private ControllerCuentaObjetivo cuentaObjetivo = new ControllerCuentaObjetivo();
 
     public ControllerUI(){}
+
+    public ArrayList<String> getNumerosCuentaObjetivo() {
+        return numerosCuentaObjetivo;
+    }
 
     public ArrayList<BeneficiariosTabla> getBeneficiarios() {
         return beneficiarios;
@@ -148,4 +157,58 @@ public class ControllerUI {
         }
         return estadosOrdenados;
     }
+
+    public void setNumerosCuenta(int numCuenta){
+        this.numerosCuentaObjetivo = cuentaObjetivo.obtenerNumerosCuentaObjetivo(ControllerConexion.getInstance().connection, numCuenta);
+    }
+
+    public ArrayList<CuentaObjetivo> verDetalles(){
+        System.out.println("Aqui");
+        ArrayList<CuentaObjetivo> cuentasActuales = new ArrayList<>();
+        System.out.println("Cuentas: " + numerosCuentaObjetivo);
+        for(String numCuenta: numerosCuentaObjetivo){
+            System.out.println(numCuenta);
+            CuentaObjetivo cuentaGuardar = cuentaObjetivo.verDetalles(ControllerConexion.getInstance().connection, numCuenta);
+            System.out.println(cuentaGuardar.imprimir());
+            cuentasActuales.add(cuentaGuardar);
+        }
+        return cuentasActuales;
+    }
+
+    public boolean crearCuentaObj(int cuentaAso, String objtivo, String fechaIni, String fechFin, float cuota){
+        CuentaObjetivo cuentaNueva = new CuentaObjetivo();
+        String numeroCuentaObj = cuentaNueva.generarNumero(numerosCuentaObjetivo);
+        int codigo = cuentaObjetivo.crearCuentaObjetivo(ControllerConexion.getInstance().connection, cuentaAso, objtivo, fechaIni, fechFin, cuota, numeroCuentaObj);
+        if (codigo == 0){
+            return true;
+        }
+        return false;
+    }
+
+    public CuentaObjetivo llenarCamposAct(String numCuenta){
+        CuentaObjetivo cuenta = cuentaObjetivo.verDetalles(ControllerConexion.getInstance().connection, numCuenta);
+        CuentaObjetivo actualizar = new CuentaObjetivo();
+        actualizar.setObjetivo(cuenta.getObjetivo());
+        actualizar.setFechaFinal(cuenta.getFechaFinal());
+        actualizar.setCuota(cuenta.getCuota());
+        actualizar.setFechaInicio(cuenta.getFechaInicio());
+        return actualizar;
+    }
+
+    public boolean actualizarCuentaObj(String numCuenta, String objetivo, String fechaFin, float cuota){
+        int codigo = cuentaObjetivo.actualizarCuentaObjetivo(ControllerConexion.getInstance().connection, numCuenta, objetivo, fechaFin, cuota);
+        if (codigo == 0){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean desactivarCuentaObj(String cuentaNum){
+        int codigo = cuentaObjetivo.desactivarCuentaObjetivo(ControllerConexion.getInstance().connection, cuentaNum);
+        if (codigo == 0){
+            return true;
+        }
+        return false;
+    }
+
 }
