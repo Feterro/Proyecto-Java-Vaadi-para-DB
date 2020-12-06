@@ -36,7 +36,7 @@ public class GUIBanco extends VerticalLayout implements View {
     //Components
     private TextField usuario;
     private PasswordField contrasenna;
-    private RadioButtonGroup<String> cuentas;
+    private ComboBox<String> cuentas;
     private TabSheet menu;
 
     private TextField cedulaA;
@@ -147,10 +147,10 @@ public class GUIBanco extends VerticalLayout implements View {
         image.setWidth("1500px");
         image.setHeight("700px");
 
-        cuentas = new RadioButtonGroup<>();
+        cuentas = new ComboBox<>();
         cuentas.setItems("1", "2", "3");
-        cuentas.addStyleName(ValoTheme.CHECKBOX_LARGE);
         cuentas.addStyleName(ValoTheme.LABEL_BOLD);
+        cuentas.setPlaceholder("CUENTA A USAR");
 
 
         Label lCuentas = new Label("SELECCIONE UNA CUENTA");
@@ -167,7 +167,7 @@ public class GUIBanco extends VerticalLayout implements View {
         cuentasContenedor.addComponent(image, "top: 0px; left: 0px");
         cuentasContenedor.addComponent(cuentas, "top: 200px; left: 100px");
         cuentasContenedor.addComponent(lCuentas, "top: 50px; left: 100px");
-        cuentasContenedor.addComponent(seleccionar, "top: 600px; left: 100px");
+        cuentasContenedor.addComponent(seleccionar, "top: 400px; left: 100px");
 
 
         menu.addTab(cuentasContenedor, "CUENTAS");
@@ -926,11 +926,11 @@ public class GUIBanco extends VerticalLayout implements View {
         movimiento.getColumn("descripcion").setCaption("DESCRIPCIÓN");
         movimiento.getColumn("monto").setCaption("MONTO $");
 
+//        movimiento.setItems(controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin));
+
         TextField filter = new TextField();
         filter.setPlaceholder("FILTRO POR DESCRIPCIÓN");
         filter.setWidth("250px");
-
-
 
 
         movimientos.addComponent(movimiento, "top: 200px; left: 250px");

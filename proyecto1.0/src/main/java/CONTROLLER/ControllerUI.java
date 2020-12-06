@@ -1,9 +1,6 @@
 package CONTROLLER;
 
-import MODEL.Beneficiario;
-import MODEL.BeneficiariosTabla;
-import MODEL.CuentaObjetivo;
-import MODEL.EstadoCuenta;
+import MODEL.*;
 
 import java.awt.image.AreaAveragingScaleFilter;
 import java.text.SimpleDateFormat;
@@ -22,6 +19,7 @@ public class ControllerUI {
     private ControllerUsuario usuarioCon = new ControllerUsuario();
     private ControllerEstadosCuenta estadosCuenta = new ControllerEstadosCuenta();
     private ControllerCuentaObjetivo cuentaObjetivo = new ControllerCuentaObjetivo();
+    private ControllerMovimiento movimiento = new ControllerMovimiento();
 
     public ControllerUI(){}
 
@@ -156,6 +154,11 @@ public class ControllerUI {
             num++;
         }
         return estadosOrdenados;
+    }
+
+    public ArrayList<Movimiento> getMovimientos(int numCuenta, String fechaIn, String fechaFin){
+        ArrayList<Movimiento> movimientos = movimiento.obtenerEstadosCuenta(ControllerConexion.getInstance().connection, numCuenta, fechaIn, fechaFin);
+        return movimientos;
     }
 
     public void setNumerosCuenta(int numCuenta){

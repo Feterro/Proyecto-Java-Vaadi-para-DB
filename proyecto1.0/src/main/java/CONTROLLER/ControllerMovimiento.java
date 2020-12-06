@@ -10,13 +10,13 @@ public class ControllerMovimiento {
 
     public ControllerMovimiento(){}
 
-    public ArrayList<Movimiento> obtenerEstadosCuenta(Connection connection, int cuentaId, String fechaInicio, String fechaFin){
+    public ArrayList<Movimiento> obtenerEstadosCuenta(Connection connection, int cuentaNum, String fechaInicio, String fechaFin){
         ArrayList<Movimiento> movimientos = new ArrayList<>();
         try{
             CallableStatement callableStatement = connection.prepareCall("EXEC SP_EC_ObtenerEstadosCuenta ?,?,?,?");
             callableStatement.setDate(1, Date.valueOf(fechaInicio));
             callableStatement.setDate(2, Date.valueOf(fechaFin));
-            callableStatement.setInt(3, cuentaId);
+            callableStatement.setInt(3, cuentaNum);
             callableStatement.registerOutParameter(4, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()){
