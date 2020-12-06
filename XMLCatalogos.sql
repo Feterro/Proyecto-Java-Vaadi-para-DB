@@ -24,8 +24,6 @@ OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB
 cross apply c.nodes('Catalogos/Tipo_Moneda/TipoMoneda') AS A(Tipo_Moneda)
 
 --SELECT * FROM dbo.tipoMoneda
---Delete FROM dbo.tipoMoneda
-
 
 
 --INSERT XML en tipoDocIdent-----------------------------------------------------------
@@ -44,7 +42,6 @@ OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB
 cross apply c.nodes('Catalogos/Tipo_Doc/TipoDocuIdentidad') AS A(Tipo_Doc)
 
 --SELECT * FROM dbo.tipoDocIdent
---Delete FROM dbo.tipoDocIdent
 
 
 --INSERT XML en parentesco-----------------------------------------------------------
@@ -63,8 +60,6 @@ OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB
 cross apply c.nodes('Catalogos/Parentezcos/Parentezco') AS A(Parentezco)
 
 --SELECT * FROM dbo.parentesco
---Delete FROM dbo.parentesco
-
 
 --INSERT XML en tipoCuentaAhorro-----------------------------------------------------------
 
@@ -100,7 +95,7 @@ OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB
 cross apply c.nodes('Catalogos/Tipo_Cuenta_Ahorros/TipoCuentaAhorro') AS A(TipoCuentaAhorro)
 
 --SELECT * FROM dbo.tipoCuentaAhorro
---Delete FROM dbo.tipoCuentaAhorro
+
 
 --INSERT XML en tipoMovimiento-----------------------------------------------------------
 
@@ -121,4 +116,12 @@ OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB
 cross apply c.nodes('Catalogos/Tipo_Movimientos/Tipo_Movimiento') AS A(TipoCuentaAhorro)
 
 --SELECT * FROM dbo.TipoMovimiento
+
+SET NOCOUNT OFF
+
+
 --Delete FROM dbo.TipoMovimiento
+--Delete FROM dbo.tipoCuentaAhorro
+--Delete FROM dbo.parentesco
+--Delete FROM dbo.tipoDocIdent
+--Delete FROM dbo.tipoMoneda

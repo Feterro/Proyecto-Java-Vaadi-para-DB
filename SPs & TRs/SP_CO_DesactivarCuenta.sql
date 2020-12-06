@@ -5,7 +5,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[SP_CO_DesactivarCuenta] @inCuentaNum varchar(10),  @outResultCode int output
+CREATE PROCEDURE [dbo].[SP_CO_DesactivarCuenta] @inCuentaNum varchar(10),  @outResultCode int output
 AS
 BEGIN
 SET NOCOUNT ON
@@ -13,8 +13,10 @@ SET NOCOUNT ON
 		
 
 		UPDATE dbo.cuentaObjetivo
-		SET activo = 0, fechaDesactivacion = GETDATE()
-		FROM dbo.cuentaObjetivo WHERE numeroCuenta = @inCuentaNum;
+		SET activo = 0,
+		fechaDesactivacion = GETDATE()
+		FROM dbo.cuentaObjetivo
+		WHERE numeroCuenta = @inCuentaNum;
 
 
 	END TRY

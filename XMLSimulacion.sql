@@ -479,7 +479,11 @@ BEGIN
 			END
 
 			UPDATE dbo.cuentaAhorro SET
-			saldo = saldo + (@inter/12) WHERE
+			saldo = saldo - @mensCargServ WHERE
+			ID = @IdBus
+
+			UPDATE dbo.cuentaAhorro SET
+			saldo = saldo + (((@inter * saldo )/100)/12) WHERE
 			ID = @IdBus
 			
 			INSERT INTO dbo.movimiento(
@@ -493,11 +497,7 @@ BEGIN
 			@IdBus,
 			@fechaActual,
 			'Intereses',
-			@multHum)--CAMBIAR!!!!!!!
-
-			UPDATE dbo.cuentaAhorro SET
-			saldo = saldo - @mensCargServ WHERE
-			ID = @IdBus
+			(((@inter * @salFin )/100)/12))
 
 			UPDATE dbo.estadoCuenta SET
 			fechaFin = @fechaActual,
