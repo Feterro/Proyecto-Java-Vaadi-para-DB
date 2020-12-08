@@ -6,6 +6,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class GUIBanco extends VerticalLayout implements View {
+public class GUIBanco extends AbsoluteLayout implements View {
 
     //Controlador
     private ControllerUI controller = new ControllerUI();
@@ -32,6 +33,7 @@ public class GUIBanco extends VerticalLayout implements View {
     private AbsoluteLayout contenedorAgregar;
     private AbsoluteLayout actualizarBene;
     private AbsoluteLayout preguntaC;
+    private AbsoluteLayout fondo;
 
     //Components
     private TextField usuario;
@@ -63,12 +65,16 @@ public class GUIBanco extends VerticalLayout implements View {
     private int estadoActual = 0;
 
     public GUIBanco() {
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/fondoTotal.png"));
+        Image image = new Image("", resource);
+        image.setSizeFull();
+        addComponent(image);
         Login();
         Banco();
     }
 
     private void Login() {
-        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/fondo2.0.jpg"));
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/Login.png"));
         Image image = new Image("", resource);
         image.setWidth("1500px");
         image.setHeight("700px");
@@ -109,26 +115,39 @@ public class GUIBanco extends VerticalLayout implements View {
         contenedorLogIn.setStyleName(ValoTheme.PANEL_BORDERLESS);
         contenedorLogIn.addComponent(image, "top: 0px; left: 0px");
         contenedorLogIn.addComponent(panelInicioSesion, "top: 300px; left: 100px");
-        contenedorLogIn.addComponent(inicio, "top: 125px; left: 150px");
-        addComponent(contenedorLogIn);
+        contenedorLogIn.addComponent(inicio, "top: 50px; left: 150px");
+
+        addComponent(contenedorLogIn, "top: 50; left: 100");
+
+
 
     }
 
     public void Banco() {
+        fondo = new AbsoluteLayout();
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/fondoTotalMenu.png"));
+        Image image = new Image("", resource);
+        image.setSizeFull();
+        fondo.addComponent(image);
+        fondo.setVisible(false);
         contenedorTabsBanco = new AbsoluteLayout();
         contenedorTabsBanco.setWidth("1500px");
-        contenedorTabsBanco.setHeight("1000px");
+        contenedorTabsBanco.setHeight("800px");
         contenedorTabsBanco.setStyleName(ValoTheme.PANEL_BORDERLESS);
+        contenedorTabsBanco.setVisible(false);
         TabSheet menu = Menu();
         contenedorTabsBanco.addComponent(menu);
-        addComponent(contenedorTabsBanco);
+        addComponent(fondo);
+        addComponent(contenedorTabsBanco, "top: 20; left: 100");
+
+
+
 
     }
 
     public TabSheet Menu() {
         menu = new TabSheet();
         menu.addStyleName(ValoTheme.TABSHEET_EQUAL_WIDTH_TABS);
-        menu.addStyleName(ValoTheme.TABSHEET_FRAMED);
         Cuentas();
         Beneficiarios();
         estadosCuenta();
@@ -151,6 +170,7 @@ public class GUIBanco extends VerticalLayout implements View {
         cuentas.setItems("1", "2", "3");
         cuentas.addStyleName(ValoTheme.LABEL_BOLD);
         cuentas.setPlaceholder("CUENTA A USAR");
+        cuentas.setWidth("300px");
 
 
         Label lCuentas = new Label("SELECCIONE UNA CUENTA");
@@ -163,7 +183,6 @@ public class GUIBanco extends VerticalLayout implements View {
         seleccionar.setHeight("50px");
         seleccionar.setWidth("300px");
         seleccionar.addClickListener(this::SeleccionarCuenta);
-
         cuentasContenedor.addComponent(image, "top: 0px; left: 0px");
         cuentasContenedor.addComponent(cuentas, "top: 200px; left: 100px");
         cuentasContenedor.addComponent(lCuentas, "top: 50px; left: 100px");
@@ -193,7 +212,7 @@ public class GUIBanco extends VerticalLayout implements View {
         contenedorOpciones.setWidth("1500px");
         contenedorOpciones.setHeight("700px");
 
-        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/FondoCuentas.png"));
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/FondoBene.png"));
         Image image = new Image("", resource);
         image.setWidth("1500px");
         image.setHeight("700px");
@@ -855,7 +874,7 @@ public class GUIBanco extends VerticalLayout implements View {
                 estados.setItems(estadoCuentas.subList(estadoActual, estadoActual + 8));
                 cantEstados = cantEstados - 8;
                 estadoActual = estadoActual + 8;
-            } else if (cantEstados <= 8) {
+            } else if (cantEstados != 0) {
                 estados.setItems(estadoCuentas.subList(estadoActual, -1));
             } else {
                 Notification.show("No hay más estados que mostrar");
@@ -881,12 +900,12 @@ public class GUIBanco extends VerticalLayout implements View {
         });
 
         estadoCuenta.addComponent(image);
-        estadoCuenta.addComponent(datos, "top: 25px; left: 50px");
-        estadoCuenta.addComponent(estados, "top: 100px; left: 400px");
-        estadoCuenta.addComponent(ids, "top:130px; left: 1120px");
-        estadoCuenta.addComponent(atras, "top: 463; left: 425px");
-        estadoCuenta.addComponent(mas, "top: 463px; left: 775px");
-        estadoCuenta.addComponent(selecionar, "top: 540; left: 600px");
+        estadoCuenta.addComponent(datos, "top: 50px; left: 50px");
+        estadoCuenta.addComponent(estados, "top: 150px; left: 400px");
+        estadoCuenta.addComponent(ids, "top:180px; left: 1120px");
+        estadoCuenta.addComponent(atras, "top: 510; left: 425px");
+        estadoCuenta.addComponent(mas, "top: 510px; left: 775px");
+        estadoCuenta.addComponent(selecionar, "top: 590; left: 600px");
         estadoCuenta.addComponent(cuenta, "top: 50px; right: 50px");
         estadosCuentaContenedor.addComponent(estadoCuenta);
         menu.addTab(estadosCuentaContenedor, "ESTADOS CUENTA").setEnabled(false);
@@ -909,6 +928,11 @@ public class GUIBanco extends VerticalLayout implements View {
         String fechaIn = String.valueOf(estadoActual.getFechaInicio());
         String fechaFin = String.valueOf(estadoActual.getFechaFinal());
 
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/detallesEstadoCuenta.png"));
+        Image image = new Image("", resource);
+        image.setWidth("1500px");
+        image.setHeight("700px");
+
         Label fechas = new Label("Estado del " + fechaIn + " al " + fechaFin);
         fechas.addStyleName(ValoTheme.LABEL_H3);
 
@@ -927,23 +951,22 @@ public class GUIBanco extends VerticalLayout implements View {
         ArrayList<Movimiento> movimientosDetalles = controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin);
         movimiento.setItems(movimientosDetalles);
 
+
+        Label buscar = new Label();
+        buscar.setIcon(VaadinIcons.SEARCH);
+
         TextField filter = new TextField();
         filter.setPlaceholder("FILTRO POR DESCRIPCIÓN");
         filter.setWidth("250px");
-
-
-        Button buscar = new Button();
-        buscar.setWidth("20px");
-        buscar.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        buscar.setIcon(VaadinIcons.SEARCH);
-        buscar.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        buscar.addClickListener(e-> {
+        filter.setValueChangeMode(ValueChangeMode.LAZY);
+        filter.addValueChangeListener(e-> {
             if(!filter.isEmpty()) {
-               movimiento.setItems(controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin, filter.getValue()));
+                movimiento.setItems(controller.getMovimientos(filter.getValue()));
             }
             if (filter.isEmpty())
                 movimiento.setItems(movimientosDetalles);
         });
+
 
         Button volver = new Button("ATRÁS");
         volver.setIcon(VaadinIcons.BACKSPACE_A);
@@ -952,10 +975,10 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         volver.addClickListener(e -> atras(movimientos, estadoCuenta));
 
-
+        movimientos.addComponent(image);
         movimientos.addComponent(movimiento, "top: 200px; left: 250px");
-        movimientos.addComponent(filter, "top: 150px; left: 250px");
-        movimientos.addComponent(buscar, "top: 150px; left: 510px");
+        movimientos.addComponent(filter, "top: 150px; left: 270px");
+        movimientos.addComponent(buscar, "top: 180px; left: 240");
         movimientos.addComponent(datos, "top: 25px; left: 650px");
         movimientos.addComponent(fechas, "top: 75px; left: 625px");
         movimientos.addComponent(volver, "top: 610px; right: 50px");
@@ -967,6 +990,11 @@ public class GUIBanco extends VerticalLayout implements View {
         AbsoluteLayout cuentasObjetivoOpciones = new AbsoluteLayout();
         cuentasObjetivoOpciones.setWidth("1500px");
         cuentasObjetivoOpciones.setHeight("700px");
+
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/CuentaObjetivo.png"));
+        Image image = new Image("", resource);
+        image.setWidth("1500px");
+        image.setHeight("700px");
 
         AbsoluteLayout cuentasObjetivo = new AbsoluteLayout();
         cuentasObjetivo.setWidth("1500px");
@@ -1011,6 +1039,7 @@ public class GUIBanco extends VerticalLayout implements View {
         desactivar.setIcon(VaadinIcons.ERASER);
         desactivar.addClickListener(e -> desactivarCuentaObjetivo(cuentasObjetivo, cuentasObjetivoOpciones));
 
+        cuentasObjetivoOpciones.addComponent(image);
         cuentasObjetivoOpciones.addComponent(opciones, "top: 50px; left: 100px");
         cuentasObjetivoOpciones.addComponent(ver, "top: 170; left: 100px");
         cuentasObjetivoOpciones.addComponent(crear, "top: 270; left: 100px");
@@ -1030,6 +1059,11 @@ public class GUIBanco extends VerticalLayout implements View {
         AbsoluteLayout ver = new AbsoluteLayout();
         ver.setWidth("1500px");
         ver.setHeight("700px");
+
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/CuentaObjetivoVer.png"));
+        Image image = new Image("", resource);
+        image.setWidth("1500px");
+        image.setHeight("700px");
 
         Label datos = new Label("DETALLES CUENTAS");
         datos.addStyleName(ValoTheme.LABEL_H2);
@@ -1068,10 +1102,11 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         volver.addClickListener(e -> atras(ver, cuentasObjOpciones));
 
+        ver.addComponent(image);
         ver.addComponent(datos, "top: 50px; left: 50px");
-        ver.addComponent(cuentasObjetivo, "top: 150px; left: 250px");
-        ver.addComponent(atras, "top: 525px; left: 525px");
-        ver.addComponent(adelante, "top: 525px; left: 775px");
+        ver.addComponent(cuentasObjetivo, "top: 200px; left: 250px");
+        ver.addComponent(atras, "top: 575px; left: 525px");
+        ver.addComponent(adelante, "top: 575px; left: 775px");
         ver.addComponent(volver, "top: 610px; right: 50px");
 
         cuentasObjetivoCon.addComponent(ver);
@@ -1083,6 +1118,11 @@ public class GUIBanco extends VerticalLayout implements View {
         AbsoluteLayout crear = new AbsoluteLayout();
         crear.setHeight("700px");
         crear.setWidth("1500px");
+
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/CuentaObjetivoAgrega.png"));
+        Image image = new Image("", resource);
+        image.setWidth("1500px");
+        image.setHeight("700px");
 
         Label datosObj = new Label("PERSONALICE SU CUENTA OBJETIVO");
         datosObj.addStyleName(ValoTheme.LABEL_H2);
@@ -1149,12 +1189,13 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         volver.addClickListener(e -> atras(crear, cuentasObjOpciones));
 
-        crear.addComponent(datosObj, "top: 50px; left: 100px");
-        crear.addComponent(objetivo, "top: 200px; left: 600px");
-        crear.addComponent(fechaIn, "top: 350px; left: 450px");
-        crear.addComponent(fechaFin, "top: 350px; left: 800px");
-        crear.addComponent(cuota, "top: 500px; left: 600px");
-        crear.addComponent(crearB, "top: 600px; left: 600px");
+        crear.addComponent(image);
+        crear.addComponent(datosObj, "top: 50px; left: 80px");
+        crear.addComponent(objetivo, "top: 200px; left: 550px");
+        crear.addComponent(fechaIn, "top: 350px; left: 400px");
+        crear.addComponent(fechaFin, "top: 350px; left: 750px");
+        crear.addComponent(cuota, "top: 500px; left: 550px");
+        crear.addComponent(crearB, "top: 600px; left: 550px");
         crear.addComponent(volver, "top: 610px; right: 50px");
 
         cuentasObjetivoCon.addComponent(crear);
@@ -1166,6 +1207,11 @@ public class GUIBanco extends VerticalLayout implements View {
         AbsoluteLayout modificar = new AbsoluteLayout();
         modificar.setWidth("1500px");
         modificar.setHeight("700px");
+
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/CuentaObjetivoModificar.png"));
+        Image image = new Image("", resource);
+        image.setWidth("1500px");
+        image.setHeight("700px");
 
         Label datosObj = new Label("EDITAR DETALLES");
         datosObj.addStyleName(ValoTheme.LABEL_H2);
@@ -1249,6 +1295,7 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         volver.addClickListener(e -> atras(modificar, cuentasObjOpciones));
 
+        modificar.addComponent(image);
         modificar.addComponent(numCuentasObjetivo, "top: 200px; left: 400px");
         modificar.addComponent(seleccionar, "top: 200px; left: 750px");
         modificar.addComponent(datosObj, "top: 50px; left: 100px");
@@ -1261,12 +1308,16 @@ public class GUIBanco extends VerticalLayout implements View {
         cuentasObjetivoCon.addComponent(modificar);
     }
 
-    public void desactivarCuentaObjetivo(AbsoluteLayout cuentasObjetivoCon, AbsoluteLayout cuentasObjOpciones){
+    public void desactivarCuentaObjetivo(AbsoluteLayout cuentasObjetivoCon, AbsoluteLayout cuentasObjOpciones) {
         cuentasObjOpciones.setVisible(false);
 
         AbsoluteLayout desactivar = new AbsoluteLayout();
         desactivar.setWidth("1500px");
         desactivar.setHeight("700px");
+
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/CuentaObjetivoDesactivar.png"));
+        Image image = new Image("", resource);
+        image.setSizeFull();
 
         Label desact = new Label("ESCOJA LA CUENTA");
         desact.addStyleName(ValoTheme.LABEL_H2);
@@ -1274,6 +1325,7 @@ public class GUIBanco extends VerticalLayout implements View {
         ComboBox<String> cuenDes = new ComboBox<>("Cuentas");
         cuenDes.setWidth("300px");
         cuenDes.setIcon(VaadinIcons.SELECT);
+        cuenDes.setPlaceholder("Cuentas");
         cuenDes.setItems(controller.getNumerosCuentaObjetivo());
 
         Button desactivarB = new Button("DESACTIVAR");
@@ -1297,9 +1349,10 @@ public class GUIBanco extends VerticalLayout implements View {
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         volver.addClickListener(e -> atras(desactivar, cuentasObjOpciones));
 
+        desactivar.addComponent(image);
         desactivar.addComponent(desact, "top: 50px; left: 50px");
-        desactivar.addComponent(cuenDes, "top: 200px; left: 100px");
-        desactivar.addComponent(desactivarB, "top: 500px; left: 100px");
+        desactivar.addComponent(cuenDes, "top: 300px; left: 100px");
+        desactivar.addComponent(desactivarB, "top: 400px; left: 100px");
         desactivar.addComponent(volver, "top: 610px; right: 50px");
 
         cuentasObjetivoCon.addComponent(desactivar);
@@ -1330,6 +1383,7 @@ public class GUIBanco extends VerticalLayout implements View {
             cantEstados = estadoCuentas.size();
             if (estadoCuentas.size() <=8){
                 estados.setItems(estadoCuentas);
+                cantEstados = cantEstados- estadoCuentas.size();
                 ArrayList<Integer> numeros = new ArrayList<>();
                 for(int i = 0; i<estadoCuentas.size(); i++){
                     numeros.add(i+1);
@@ -1359,6 +1413,8 @@ public class GUIBanco extends VerticalLayout implements View {
             cuentasL.add(0, "No seleccionado");
             cuentas.setItems(cuentasL);
             cuentas.setSelectedItem("No seleccionado");
+            contenedorTabsBanco.setVisible(true);
+            fondo.setVisible(true);
 
         }
         else{

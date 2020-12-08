@@ -161,8 +161,8 @@ public class ControllerUI {
         return movimientos;
     }
 
-    public ArrayList<Movimiento> getMovimientos(int numCuenta, String fechaIn, String fechaFin, String  descripcion){
-        ArrayList<Movimiento> movimientos = movimiento.obtenerEstadosCuenta(ControllerConexion.getInstance().connection, numCuenta, fechaIn, fechaFin, descripcion);
+    public ArrayList<Movimiento> getMovimientos(String  descripcion){
+        ArrayList<Movimiento> movimientos = movimiento.filtro(descripcion);
         return movimientos;
     }
 
