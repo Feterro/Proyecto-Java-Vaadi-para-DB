@@ -17,7 +17,7 @@ public class ControllerEstadosCuenta {
             callableStatement.registerOutParameter(2, Types.VARCHAR);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()){
-                EstadoCuenta estado = new EstadoCuenta(resultSet.getInt("ID"), resultSet.getDate("fechaIni"),resultSet.getDate("fechaFin"));
+                EstadoCuenta estado = new EstadoCuenta(resultSet.getInt("ID"), resultSet.getDate("fechaIni"), resultSet.getDate("fechaFin"), resultSet.getFloat("saldoIni"), resultSet.getFloat("saldoFin"));
                 estadosCuenta.add(estado);
             }
         }

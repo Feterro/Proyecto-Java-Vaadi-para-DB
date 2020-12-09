@@ -565,4 +565,3 @@ END
 --DBCC checkident('dbo.cuentaAhorro',reseed,0)
 --DELETE FROM dbo.persona
 --DBCC checkident('dbo.persona',reseed,0)
-

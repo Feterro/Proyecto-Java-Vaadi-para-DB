@@ -1,4 +1,5 @@
 CONTROLLER\ControllerEstadosCuenta.class
+CONTROLLER\ControllerCuentaObjetivo.class
 MODEL\EstadoCuenta.class
 VIEW\MyUI$MyUIServlet.class
 CONTROLLER\ControllerConexion.class
@@ -9,6 +10,7 @@ VIEW\MyUI.class
 CONTROLLER\ControllerBeneficiario.class
 VIEW\GUIBanco.class
 MODEL\CuentaObjetivo.class
+VIEW\pruebas.class
 CONTROLLER\ControllerMovimiento.class
 MODEL\Persona.class
 MODEL\BeneficiariosTabla.class

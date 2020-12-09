@@ -117,7 +117,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
         contenedorLogIn.addComponent(panelInicioSesion, "top: 300px; left: 100px");
         contenedorLogIn.addComponent(inicio, "top: 50px; left: 150px");
 
-        addComponent(contenedorLogIn, "top: 50; left: 100");
+        addComponent(contenedorLogIn, "top: 150; left: 200");
 
 
 
@@ -138,7 +138,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
         TabSheet menu = Menu();
         contenedorTabsBanco.addComponent(menu);
         addComponent(fondo);
-        addComponent(contenedorTabsBanco, "top: 20; left: 100");
+        addComponent(contenedorTabsBanco, "top: 50; left: 200");
 
 
 
@@ -822,15 +822,20 @@ public class GUIBanco extends AbsoluteLayout implements View {
         image.setWidth("1500px");
         image.setHeight("700px");
 
+
         Label datos = new Label("ESTADOS MÁS RECIENTES");
         datos.addStyleName(ValoTheme.LABEL_H2);
 
         estados = new Grid<>(EstadoCuenta.class);
         estados.setWidth("700px");
         estados.setHeight("343px");
+        estados.setColumnOrder("numero", "fechaInicio", "fechaFinal", "saldoInicial", "saldoFinal");
         estados.getColumn("numero").setCaption("#");
         estados.getColumn("fechaInicio").setCaption("FECHA INICIO");
         estados.getColumn("fechaFinal").setCaption("FECHA FINAL");
+        estados.getColumn("saldoInicial").setCaption("SALDO INCIAL");
+        estados.getColumn("saldoFinal").setCaption("SALDO FINAL");
+
 
 
 
@@ -941,7 +946,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
         movimientos.setHeight("700px");
 
         Grid<Movimiento> movimiento = new Grid<>(Movimiento.class);
-        movimiento.setWidth("1000px");
+        movimiento.setWidth("800px");
         movimiento.setHeight("400px");
         movimiento.setColumnOrder("fechaMov", "tipo", "descripcion", "monto");
         movimiento.getColumn("fechaMov").setCaption("FECHA MOVIMIENTO");
@@ -967,6 +972,25 @@ public class GUIBanco extends AbsoluteLayout implements View {
                 movimiento.setItems(movimientosDetalles);
         });
 
+        Label resumen = new Label("RESUMEN DATOS");
+        resumen.addStyleName(ValoTheme.LABEL_BOLD);
+        resumen.addStyleName(ValoTheme.LABEL_H2);
+
+        Label saldoInicial = new Label("Saldo inicial: " + estadoActual.getSaldoInicial());
+        saldoInicial.addStyleName(ValoTheme.LABEL_H4);
+        saldoInicial.addStyleName(ValoTheme.LABEL_BOLD);
+
+        Label saldoFinal = new Label("Saldo Final: " + estadoActual.getFechaFinal());
+        saldoFinal.addStyleName(ValoTheme.LABEL_H4);
+        saldoFinal.addStyleName(ValoTheme.LABEL_BOLD);
+
+        Label cantOpCajHumano = new Label("Cantidad de operaciones por cajero humano: " + getCantCajeroH(movimientosDetalles));
+        cantOpCajHumano.addStyleName(ValoTheme.LABEL_H4);
+        cantOpCajHumano.addStyleName(ValoTheme.LABEL_BOLD);
+
+        Label cantOpCajAut = new Label("Cantidad de operaciones por cajero automático: " + getCantCajeroAu(movimientosDetalles));
+        cantOpCajAut.addStyleName(ValoTheme.LABEL_H4);
+        cantOpCajAut.addStyleName(ValoTheme.LABEL_BOLD);
 
         Button volver = new Button("ATRÁS");
         volver.setIcon(VaadinIcons.BACKSPACE_A);
@@ -975,15 +999,20 @@ public class GUIBanco extends AbsoluteLayout implements View {
         volver.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         volver.addClickListener(e -> atras(movimientos, estadoCuenta));
 
+
         movimientos.addComponent(image);
-        movimientos.addComponent(movimiento, "top: 200px; left: 250px");
-        movimientos.addComponent(filter, "top: 150px; left: 270px");
-        movimientos.addComponent(buscar, "top: 180px; left: 240");
+        movimientos.addComponent(saldoInicial, "top: 250px; left: 900px");
+        movimientos.addComponent(saldoFinal, "top: 300px; left: 900px");
+        movimientos.addComponent(cantOpCajHumano, "top: 350px; left: 900px");
+        movimientos.addComponent(cantOpCajAut, "top: 400px; left: 900px");
+        movimientos.addComponent(movimiento, "top: 200px; left: 80px");
+        movimientos.addComponent(filter, "top: 150px; left: 100px");
+        movimientos.addComponent(buscar, "top: 180px; left: 80");
         movimientos.addComponent(datos, "top: 25px; left: 650px");
         movimientos.addComponent(fechas, "top: 75px; left: 625px");
         movimientos.addComponent(volver, "top: 610px; right: 50px");
+        movimientos.addComponent(resumen, "top: 200px; left: 900px");
         contenedorEstados.addComponent(movimientos);
-
     }
 
     public void cuentasObjetivo() {
@@ -1452,6 +1481,29 @@ public class GUIBanco extends AbsoluteLayout implements View {
         else{
             Notification.show("El porcentaje asignado supera más del 100%");
         }
+    }
+
+    private String getCantCajeroAu(ArrayList<Movimiento> movimientosDetalles) {
+        int cant = 0;
+        for (Movimiento mov: movimientosDetalles){
+            if(mov.getTipo().equals("Deposito en ATM") || mov.getTipo().equals("Retiro ATM")){
+                cant ++;
+            }
+        }
+
+        return String.valueOf(cant);
+
+    }
+
+    private String getCantCajeroH(ArrayList<Movimiento> movimientosDetalles) {
+        int cant = 0;
+        for (Movimiento mov: movimientosDetalles){
+            if(mov.getTipo().equals("Deposito Ventana") || mov.getTipo().equals("Retiro Ventana")){
+                cant++;
+            }
+        }
+
+        return String.valueOf(cant);
     }
 
     //Otros

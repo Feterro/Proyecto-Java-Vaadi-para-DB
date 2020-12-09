@@ -143,7 +143,7 @@ public class ControllerUI {
         for(Date fecha: fechaInicio){
             for (EstadoCuenta estado: estados){
                 if(estado.getFechaInicio().equals(fecha)){
-                    EstadoCuenta estad = new EstadoCuenta(estado.getNumero(), fecha, estado.getFechaFinal());
+                    EstadoCuenta estad = new EstadoCuenta(estado.getNumero(), fecha, estado.getFechaFinal(), estado.getSaldoInicial(), estado.getSaldoFinal());
                     estadosOrdenados.add(estad);
                 }
             }

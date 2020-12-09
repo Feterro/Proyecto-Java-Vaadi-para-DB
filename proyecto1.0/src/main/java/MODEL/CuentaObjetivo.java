@@ -87,6 +87,9 @@ public class CuentaObjetivo {
     }
 
     public String generarNumero(ArrayList<String> numeros){
+        if(numeros.size() == 0){
+            return "00001";
+        }
         Collections.sort(numeros);
         int ultimoNumero = Integer.parseInt(numeros.get(numeros.size()-1));
         int nuevoNumCuenta = ultimoNumero + 1;

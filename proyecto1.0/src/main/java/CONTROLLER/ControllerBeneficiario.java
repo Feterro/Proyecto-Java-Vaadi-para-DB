@@ -132,7 +132,7 @@ public class ControllerBeneficiario {
         try {
             String ip = InetAddress.getLocalHost().toString();
             String[] ipDividido =  ip.split("/");
-            CallableStatement callableStatement = connection.prepareCall("EXEC SP_BE_InsertaBeneficiarioComplejo ?,?,?,?,?,?,?,?,?,?,?,?");
+            CallableStatement callableStatement = connection.prepareCall("EXEC SP_PE_InsertaBeneficiarioComplejo ?,?,?,?,?,?,?,?,?,?,?,?");
             callableStatement.setString(1, nombre);
             callableStatement.setInt(2, personaDoc);
             callableStatement.setDate(3, Date.valueOf(fechaNac));

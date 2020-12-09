@@ -6,14 +6,16 @@ public class EstadoCuenta {
     private int numero;
     private Date fechaInicio;
     private Date fechaFinal;
-//    private float Saldo_Inicial;
-//    private float Saldo_Final;
+    private float saldoInicial;
+    private float saldoFinal;
 
 
-    public EstadoCuenta(int Numero, Date fechaInicio, Date fechaFinal) {
+    public EstadoCuenta(int Numero, Date fechaInicio, Date fechaFinal, float saldoInicial, float saldoFinal) {
         this.numero = Numero;
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
+        this.saldoInicial = saldoInicial;
+        this.saldoFinal = saldoFinal;
     }
 
     public int getNumero() {
@@ -28,13 +30,13 @@ public class EstadoCuenta {
         return fechaFinal;
     }
 
-//    public float getSaldo_Inicial() {
-//        return Saldo_Inicial;
-//    }
-//
-//    public float getSaldo_Final() {
-//        return Saldo_Final;
-//    }
+    public float getSaldoInicial() {
+        return saldoInicial;
+    }
+
+    public float getSaldoFinal() {
+        return saldoFinal;
+    }
 
     public void setNumero(int numero) {
         this.numero = numero;
@@ -48,12 +50,12 @@ public class EstadoCuenta {
         this.fechaFinal = fechaFinal;
     }
 
-//    public void setSaldo_Inicial(float saldo_Inicial) {
-//        this.Saldo_Inicial = saldo_Inicial;
-//    }
-//
-//    public void setSaldo_Final(float saldo_Final) {
-//        this.Saldo_Final = saldo_Final;
-//    }
+    public void setSaldoInicial(float saldoInicial) {
+        this.saldoInicial = saldoInicial;
+    }
+
+    public void setSaldoFinal(float saldoFinal) {
+        this.saldoFinal = saldoFinal;
+    }
 }
 
