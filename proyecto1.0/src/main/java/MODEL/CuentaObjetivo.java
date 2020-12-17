@@ -87,6 +87,7 @@ public class CuentaObjetivo {
     }
 
     public String generarNumero(ArrayList<String> numeros){
+        System.out.println("numero");
         if(numeros.size() == 0){
             return "00001";
         }

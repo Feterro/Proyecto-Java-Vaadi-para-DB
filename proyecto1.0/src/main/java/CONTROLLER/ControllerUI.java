@@ -1,18 +1,17 @@
 package CONTROLLER;
 
 import MODEL.*;
+import com.vaadin.ui.TabSheet;
 
-import java.awt.image.AreaAveragingScaleFilter;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
 public class ControllerUI {
 
+    private TabSheet menu;
 
-    private ArrayList<BeneficiariosTabla> beneficiarios; //igual al sp
+    private ArrayList<Beneficiario> beneficiarios; //igual al sp
     private ArrayList<String> numerosCuentaObjetivo;
 
     private ControllerBeneficiario beneficiarioCon = new ControllerBeneficiario();
@@ -21,13 +20,42 @@ public class ControllerUI {
     private ControllerCuentaObjetivo cuentaObjetivo = new ControllerCuentaObjetivo();
     private ControllerMovimiento movimiento = new ControllerMovimiento();
 
+    private String nombreUsuario;
+    private int numCuenta;
+
+    private static ControllerUI controllerUI;
+
     public ControllerUI(){}
+
+    public static ControllerUI getInstance(){
+        if(controllerUI == null){
+            controllerUI = new ControllerUI();
+        }
+        return controllerUI;
+    }
+
+    public void setNumCuenta(int numCuenta) {
+        this.numCuenta = numCuenta;
+    }
+
+    public void setMenu(TabSheet menu) {
+        this.menu = menu;
+    }
+
+    public TabSheet getMenu() {
+        return menu;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
+
 
     public ArrayList<String> getNumerosCuentaObjetivo() {
         return numerosCuentaObjetivo;
     }
 
-    public ArrayList<BeneficiariosTabla> getBeneficiarios() {
+    public ArrayList<Beneficiario> getBeneficiarios() {
         return beneficiarios;
     }
 
@@ -36,38 +64,40 @@ public class ControllerUI {
         return contrasenna.equals(contra);
     }
 
-    public ArrayList<String> devolverCuentas(String usuario){
-        return usuarioCon.getVisibles(ControllerConexion.getInstance().connection, usuario);
+    public ArrayList<String> devolverCuentas(){
+
+        return usuarioCon.getVisibles(ControllerConexion.getInstance().connection, nombreUsuario);
     }
 
-    public void setBeneficiarios(int cuenta){
-        ArrayList<String> cedulas = beneficiarioCon.getCedulasBeneficiarios(ControllerConexion.getInstance().connection,cuenta);
+    public void setBeneficiarios(){
+        ArrayList<String> cedulas = beneficiarioCon.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, numCuenta);
         beneficiarios = new ArrayList<>();
 
         for (String ced: cedulas){
             Beneficiario beneficiario = beneficiarioCon.getBeneficiarios(ControllerConexion.getInstance().connection, Integer.parseInt(ced));
-            BeneficiariosTabla ben = new BeneficiariosTabla(beneficiario.getNombre(), String.valueOf(beneficiario.valorDocIdent), beneficiario.getPorcentaje());
-            beneficiarios.add(ben);
+            beneficiarios.add(beneficiario);
         }
     }
 
-    public ArrayList<BeneficiariosTabla> llenarTabla(int cuenta) {
-        setBeneficiarios(cuenta);
+    public ArrayList<Beneficiario> llenarTabla() {
         if (beneficiarios.size() < 3){
             int mas = 3 - beneficiarios.size();
             for (int i = 0; i < mas; i++){
-                BeneficiariosTabla beneficiarioNoHay = new BeneficiariosTabla("Sin beneficiario", "0",0);
+                Beneficiario beneficiarioNoHay = new Beneficiario();
+                beneficiarioNoHay.setValorDocIdent(0);
+                beneficiarioNoHay.setNombre("Sin beneficiario");
+                beneficiarioNoHay.setPorcentaje(0);
                 beneficiarios.add(beneficiarioNoHay);
             }
         }
         return beneficiarios;
     }
 
-    public int getCantActBene(ArrayList<BeneficiariosTabla> beneficiarios){
+    public int getCantActBene(){
         int cant = 0;
 
-        for (BeneficiariosTabla ben: beneficiarios){
-            if (!ben.getdocumentoIdentidad().equals("0")){
+        for (Beneficiario ben: beneficiarios){
+            if (ben.getValorDocIdent() != 0){
                 cant++;
             }
         }
@@ -75,11 +105,11 @@ public class ControllerUI {
         return cant;
     }
 
-    public int getPorcentajeUsado(ArrayList<BeneficiariosTabla> beneficiarios){
+    public int getPorcentajeUsado(){
         int porcentaje = 0;
 
-        for (BeneficiariosTabla ben: beneficiarios){
-            porcentaje = (int) (porcentaje + ben.getPorcentaje());
+        for (Beneficiario ben: beneficiarios){
+            porcentaje = (porcentaje + ben.getPorcentaje());
         }
 
         return porcentaje;
@@ -89,14 +119,14 @@ public class ControllerUI {
         return beneficiarioCon.getParentescos(ControllerConexion.getInstance().connection);
     }
 
-    public boolean AgregarBeneficiario(int cedula, String parentezco, float porcentaje, int numeroCuen){
-        if (beneficiarioCon.insertaBeneficiarios(ControllerConexion.getInstance().connection, cedula, numeroCuen, parentezco, (int) porcentaje) != 0){
+    public boolean AgregarBeneficiario(int cedula, String parentezco, float porcentaje){
+        if (beneficiarioCon.insertaBeneficiarios(ControllerConexion.getInstance().connection, cedula, numCuenta, parentezco, (int) porcentaje) != 0){
             return false;
         }
         return true;
     }
 
-    public boolean agregarBeneficiarioComplejo(int numCuenta, int cedula, String parentezco, String nombre, String tipDocIdent, String fechaNac, int porcentaje, String email, int tel1, int tel2){
+    public boolean agregarBeneficiarioComplejo(int cedula, String parentezco, String nombre, String tipDocIdent, String fechaNac, int porcentaje, String email, int tel1, int tel2){
         if (beneficiarioCon.insertaBeneficiariosComplejo(ControllerConexion.getInstance().connection, cedula, numCuenta, parentezco, porcentaje, nombre, fechaNac, tel1, tel2, tipDocIdent, email) == 0){
             return true;
         }
@@ -107,8 +137,8 @@ public class ControllerUI {
         return beneficiarioCon.getTipoDoc(ControllerConexion.getInstance().connection);
     }
 
-    public ArrayList<String> getCedulasBen(int cuenta){
-        return beneficiarioCon.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, cuenta);
+    public ArrayList<String> getCedulasBen(){
+        return beneficiarioCon.getCedulasBeneficiarios(ControllerConexion.getInstance().connection, numCuenta);
     }
 
     public Beneficiario getBeneficiario(int ced){
@@ -132,8 +162,8 @@ public class ControllerUI {
 
 
 
-    public ArrayList<EstadoCuenta> getEstadosCuenta(int cuenta){
-        ArrayList<EstadoCuenta> estados = estadosCuenta.obtenerEstadosCuenta(ControllerConexion.getInstance().connection, cuenta);
+    public ArrayList<EstadoCuenta> getEstadosCuenta(){
+        ArrayList<EstadoCuenta> estados = estadosCuenta.obtenerEstadosCuenta(ControllerConexion.getInstance().connection, numCuenta);
         ArrayList<Date> fechaInicio = new ArrayList<>();
         ArrayList<EstadoCuenta> estadosOrdenados =  new ArrayList<>();
         for (EstadoCuenta estado: estados){
@@ -156,7 +186,7 @@ public class ControllerUI {
         return estadosOrdenados;
     }
 
-    public ArrayList<Movimiento> getMovimientos(int numCuenta, String fechaIn, String fechaFin){
+    public ArrayList<Movimiento> getMovimientos(String fechaIn, String fechaFin){
         ArrayList<Movimiento> movimientos = movimiento.obtenerEstadosCuenta(ControllerConexion.getInstance().connection, numCuenta, fechaIn, fechaFin);
         return movimientos;
     }
@@ -167,7 +197,7 @@ public class ControllerUI {
     }
 
 
-    public void setNumerosCuenta(int numCuenta){
+    public void setNumerosCuenta(){
         this.numerosCuentaObjetivo = cuentaObjetivo.obtenerNumerosCuentaObjetivo(ControllerConexion.getInstance().connection, numCuenta);
     }
 
@@ -184,10 +214,11 @@ public class ControllerUI {
         return cuentasActuales;
     }
 
-    public boolean crearCuentaObj(int cuentaAso, String objtivo, String fechaIni, String fechFin, float cuota){
+    public boolean crearCuentaObj(String objtivo, String fechaIni, String fechFin, float cuota){
+        System.out.println("aqui");
         CuentaObjetivo cuentaNueva = new CuentaObjetivo();
         String numeroCuentaObj = cuentaNueva.generarNumero(numerosCuentaObjetivo);
-        int codigo = cuentaObjetivo.crearCuentaObjetivo(ControllerConexion.getInstance().connection, cuentaAso, objtivo, fechaIni, fechFin, cuota, numeroCuentaObj);
+        int codigo = cuentaObjetivo.crearCuentaObjetivo(ControllerConexion.getInstance().connection, numCuenta, objtivo, fechaIni, fechFin, cuota, numeroCuentaObj);
         if (codigo == 0){
             return true;
         }

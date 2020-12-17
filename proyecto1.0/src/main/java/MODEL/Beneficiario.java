@@ -5,12 +5,8 @@ import java.util.ArrayList;
 public class Beneficiario extends Persona {
 
     private int porcentaje;
-
     public int cuenta;
     public String parentesco;
-    //private ArrayList<String> listaParentescos;
-    //private ArrayList<String> listaTipoDoc;
-    //private ArrayList<Integer> listaCuentasVisibles;
     private boolean activo;
 
 

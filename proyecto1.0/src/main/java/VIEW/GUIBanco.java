@@ -22,7 +22,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
     private ControllerUI controller = new ControllerUI();
 
     //Listas
-    private ArrayList<BeneficiariosTabla> beneficiariosTablaL;
+//    private ArrayList<BeneficiariosTabla> beneficiariosTablaL;
     private ArrayList<EstadoCuenta> estadoCuentas;
 
     //Contenedores diferentes páginas
@@ -139,10 +139,6 @@ public class GUIBanco extends AbsoluteLayout implements View {
         contenedorTabsBanco.addComponent(menu);
         addComponent(fondo);
         addComponent(contenedorTabsBanco, "top: 50; left: 200");
-
-
-
-
     }
 
     public TabSheet Menu() {
@@ -182,7 +178,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
         seleccionar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         seleccionar.setHeight("50px");
         seleccionar.setWidth("300px");
-        seleccionar.addClickListener(this::SeleccionarCuenta);
+//        seleccionar.addClickListener(this::SeleccionarCuenta);
         cuentasContenedor.addComponent(image, "top: 0px; left: 0px");
         cuentasContenedor.addComponent(cuentas, "top: 200px; left: 100px");
         cuentasContenedor.addComponent(lCuentas, "top: 50px; left: 100px");
@@ -280,29 +276,29 @@ public class GUIBanco extends AbsoluteLayout implements View {
         bene.addStyleName(ValoTheme.LABEL_BOLD);
 
 
-        Grid<BeneficiariosTabla> beneficiarios = new Grid<>(BeneficiariosTabla.class);
-        beneficiarios.setHeight("152px");
-        beneficiarios.setWidth("700px");
-        beneficiarios.setColumns("nombre", "documentoIdentidad", "porcentaje");
-        beneficiariosTablaL = controller.llenarTabla(Integer.parseInt(numCuenta));
-        beneficiarios.setItems(beneficiariosTablaL);
+//        Grid<BeneficiariosTabla> beneficiarios = new Grid<>(BeneficiariosTabla.class);
+//        beneficiarios.setHeight("152px");
+//        beneficiarios.setWidth("700px");
+//        beneficiarios.setColumns("nombre", "documentoIdentidad", "porcentaje");
+////        beneficiariosTablaL = controller.llenarTabla(Integer.parseInt(numCuenta));
+//        beneficiarios.setItems(beneficiariosTablaL);
 
-        int porcentaje = controller.getPorcentajeUsado(beneficiariosTablaL);
-        int sobrante = 100 - porcentaje;
+//        int porcentaje = controller.getPorcentajeUsado(beneficiariosTablaL);
+//        int sobrante = 100 - porcentaje;
 
 
         Label resumen = new Label("RESUMEN DATOS");
         resumen.addStyleName(ValoTheme.LABEL_H2);
         resumen.addStyleName(ValoTheme.LABEL_BOLD);
-        Label cantBeneficiarios = new Label("Total de beneficiarios: " + controller.getCantActBene(beneficiariosTablaL));
-        cantBeneficiarios.addStyleName(ValoTheme.LABEL_H3);
-        cantBeneficiarios.addStyleName(ValoTheme.LABEL_BOLD);
-        Label porcentajeActual = new Label("Total de porcentaje usado: " + porcentaje);
-        porcentajeActual.addStyleName(ValoTheme.LABEL_H3);
-        porcentajeActual.addStyleName(ValoTheme.LABEL_BOLD);
-        Label sobranteL = new Label("Total dispoible de porcentaje: " + sobrante);
-        sobranteL.addStyleName(ValoTheme.LABEL_H3);
-        sobranteL.addStyleName(ValoTheme.LABEL_BOLD);
+//        Label cantBeneficiarios = new Label("Total de beneficiarios: " + controller.getCantActBene(beneficiariosTablaL));
+//        cantBeneficiarios.addStyleName(ValoTheme.LABEL_H3);
+//        cantBeneficiarios.addStyleName(ValoTheme.LABEL_BOLD);
+//        Label porcentajeActual = new Label("Total de porcentaje usado: " + porcentaje);
+//        porcentajeActual.addStyleName(ValoTheme.LABEL_H3);
+//        porcentajeActual.addStyleName(ValoTheme.LABEL_BOLD);
+//        Label sobranteL = new Label("Total dispoible de porcentaje: " + sobrante);
+//        sobranteL.addStyleName(ValoTheme.LABEL_H3);
+//        sobranteL.addStyleName(ValoTheme.LABEL_BOLD);
 
 
         Button volver = new Button("ATRÁS");
@@ -314,12 +310,12 @@ public class GUIBanco extends AbsoluteLayout implements View {
 
         ver.addComponent(image, "top: 0px; left: 0px");
         ver.addComponent(bene, "top: 50px; left: 50px");
-        ver.addComponent(beneficiarios, "top: 200px; left: 350px");
+//        ver.addComponent(beneficiarios, "top: 200px; left: 350px");
         ver.addComponent(volver, "top: 610px; right: 50px");
         ver.addComponent(resumen, "top: 400px; left: 50px");
-        ver.addComponent(cantBeneficiarios, "top: 450px; left: 350px");
-        ver.addComponent(porcentajeActual, "top: 475px; left: 350px");
-        ver.addComponent(sobranteL, "top: 500px; left: 350px");
+//        ver.addComponent(cantBeneficiarios, "top: 450px; left: 350px");
+//        ver.addComponent(porcentajeActual, "top: 475px; left: 350px");
+//        ver.addComponent(sobranteL, "top: 500px; left: 350px");
         contenedor.addComponent(ver);
     }
 
@@ -361,19 +357,19 @@ public class GUIBanco extends AbsoluteLayout implements View {
         agregar.setIcon(VaadinIcons.ADD_DOCK);
         agregar.setStyleName("primary");
         agregar.setWidth("300px");
-        agregar.addClickListener(e -> {
-            {
-                agregarBeneficiario(Integer.parseInt(cedulaA.getValue()), parentezcoA.getSelectedItem().get(), Integer.parseInt(porc.getValue()), controller.getBeneficiarios(), contenedorAgregar, tabBene);
-                controller.setBeneficiarios(Integer.parseInt(numCuenta));
-                if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100)
-                    porcentajeL.setVisible(false);
-            }
-        });
+//        agregar.addClickListener(e -> {
+//            {
+////                agregarBeneficiario(Integer.parseInt(cedulaA.getValue()), parentezcoA.getSelectedItem().get(), Integer.parseInt(porc.getValue()), controller.getBeneficiarios(), contenedorAgregar, tabBene);
+//                controller.setBeneficiarios(Integer.parseInt(numCuenta));
+////                if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100)
+////                    porcentajeL.setVisible(false);
+////            }
+//        });
 
         Button atras = new Button("ATRÁS");
         atras.setIcon(VaadinIcons.BACKSPACE_A);
         atras.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        atras.addClickListener(j -> atras(contenedorAgregar, contenedorOpciones));
+//        atras.addClickListener(j -> atras(contenedorAgregar, contenedorOpciones));
 
         contenedorAgregar.addComponent(image);
         contenedorAgregar.addComponent(agregarL, "top: 50px; left: 100px");
@@ -468,27 +464,27 @@ public class GUIBanco extends AbsoluteLayout implements View {
         agregarNuevo.setStyleName(ValoTheme.BUTTON_PRIMARY);
         agregarNuevo.setWidth("300px");
         agregarNuevo.setHeight("50px");
-        agregarNuevo.addClickListener(e -> {
-            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) + Integer.parseInt(porcentaje.getValue()) <= 100) {
-                if (controller.getCantActBene(controller.getBeneficiarios()) < 3) {
-                    boolean devolvio = controller.agregarBeneficiarioComplejo(Integer.parseInt(numCuenta), Integer.parseInt(cedula.getValue()), parentezco.getSelectedItem().get(), nombre.getValue(), tipoDoc.getSelectedItem().get(), fechaNac.getValue().toString(), Integer.parseInt(porcentaje.getValue()), email.getValue(), Integer.parseInt(tel1.getValue()), Integer.parseInt(tel2.getValue()));
-                    if (devolvio) {
-                        Notification.show("Beneficiario agregado correctamente");
-                        contenedorAgregarComplejo.setVisible(false);
-                        contenedorOpciones.setVisible(true);
-                    } else {
-                        Notification.show("Hubo un problema agregando el beneficiario");
-                    }
-                } else {
-                    Notification.show("Ya existe la cantidad máxima de beneficiarios");
-                }
-            } else {
-                Notification.show("El porcentaje supera el 100%");
-            }
-            controller.setBeneficiarios(Integer.parseInt(numCuenta));
-            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100)
-                porcentajeL.setVisible(false);
-        });
+//        agregarNuevo.addClickListener(e -> {
+//            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) + Integer.parseInt(porcentaje.getValue()) <= 100) {
+//                if (controller.getCantActBene(controller.getBeneficiarios()) < 3) {
+//                    boolean devolvio = controller.agregarBeneficiarioComplejo(Integer.parseInt(numCuenta), Integer.parseInt(cedula.getValue()), parentezco.getSelectedItem().get(), nombre.getValue(), tipoDoc.getSelectedItem().get(), fechaNac.getValue().toString(), Integer.parseInt(porcentaje.getValue()), email.getValue(), Integer.parseInt(tel1.getValue()), Integer.parseInt(tel2.getValue()));
+//                    if (devolvio) {
+//                        Notification.show("Beneficiario agregado correctamente");
+//                        contenedorAgregarComplejo.setVisible(false);
+//                        contenedorOpciones.setVisible(true);
+//                    } else {
+//                        Notification.show("Hubo un problema agregando el beneficiario");
+//                    }
+//                } else {
+//                    Notification.show("Ya existe la cantidad máxima de beneficiarios");
+//                }
+//            } else {
+//                Notification.show("El porcentaje supera el 100%");
+//            }
+//            controller.setBeneficiarios(Integer.parseInt(numCuenta));
+//            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100)
+//                porcentajeL.setVisible(false);
+//        });
 
         Button atras = new Button("ATRÁS");
         atras.setIcon(VaadinIcons.BACKSPACE_A);
@@ -590,7 +586,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
 
         ComboBox<String> beneficiarios = new ComboBox<>("Beneficiarios");
         beneficiarios.setIcon(VaadinIcons.GROUP);
-        beneficiarios.setItems(controller.getCedulasBen(Integer.parseInt(numCuenta)));
+//        beneficiarios.setItems(controller.getCedulasBen(Integer.parseInt(numCuenta)));
         beneficiarios.setWidth("300px");
         beneficiarios.setPlaceholder("No seleccionado");
 
@@ -712,24 +708,24 @@ public class GUIBanco extends AbsoluteLayout implements View {
         actualizar.setStyleName(ValoTheme.BUTTON_PRIMARY);
         actualizar.setWidth("300px");
         actualizar.setHeight("50px");
-        actualizar.addClickListener(e -> {
-            if (porcentajeCorrecto(Integer.parseInt(porcentaje.getValue()), cedulaG)) {
-                if (controller.actualizarBen(cedulaG, Integer.parseInt(cedula.getValue()), nombre.getValue(), parentezco.getSelectedItem().get(), fechaNac.getValue().toString(), tipoDoc.getSelectedItem().get(), Integer.parseInt(porcentaje.getValue()), email.getValue(), Integer.parseInt(tel1.getValue()), Integer.parseInt(tel2.getValue()))) {
-                    Notification.show("Se actualizó correctamente el beneficiario");
-                    actualizarBen.setVisible(false);
-                    contenedorOpciones.setVisible(true);
-                } else {
-                    Notification.show("Hubo un problema al agregar el beneficiario\nIntentelo de nuevo más tarde");
-                }
-            } else {
-                Notification.show("El porcentaje seleccionado sobrepasa el 100%");
-            }
-            controller.setBeneficiarios(Integer.parseInt(numCuenta));
-            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100) {
-                porcentajeL.setVisible(false);
-            } else if (controller.getPorcentajeUsado(controller.getBeneficiarios()) < 100)
-                porcentajeL.setVisible(true);
-        });
+//        actualizar.addClickListener(e -> {
+//            if (porcentajeCorrecto(Integer.parseInt(porcentaje.getValue()), cedulaG)) {
+//                if (controller.actualizarBen(cedulaG, Integer.parseInt(cedula.getValue()), nombre.getValue(), parentezco.getSelectedItem().get(), fechaNac.getValue().toString(), tipoDoc.getSelectedItem().get(), Integer.parseInt(porcentaje.getValue()), email.getValue(), Integer.parseInt(tel1.getValue()), Integer.parseInt(tel2.getValue()))) {
+//                    Notification.show("Se actualizó correctamente el beneficiario");
+//                    actualizarBen.setVisible(false);
+//                    contenedorOpciones.setVisible(true);
+//                } else {
+//                    Notification.show("Hubo un problema al agregar el beneficiario\nIntentelo de nuevo más tarde");
+//                }
+//            } else {
+//                Notification.show("El porcentaje seleccionado sobrepasa el 100%");
+//            }
+//            controller.setBeneficiarios(Integer.parseInt(numCuenta));
+//            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100) {
+//                porcentajeL.setVisible(false);
+//            } else if (controller.getPorcentajeUsado(controller.getBeneficiarios()) < 100)
+//                porcentajeL.setVisible(true);
+//        });
 
         actualizarBen.addComponent(image);
         actualizarBen.addComponent(datos, "top: 50px; left: 50px");
@@ -773,25 +769,25 @@ public class GUIBanco extends AbsoluteLayout implements View {
         beneficiariosE.setIcon(VaadinIcons.GROUP);
         beneficiariosE.setPlaceholder("Sin selección");
         beneficiariosE.setWidth("300px");
-        beneficiariosE.setItems(controller.getCedulasBen(Integer.parseInt(numCuenta)));
+//        beneficiariosE.setItems(controller.getCedulasBen(Integer.parseInt(numCuenta)));
 
         Button eliminar = new Button("ELIMINAR");
         eliminar.setIcon(VaadinIcons.CLOSE_CIRCLE);
         eliminar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         eliminar.setWidth("300px");
-        eliminar.addClickListener(e -> {
-            boolean devolver = controller.eliminarBene(Integer.parseInt(beneficiariosE.getSelectedItem().get()));
-            if (devolver) {
-                Notification.show("Se eliminó el beneficiario correctamente");
-                beneficiariosE.clear();
-                beneficiariosE.setItems(controller.getCedulasBen(Integer.parseInt(numCuenta)));
-            } else {
-                Notification.show("Hubo un error con la eliminación\nIntentelo más tarde");
-            }
-            controller.setBeneficiarios(Integer.parseInt(numCuenta));
-            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) < 100)
-                porcentajeL.setVisible(true);
-        });
+//        eliminar.addClickListener(e -> {
+//            boolean devolver = controller.eliminarBene(Integer.parseInt(beneficiariosE.getSelectedItem().get()));
+//            if (devolver) {
+//                Notification.show("Se eliminó el beneficiario correctamente");
+//                beneficiariosE.clear();
+//                beneficiariosE.setItems(controller.getCedulasBen(Integer.parseInt(numCuenta)));
+//            } else {
+//                Notification.show("Hubo un error con la eliminación\nIntentelo más tarde");
+//            }
+//            controller.setBeneficiarios(Integer.parseInt(numCuenta));
+//            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) < 100)
+//                porcentajeL.setVisible(true);
+//        });
 
         Button atras = new Button("ATRÁS");
         atras.setIcon(VaadinIcons.BACKSPACE_A);
@@ -953,8 +949,8 @@ public class GUIBanco extends AbsoluteLayout implements View {
         movimiento.getColumn("tipo").setCaption("TIPO");
         movimiento.getColumn("descripcion").setCaption("DESCRIPCIÓN");
         movimiento.getColumn("monto").setCaption("MONTO $");
-        ArrayList<Movimiento> movimientosDetalles = controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin);
-        movimiento.setItems(movimientosDetalles);
+//        ArrayList<Movimiento> movimientosDetalles = controller.getMovimientos(Integer.parseInt(numCuenta), fechaIn, fechaFin);
+//        movimiento.setItems(movimientosDetalles);
 
 
         Label buscar = new Label();
@@ -963,14 +959,14 @@ public class GUIBanco extends AbsoluteLayout implements View {
         TextField filter = new TextField();
         filter.setPlaceholder("FILTRO POR DESCRIPCIÓN");
         filter.setWidth("250px");
-        filter.setValueChangeMode(ValueChangeMode.LAZY);
-        filter.addValueChangeListener(e-> {
-            if(!filter.isEmpty()) {
-                movimiento.setItems(controller.getMovimientos(filter.getValue()));
-            }
-            if (filter.isEmpty())
-                movimiento.setItems(movimientosDetalles);
-        });
+//        filter.setValueChangeMode(ValueChangeMode.LAZY);
+//        filter.addValueChangeListener(e-> {
+//            if(!filter.isEmpty()) {
+//                movimiento.setItems(controller.getMovimientos(filter.getValue()));
+//            }
+//            if (filter.isEmpty())
+//                movimiento.setItems(movimientosDetalles);
+//        });
 
         Label resumen = new Label("RESUMEN DATOS");
         resumen.addStyleName(ValoTheme.LABEL_BOLD);
@@ -983,14 +979,14 @@ public class GUIBanco extends AbsoluteLayout implements View {
         Label saldoFinal = new Label("Saldo Final: " + estadoActual.getFechaFinal());
         saldoFinal.addStyleName(ValoTheme.LABEL_H4);
         saldoFinal.addStyleName(ValoTheme.LABEL_BOLD);
-
-        Label cantOpCajHumano = new Label("Cantidad de operaciones por cajero humano: " + getCantCajeroH(movimientosDetalles));
-        cantOpCajHumano.addStyleName(ValoTheme.LABEL_H4);
-        cantOpCajHumano.addStyleName(ValoTheme.LABEL_BOLD);
-
-        Label cantOpCajAut = new Label("Cantidad de operaciones por cajero automático: " + getCantCajeroAu(movimientosDetalles));
-        cantOpCajAut.addStyleName(ValoTheme.LABEL_H4);
-        cantOpCajAut.addStyleName(ValoTheme.LABEL_BOLD);
+//
+//        Label cantOpCajHumano = new Label("Cantidad de operaciones por cajero humano: " + getCantCajeroH(movimientosDetalles));
+//        cantOpCajHumano.addStyleName(ValoTheme.LABEL_H4);
+//        cantOpCajHumano.addStyleName(ValoTheme.LABEL_BOLD);
+//
+//        Label cantOpCajAut = new Label("Cantidad de operaciones por cajero automático: " + getCantCajeroAu(movimientosDetalles));
+//        cantOpCajAut.addStyleName(ValoTheme.LABEL_H4);
+//        cantOpCajAut.addStyleName(ValoTheme.LABEL_BOLD);
 
         Button volver = new Button("ATRÁS");
         volver.setIcon(VaadinIcons.BACKSPACE_A);
@@ -1003,8 +999,8 @@ public class GUIBanco extends AbsoluteLayout implements View {
         movimientos.addComponent(image);
         movimientos.addComponent(saldoInicial, "top: 250px; left: 900px");
         movimientos.addComponent(saldoFinal, "top: 300px; left: 900px");
-        movimientos.addComponent(cantOpCajHumano, "top: 350px; left: 900px");
-        movimientos.addComponent(cantOpCajAut, "top: 400px; left: 900px");
+//        movimientos.addComponent(cantOpCajHumano, "top: 350px; left: 900px");
+//        movimientos.addComponent(cantOpCajAut, "top: 400px; left: 900px");
         movimientos.addComponent(movimiento, "top: 200px; left: 80px");
         movimientos.addComponent(filter, "top: 150px; left: 100px");
         movimientos.addComponent(buscar, "top: 180px; left: 80");
@@ -1191,13 +1187,13 @@ public class GUIBanco extends AbsoluteLayout implements View {
 
                 if(fechaInicio.after(hoyD) || fechaInicio.equals(hoyD)){
                     if (fechaFinal.after(fechaInicio)){
-                       if(controller.crearCuentaObj(Integer.parseInt(numCuenta), objetivo.getValue(), fechaIn.getValue().toString(), fechaFin.getValue().toString(), Float.parseFloat(cuota.getValue()))){
-                           Notification.show("La cuenta fue creada con éxito!");
-                           controller.setNumerosCuenta(Integer.parseInt(numCuenta));
-                       }
-                       else{
-                           Notification.show("Hubo un problema creando la cuenta, intente de nuevo");
-                       }
+//                       if(controller.crearCuentaObj(Integer.parseInt(numCuenta), objetivo.getValue(), fechaIn.getValue().toString(), fechaFin.getValue().toString(), Float.parseFloat(cuota.getValue()))){
+//                           Notification.show("La cuenta fue creada con éxito!");
+//                           controller.setNumerosCuenta(Integer.parseInt(numCuenta));
+//                       }
+//                       else{
+//                           Notification.show("Hubo un problema creando la cuenta, intente de nuevo");
+//                       }
                     }
                     else{
                         Notification.show("La fecha de finalización está antes que la fecha de inicio");
@@ -1286,7 +1282,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
                 if(fechaFinD.after(fechaIn)){
                     if(controller.actualizarCuentaObj(numCuentasObjetivo.getSelectedItem().get(), objetivo.getValue(), fechaFin.getValue().toString(), Float.parseFloat(cuota.getValue()))){
                         Notification.show("La cuenta se actualizó exitosamente!");
-                        controller.setNumerosCuenta(Integer.parseInt(numCuenta));
+//                        controller.setNumerosCuenta(Integer.parseInt(numCuenta));
                     }
                     else{
                         Notification.show("Hubo un problema con la actualización\nIntente de nuevo");
@@ -1364,7 +1360,7 @@ public class GUIBanco extends AbsoluteLayout implements View {
         desactivarB.addClickListener(e-> {
             if(controller.desactivarCuentaObj(cuenDes.getSelectedItem().get())){
                 Notification.show("La cuenta fue desactivada exitosamente");
-                controller.setNumerosCuenta(Integer.parseInt(numCuenta));
+//                controller.setNumerosCuenta(Integer.parseInt(numCuenta));
             }
             else{
                 Notification.show("No se pudo desactivar la cuenta\nIntente de nuevo");
@@ -1389,47 +1385,45 @@ public class GUIBanco extends AbsoluteLayout implements View {
 
     //Métodos de los botones
 
-    public void SeleccionarCuenta(Button.ClickEvent event) {
-        numCuenta = cuentas.getSelectedItem().get();
-        if (!numCuenta.equals("No seleccionado")){
-            System.out.println("Entra");
-            menu.getTab(1).setEnabled(true);
-            menu.getTab(2).setEnabled(true);
-            menu.getTab(3).setEnabled(true);
-            Notification.show("Actualmente está usando la cuenta:\n       "+numCuenta);
-            cuentaL.setValue("Está en la cuenta numero " + numCuenta);
-            cuenta.setValue("Está en la cuenta numero " + numCuenta);
-            cuentaOB.setValue("Está en la cuenta numero " + numCuenta);
-            controller.setBeneficiarios(Integer.parseInt(numCuenta));
-            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) < 100){
-                porcentajeL.setValue("No está usando el porcentaje completo para los beneficiarios");
-            }
-            else if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100) {
-                porcentajeL.setVisible(false);
-                porcentajeL.setValue("No está usando el porcentaje completo para los beneficiarios");
-            }
-            estadoCuentas = controller.getEstadosCuenta(Integer.parseInt(numCuenta));
-            cantEstados = estadoCuentas.size();
-            if (estadoCuentas.size() <=8){
-                estados.setItems(estadoCuentas);
-                cantEstados = cantEstados- estadoCuentas.size();
-                ArrayList<Integer> numeros = new ArrayList<>();
-                for(int i = 0; i<estadoCuentas.size(); i++){
-                    numeros.add(i+1);
-                }
-                ids.setItems(numeros);
-                ids.setSelectedItem(1);
-            }
-            else{
-                estados.setItems(estadoCuentas.subList(0,8));
-                cantEstados = cantEstados - 8;
-                estadoActual = estadoActual + 8;
-            }
-            controller.setNumerosCuenta(Integer.parseInt(numCuenta));
-
-
-        }
-    }
+//    public void SeleccionarCuenta(Button.ClickEvent event) {
+//        numCuenta = cuentas.getSelectedItem().get();
+//        if (!numCuenta.equals("No seleccionado")){
+//            System.out.println("Entra");
+//            menu.getTab(1).setEnabled(true);
+//            menu.getTab(2).setEnabled(true);
+//            menu.getTab(3).setEnabled(true);
+//            Notification.show("Actualmente está usando la cuenta:\n       "+numCuenta);
+//            cuentaL.setValue("Está en la cuenta numero " + numCuenta);
+//            cuenta.setValue("Está en la cuenta numero " + numCuenta);
+//            cuentaOB.setValue("Está en la cuenta numero " + numCuenta);
+//            controller.setBeneficiarios(Integer.parseInt(numCuenta));
+//            if (controller.getPorcentajeUsado(controller.getBeneficiarios()) < 100){
+//                porcentajeL.setValue("No está usando el porcentaje completo para los beneficiarios");
+//            }
+//            else if (controller.getPorcentajeUsado(controller.getBeneficiarios()) == 100) {
+//                porcentajeL.setVisible(false);
+//                porcentajeL.setValue("No está usando el porcentaje completo para los beneficiarios");
+//            }
+//            estadoCuentas = controller.getEstadosCuenta(Integer.parseInt(numCuenta));
+//            cantEstados = estadoCuentas.size();
+//            if (estadoCuentas.size() <=8){
+//                estados.setItems(estadoCuentas);
+//                cantEstados = cantEstados- estadoCuentas.size();
+//                ArrayList<Integer> numeros = new ArrayList<>();
+//                for(int i = 0; i<estadoCuentas.size(); i++){
+//                    numeros.add(i+1);
+//                }
+//                ids.setItems(numeros);
+//                ids.setSelectedItem(1);
+//            }
+//            else{
+//                estados.setItems(estadoCuentas.subList(0,8));
+//                cantEstados = cantEstados - 8;
+//                estadoActual = estadoActual + 8;
+//            }
+//            controller.setNumerosCuenta(Integer.parseInt(numCuenta));
+//        }
+//    }
 
 
     public void obtenerDatos(Button.ClickEvent event) {
@@ -1438,7 +1432,8 @@ public class GUIBanco extends AbsoluteLayout implements View {
         if (controller.verificarUsuario(contra, nombreUsuario)){
             contenedorLogIn.setVisible(false);
             contenedorTabsBanco.setVisible(true);
-            ArrayList<String> cuentasL = controller.devolverCuentas(nombreUsuario);
+            controller.setNombreUsuario(nombreUsuario);
+            ArrayList<String> cuentasL = controller.devolverCuentas();
             cuentasL.add(0, "No seleccionado");
             cuentas.setItems(cuentasL);
             cuentas.setSelectedItem("No seleccionado");
@@ -1464,24 +1459,24 @@ public class GUIBanco extends AbsoluteLayout implements View {
 
     }
 
-    public void agregarBeneficiario(int cedula, String parentezo, int porcetanje, ArrayList<BeneficiariosTabla> beneficiarios, AbsoluteLayout agregar, AbsoluteLayout tabBene){
-        if (controller.getPorcentajeUsado(beneficiarios)+porcetanje<=100) {
-            if (controller.getCantActBene(beneficiarios) < 3) {
-                if (controller.AgregarBeneficiario(cedula, parentezo, porcetanje, Integer.parseInt(numCuenta))) {
-                    Notification.show("Se agregó el beneficiario correctamente");
-                }
-                else{
-                    preguntar(agregar, tabBene, cedula, parentezo, porcetanje);
-                }
-            }
-            else{
-                Notification.show("Ya existe la cantidad máxima de beneficiarios\nElimine alguno para agregar uno nuevo");
-            }
-        }
-        else{
-            Notification.show("El porcentaje asignado supera más del 100%");
-        }
-    }
+//    public void agregarBeneficiario(int cedula, String parentezo, int porcetanje, ArrayList<BeneficiariosTabla> beneficiarios, AbsoluteLayout agregar, AbsoluteLayout tabBene){
+//        if (controller.getPorcentajeUsado(beneficiarios)+porcetanje<=100) {
+//            if (controller.getCantActBene(beneficiarios) < 3) {
+//                if (controller.AgregarBeneficiario(cedula, parentezo, porcetanje, Integer.parseInt(numCuenta))) {
+//                    Notification.show("Se agregó el beneficiario correctamente");
+//                }
+//                else{
+//                    preguntar(agregar, tabBene, cedula, parentezo, porcetanje);
+//                }
+//            }
+//            else{
+//                Notification.show("Ya existe la cantidad máxima de beneficiarios\nElimine alguno para agregar uno nuevo");
+//            }
+//        }
+//        else{
+//            Notification.show("El porcentaje asignado supera más del 100%");
+//        }
+//    }
 
     private String getCantCajeroAu(ArrayList<Movimiento> movimientosDetalles) {
         int cant = 0;
@@ -1507,17 +1502,17 @@ public class GUIBanco extends AbsoluteLayout implements View {
     }
 
     //Otros
-    public boolean porcentajeCorrecto(int porcentajeEscrito, int cedula){
-        int porcentaje = 0;
-        for(BeneficiariosTabla ben: controller.getBeneficiarios()){
-            if(Integer.parseInt(ben.getdocumentoIdentidad()) == cedula){
-                porcentaje = (int) (controller.getPorcentajeUsado(controller.getBeneficiarios()) - ben.getPorcentaje());
-            }
-        }
-        if ((porcentaje + porcentajeEscrito) <= 100)
-            return true;
-        return false;
-    }
+//    public boolean porcentajeCorrecto(int porcentajeEscrito, int cedula){
+//        int porcentaje = 0;
+//        for(BeneficiariosTabla ben: controller.getBeneficiarios()){
+//            if(Integer.parseInt(ben.getdocumentoIdentidad()) == cedula){
+//                porcentaje = (int) (controller.getPorcentajeUsado(controller.getBeneficiarios()) - ben.getPorcentaje());
+//            }
+//        }
+//        if ((porcentaje + porcentajeEscrito) <= 100)
+//            return true;
+//        return false;
+//    }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {}

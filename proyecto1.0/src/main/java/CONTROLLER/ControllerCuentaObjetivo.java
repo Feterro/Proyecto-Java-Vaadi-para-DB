@@ -2,6 +2,7 @@ package CONTROLLER;
 
 import MODEL.CuentaObjetivo;
 import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.Notification;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -12,6 +13,12 @@ public class ControllerCuentaObjetivo {
     public ControllerCuentaObjetivo(){}
 
     public int crearCuentaObjetivo(Connection connection, int numCuentaAso, String objetivo, String fechaInicio, String fechaFin, float cuota, String numCuenta){
+        System.out.println(numCuentaAso);
+        System.out.println(objetivo);
+        System.out.println(fechaInicio);
+        System.out.println(fechaFin);
+        System.out.println(cuota);
+        System.out.println(numCuenta);
         int devolver = 0;
 
         try {
@@ -33,7 +40,7 @@ public class ControllerCuentaObjetivo {
             devolver = 1;
             e.printStackTrace();
         }
-
+        System.out.println(devolver);
         return devolver;
     }
 
@@ -77,6 +84,7 @@ public class ControllerCuentaObjetivo {
     }
 
     public ArrayList<String> obtenerNumerosCuentaObjetivo(Connection connection, int numeroCuentaAso){
+
         ArrayList<String> numerosCuenta = new ArrayList<>();
 
         try{

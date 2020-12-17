@@ -18,9 +18,9 @@ public class ControllerConexion {
     }
 
     public void  crearConexion(){
-        String url = "jdbc:sqlserver://localhost:1599;database=BDProyecto";
+        String url = "jdbc:sqlserver://localhost:1433;database=BDProyecto";
         try {
-            Connection connection = DriverManager.getConnection(url,"JavaConexion","Admin");
+            Connection connection = DriverManager.getConnection(url,"BDP","gatoscools");
             System.out.println("Conexion exitosa!");
             this.connection = connection;
         }

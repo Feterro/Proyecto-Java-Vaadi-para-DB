@@ -17,14 +17,13 @@ import com.vaadin.ui.UI;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
-//@StyleSheet("src/main/webapp/VAADIN/themes/mytheme/login.css")
 public class MyUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
     Navigator nav = new Navigator(this, this);
-    nav.addView("Principal", GUIBanco.class);
-    nav.navigateTo("Principal");
+    nav.addView("Login", LoginV.class);
+    nav.navigateTo("Login");
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
