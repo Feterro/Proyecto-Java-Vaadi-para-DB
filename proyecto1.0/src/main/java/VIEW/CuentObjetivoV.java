@@ -218,19 +218,19 @@ public class CuentObjetivoV{
                 if(fechaInicio.after(hoyD) || fechaInicio.equals(hoyD)){
                     if (fechaFinal.after(fechaInicio)){
                         if(controller.crearCuentaObj(objetivo.getValue(), fechaIn.getValue().toString(), fechaFin.getValue().toString(), Float.parseFloat(cuota.getValue()))){
-                            Notification.show("La cuenta fue creada con éxito!");
+                            Notification.show("CREACIÓN","Exitosa", Notification.Type.TRAY_NOTIFICATION);
                             controller.setNumerosCuenta();
                         }
                         else{
-                            Notification.show("Hubo un problema creando la cuenta, intente de nuevo");
+                            Notification.show("CREACIÓN","No se pudo crear", Notification.Type.ERROR_MESSAGE);
                         }
                     }
                     else{
-                        Notification.show("La fecha de finalización está antes que la fecha de inicio");
+                        Notification.show("FECHA INCORRECTA","La fecha de finalización está antes que la fecha de inicio", Notification.Type.WARNING_MESSAGE);
                     }
                 }
                 else{
-                    Notification.show("La fecha de inicio no puede ser una fecha anterior a la fecha de hoy");
+                    Notification.show("FECHA INCORRECTA","La fecha de inicio no puede ser una fecha anterior a la fecha de hoy", Notification.Type.WARNING_MESSAGE);
                 }
             } catch (ParseException parseException) {
                 parseException.printStackTrace();
@@ -313,15 +313,15 @@ public class CuentObjetivoV{
                 System.out.println("Inicio: " +fechaIn);
                 if(fechaFinD.after(fechaIn)){
                     if(controller.actualizarCuentaObj(numCuentasObjetivo.getSelectedItem().get(), objetivo.getValue(), fechaFin.getValue().toString(), Float.parseFloat(cuota.getValue()))){
-                        Notification.show("La cuenta se actualizó exitosamente!");
+                        Notification.show("ACTUALIZACIÓN","Exitosa", Notification.Type.TRAY_NOTIFICATION);
                         controller.setNumerosCuenta();
                     }
                     else{
-                        Notification.show("Hubo un problema con la actualización\nIntente de nuevo");
+                        Notification.show("ACTUALIZACIÓN","No se pudo", Notification.Type.ERROR_MESSAGE);
                     }
                 }
                 else
-                    Notification.show("La fecha de finalización no puede ser antes que la fecha de inicio");
+                    Notification.show("FECHA INCORRECTA","La fecha de finalización no puede ser antes que la fecha de inicio", Notification.Type.WARNING_MESSAGE);
             } catch (ParseException parseException) {
                 parseException.printStackTrace();
             }
@@ -393,12 +393,14 @@ public class CuentObjetivoV{
         desactivarB.setWidth("300px");
         desactivarB.addClickListener(e-> {
             if(controller.desactivarCuentaObj(cuenDes.getSelectedItem().get())){
-                Notification.show("La cuenta fue desactivada exitosamente");
+                Notification.show("DESACTIVACIÓN","La cuenta fue desactivada exitosamente", Notification.Type.TRAY_NOTIFICATION);
                 controller.setNumerosCuenta();
             }
             else{
-                Notification.show("No se pudo desactivar la cuenta\nIntente de nuevo");
+                Notification.show("DESACTIVACIÓN","No se pudo desactivar la cuenta\nIntente de nuevo", Notification.Type.ERROR_MESSAGE);
             }
+            controller.setNumerosCuenta();
+            cuenDes.setItems(controller.getNumerosCuentaObjetivo());
         });
 
         Button volver = new Button("ATRÁS");

@@ -13,12 +13,6 @@ public class ControllerCuentaObjetivo {
     public ControllerCuentaObjetivo(){}
 
     public int crearCuentaObjetivo(Connection connection, int numCuentaAso, String objetivo, String fechaInicio, String fechaFin, float cuota, String numCuenta){
-        System.out.println(numCuentaAso);
-        System.out.println(objetivo);
-        System.out.println(fechaInicio);
-        System.out.println(fechaFin);
-        System.out.println(cuota);
-        System.out.println(numCuenta);
         int devolver = 0;
 
         try {
