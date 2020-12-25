@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b92691f0-0551-461b-863d-755db65b1199" name="Default Changelist" comment="" />
+    <list default="true" id="b92691f0-0551-461b-863d-755db65b1199" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Datos_Tarea_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Datos_Tarea_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/XMLSimulacion.sql" beforeDir="false" afterPath="$PROJECT_DIR$/XMLSimulacion.sql" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

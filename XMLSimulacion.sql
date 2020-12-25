@@ -5,8 +5,8 @@ GO
 SET NOCOUNT ON
 
 DECLARE 
-@fechasSimulacion date = '2020-11-29',
-@fechaActual date = '2020-07-01'
+@fechasSimulacion date = '12-31-2020',
+@fechaActual date = '08-01-2020'
 
 DECLARE 
 @lo1 int = 1,
@@ -46,7 +46,7 @@ BEGIN
 	@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Persona') AS A(Persona) 
@@ -79,7 +79,7 @@ BEGIN
 		A.Cuenta.value('@NumeroCuenta', 'int') AS numCuenta
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Cuenta') AS A(Cuenta)
@@ -115,6 +115,71 @@ BEGIN
 
 	--SELECT * FROM dbo.cuentaAhorro
 
+	--INSERT XML en cuentaObjetivo-----------------------------------------------------------
+
+	--DECLARE @fechaActual date = '2020-07-01'
+
+	DECLARE @cuentaObjTemp TABLE
+	(ID int identity,
+	numCuentProv int,
+	fechaIni date,
+	fechaFinal date,
+	numCuenta int,
+	monto decimal(19,4),
+	descripcion varchar(50),
+	diaAhorro int)
+
+	INSERT INTO @cuentaObjTemp(
+	numCuentProv,
+	fechaIni,
+	fechaFinal,
+	numCuenta,
+	monto,
+	descripcion,
+	diaAhorro)
+
+	SELECT
+		A.Cuenta.value('@NumeroCuentaPrimaria', 'int') AS tipoCuentaId,
+		@fechaActual,
+		A.Cuenta.value('@FechaFinal', 'date') AS tipoCuentaId,
+		A.Cuenta.value('@NumeroCuentaAhorro', 'int') AS tipoCuentaId,
+		A.Cuenta.value('@MontoAhorro', 'decimal(19,4)') AS tipoCuentaId,
+		A.Cuenta.value('@Descripcion', 'varchar(50)') AS tempDocIdent,
+		A.Cuenta.value('@DiaAhorro', 'int') AS numCuenta
+	FROM(
+	SELECT CAST(c AS XML) FROM 
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	) AS S(c)
+
+	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/CuentaAhorro') AS A(Cuenta)
+
+	UPDATE @cuentaObjTemp
+	SET numCuentProv = dbo.cuentaAhorro.ID
+	FROM  @cuentaObjTemp
+	INNER JOIN dbo.cuentaAhorro ON numCuentProv = dbo.cuentaAhorro.ID
+
+	INSERT INTO dbo.CuentaObjetivo(
+	objetivo,
+	fechaIn,
+	cuentaAhorroId,
+	cuota,
+	numeroCuenta,
+	fechaFin,
+	diaAhorro)
+
+	SELECT descripcion,
+	fechaIni, 
+	numCuentProv, 
+	monto, 
+	numCuenta,
+	fechaFinal,
+	diaAhorro 
+	FROM @cuentaObjTemp 
+
+	DELETE FROM @cuentaObjTemp
+
+	--SELECT * FROM dbo.@cuentaObjTemp
+
 --INSERT XML en beneficiario-----------------------------------------------------------
 
 	--DECLARE @fechaActual date = '2020-07-01'
@@ -143,7 +208,7 @@ BEGIN
 		SUSER_NAME()
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Beneficiario') AS A(Benef)
@@ -189,7 +254,7 @@ BEGIN
 		A.Usu.value('@EsAdministrador', 'bit') AS porcentaje
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Usuario') AS A(Usu)
@@ -220,10 +285,10 @@ BEGIN
 	cuen)
 	SELECT
 		A.Usu.value('@User', 'varchar(50)') AS ParId,
-		A.Usu.value('@NumeroCuenta', 'int') AS tempDocIden
+		A.Usu.value('@Cuenta', 'int') AS tempDocIden
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/UsuarioPuedeVer') AS A(Usu)
@@ -290,7 +355,7 @@ BEGIN
 		@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Movimientos') AS A(Mov)
@@ -306,38 +371,39 @@ BEGIN
 	INNER JOIN dbo.TipoMovimiento ON tipoMov = dbo.TipoMovimiento.Id
 	
 	DECLARE   
-	@montoDepo decimal(19,4),
+	@monto decimal(19,4),
 	@esDebito varchar(30),
 	@tipoMov int,
 	@cuentaPertenece int,
 	@saldoIncumplido decimal(19,4),
 	@tipCue int,
-	@salMin decimal(19,4),
-	@multaIncum decimal(19,4),
-	@incum bit = 0
+	@cantMov int = 0,
+	@minEstado decimal(19,4),
+	@descr varchar(50)
 
 	SET @hi1 = (SELECT COUNT(*) FROM @movTemp) + @lo1-1
 
 	WHILE(@lo1<=@hi1)
 	BEGIN
 
-		SET @montoDepo = (SELECT monto FROM @movTemp WHERE ID = @lo1)
+		SET @monto = (SELECT monto FROM @movTemp WHERE ID = @lo1)
 		SET @cuentaPertenece = (SELECT cuentaAhorrotemp FROM @movTemp WHERE ID = @lo1)
 		SET @esDebito = (SELECT debito FROM @movTemp WHERE ID =  @lo1)
 		SET @tipoMov = (SELECT tipoMov FROM @movTemp WHERE ID =  @lo1)
+		SET @descr = (SELECT descripcion FROM @movTemp WHERE ID =  @lo1)
 
 
 		IF @esDebito = 'Debito'
 		BEGIN
 			UPDATE dbo.cuentaAhorro
-			SET saldo = saldo - @montoDepo
+			SET saldo = saldo - @monto
 			WHERE ID = @cuentaPertenece;
 		END
 
 		ELSE
 		BEGIN
 			UPDATE dbo.cuentaAhorro
-			SET saldo = saldo + @montoDepo
+			SET saldo = saldo + @monto
 			WHERE ID = @cuentaPertenece;
 		END
 
@@ -357,35 +423,45 @@ BEGIN
 
 		SET @saldoIncumplido = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece);
 		SET @tipCue = (SELECT tipoCuentaId FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece);
-		SET @salMin = (SELECT saldMin FROM dbo.tipoCuentaAhorro WHERE ID = @tipCue);
-		SET @multaIncum = (SELECT saldMin FROM dbo.tipoCuentaAhorro WHERE ID = @tipCue);
-		SET @incum = (SELECT incumpleSalMin FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece)
+		SET @cantMov = (SELECT COUNT(ID) FROM dbo.movimiento WHERE cuentaAhorroId = @cuentaPertenece);
+		SET @minEstado = (SELECT saldoMin FROM dbo.estadoCuenta WHERE cuentaAhorroId = @cuentaPertenece);
 
 
-		IF (@saldoIncumplido < @salMin) AND (@incum = 0)
+		IF (@saldoIncumplido < @minEstado) OR @cantMov = 0
 		BEGIN
-			UPDATE dbo.cuentaAhorro
-			SET incumpleSalMin = 1
-			WHERE ID = @cuentaPertenece;
+			UPDATE dbo.estadoCuenta
+			SET saldoMin = @saldoIncumplido
+			WHERE cuentaAhorroId = @cuentaPertenece 
+			AND fechaFin IS NULL;
 		END
-	
 
 		SET @lo1 = @lo1 + 1
+
+		INSERT INTO dbo.movimiento(tipoMovimientoId,
+		cuentaAhorroId,
+		monto,
+		descripcion,
+		fechaMovimiento)
+
+		VALUES(
+		@tipoMov,
+		@cuentaPertenece,
+		@monto,
+		@descr,
+		@fechaActual)
+
 	END
 
 	SET @lo1 = @hi1+1
 
-	INSERT INTO dbo.movimiento(tipoMovimientoId,
-	cuentaAhorroId,
-	monto,
-	descripcion,
-	fechaMovimiento)
-
-	SELECT tipoMov, cuentaAhorrotemp, monto, descripcion, fechaMov FROM @movTemp
+	
 
 	DELETE FROM @movTemp
 
 	--SELECT * FROM dbo.movimiento
+
+--Procesamiento de Cuentas Objetivo---------------------------------------------
+
 
 --Procesamiento de Estados de Cuenta---------------------------------------------
 
@@ -399,7 +475,6 @@ BEGIN
 		tipoCue int NOT NULL,
 		hizoHum int,
 		hizoAuto int,
-		incumplio bit,
 		multHum decimal(19,4),
 		multAuto decimal(19,4),
 		multMin decimal(19,4),
@@ -411,10 +486,9 @@ BEGIN
 		cuentaId,
 		tipoCue,
 		hizoHum,
-		hizoAuto,
-		incumplio)
+		hizoAuto)
 
-		SELECT ID, tipoCuentaId,cantHumano,cantAuto,incumpleSalMin FROM dbo.cuentaAhorro
+		SELECT ID, tipoCuentaId,cantHumano,cantAuto FROM dbo.cuentaAhorro
 		WHERE DAY(fechaApertura) = (DAY(DATEADD(DAY,1,@fechaActual))) 
 
 		UPDATE @cuentasCierre
@@ -433,7 +507,8 @@ BEGIN
 		@tipoCuent int,
 		@hizoHum int,
 		@hizoAuto int,
-		@incumplio bit,
+		@saldoEstado decimal(19,4),
+		@salMini decimal(19,4),
 		@multHum decimal(19,4),
 		@multAuto decimal(19,4),
 		@multIncum decimal(19,4),
@@ -447,9 +522,11 @@ BEGIN
 
 			SET @IdBus = (SELECT cuentaId FROM @cuentasCierre WHERE ID = @lo3)
 			SET @salFin = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @IdBus)
+			SET @tipoCuent = (SELECT tipoCuentaId FROM dbo.cuentaAhorro WHERE ID = @IdBus)
 			SET @hizoHum = (SELECT hizoHum FROM @cuentasCierre WHERE ID = @lo3)
 			SET @hizoAuto = (SELECT hizoAuto FROM @cuentasCierre WHERE ID = @lo3)
-			SET @incumplio = (SELECT incumplio FROM @cuentasCierre WHERE ID = @lo3)
+			SET @salMini = (SELECT saldMin FROM dbo.tipoCuentaAhorro WHERE ID = @tipoCuent)
+			SET @saldoEstado = (SELECT saldoMin FROM dbo.estadoCuenta WHERE cuentaAhorroId = @IdBus AND fechaFin IS NULL)
 			SET @multHum = (SELECT multHum FROM @cuentasCierre WHERE ID = @lo3)
 			SET @multAuto = (SELECT multAuto FROM @cuentasCierre WHERE ID = @lo3)
 			SET @multIncum = (SELECT multMin FROM @cuentasCierre WHERE ID = @lo3)
@@ -494,7 +571,7 @@ BEGIN
 				ID = @IdBus
 			END
 
-			IF @incumplio = 1
+			IF @saldoEstado < @salMini
 			BEGIN
 				UPDATE dbo.cuentaAhorro SET
 				saldo = saldo - @multIncum WHERE
@@ -531,10 +608,12 @@ BEGIN
 			fechaIni,
 			cuentaAhorroId,
 			saldoIni,
-			saldoFin)
+			saldoFin,
+			saldoMin)
 			VALUES(
 			DATEADD(DAY,1,@fechaActual),
 			@IdBus,
+			@salFin,
 			@salFin,
 			@salFin)
 

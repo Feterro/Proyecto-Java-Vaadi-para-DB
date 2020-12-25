@@ -18,10 +18,10 @@ A.Tipo_Moneda.value('@Simbolo', 'varchar(10)') AS simbolo
 
 FROM(
 SELECT CAST(c AS XML) FROM 
-OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2_Catalogos.xml', SINGLE_BLOB) AS T(c)
+OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_3_Catalogos.xml', SINGLE_BLOB) AS T(c)
 ) AS S(c)
 
-cross apply c.nodes('Catalogos/Tipo_Moneda/TipoMoneda') AS A(Tipo_Moneda)
+cross apply c.nodes('Catalogos/TipoMoneda/TipoMoneda') AS A(Tipo_Moneda)
 
 --SELECT * FROM dbo.tipoMoneda
 
@@ -36,10 +36,10 @@ A.Tipo_Doc.value('@Nombre', 'varchar(50)') AS tipoDoc
 
 FROM(
 SELECT CAST(c AS XML) FROM 
-OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2_Catalogos.xml', SINGLE_BLOB) AS T(c)
+OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_3_Catalogos.xml', SINGLE_BLOB) AS T(c)
 ) AS S(c)
 
-cross apply c.nodes('Catalogos/Tipo_Doc/TipoDocuIdentidad') AS A(Tipo_Doc)
+cross apply c.nodes('Catalogos/TipoDoc/TipoDocuIdentidad') AS A(Tipo_Doc)
 
 --SELECT * FROM dbo.tipoDocIdent
 
@@ -54,7 +54,7 @@ A.Parentezco.value('@Nombre', 'varchar(30)') AS nombre
 
 FROM(
 SELECT CAST(c AS XML) FROM 
-OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2_Catalogos.xml', SINGLE_BLOB) AS T(c)
+OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_3_Catalogos.xml', SINGLE_BLOB) AS T(c)
 ) AS S(c)
 
 cross apply c.nodes('Catalogos/Parentezcos/Parentezco') AS A(Parentezco)
@@ -89,10 +89,10 @@ A.TipoCuentaAhorro.value('@ComisionAutomatico', 'decimal(10,4)') AS comisionRetA
 A.TipoCuentaAhorro.value('@IdTipoMoneda', 'int') AS tipoMonedaId
 FROM(
 SELECT CAST(c AS XML) FROM 
-OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2_Catalogos.xml', SINGLE_BLOB) AS T(c)
+OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_3_Catalogos.xml', SINGLE_BLOB) AS T(c)
 ) AS S(c)
 
-cross apply c.nodes('Catalogos/Tipo_Cuenta_Ahorros/TipoCuentaAhorro') AS A(TipoCuentaAhorro)
+cross apply c.nodes('Catalogos/Tipo_Cuenta_Ahorro/TipoCuentaAhorro') AS A(TipoCuentaAhorro)
 
 --SELECT * FROM dbo.tipoCuentaAhorro
 
@@ -110,12 +110,48 @@ A.TipoCuentaAhorro.value('@Tipo', 'varchar(50)') AS nombre
 
 FROM(
 SELECT CAST(c AS XML) FROM 
-OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_2_Catalogos.xml', SINGLE_BLOB) AS T(c)
+OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_3_Catalogos.xml', SINGLE_BLOB) AS T(c)
 ) AS S(c)
 
-cross apply c.nodes('Catalogos/Tipo_Movimientos/Tipo_Movimiento') AS A(TipoCuentaAhorro)
+cross apply c.nodes('Catalogos/TipoMovimientos/TipoMovimiento') AS A(TipoCuentaAhorro)
 
 --SELECT * FROM dbo.TipoMovimiento
+
+--INSERT XML en tipoMovimientoCO-----------------------------------------------------------
+
+INSERT INTO dbo.tipoMovCo( Id,
+nombre)
+
+SELECT 
+A.TipoCuentaAhorro.value('@Id', 'int') AS ID,
+A.TipoCuentaAhorro.value('@Nombre', 'varchar(50)') AS nombre
+
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_3_Catalogos.xml', SINGLE_BLOB) AS T(c)
+) AS S(c)
+
+cross apply c.nodes('Catalogos/TiposMovimientoCuentaAhorro/Tipo_Movimiento') AS A(TipoCuentaAhorro)
+
+--SELECT * FROM dbo.tipoMovCo
+
+--INSERT XML en tipoEvento-----------------------------------------------------------
+
+INSERT INTO dbo.tipoEvento(Id,
+nombre)
+
+SELECT 
+A.TipoCuentaAhorro.value('@Id', 'int') AS ID,
+A.TipoCuentaAhorro.value('@Nombre', 'varchar(50)') AS nombre
+
+FROM(
+SELECT CAST(c AS XML) FROM 
+OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea_3_Catalogos.xml', SINGLE_BLOB) AS T(c)
+) AS S(c)
+
+cross apply c.nodes('Catalogos/TiposEvento/TipoEvento') AS A(TipoCuentaAhorro)
+
+--SELECT * FROM dbo.tipoEvento
 
 SET NOCOUNT OFF
 
@@ -125,3 +161,5 @@ SET NOCOUNT OFF
 --Delete FROM dbo.parentesco
 --Delete FROM dbo.tipoDocIdent
 --Delete FROM dbo.tipoMoneda
+--Delete FROM dbo.tipoMovCo
+--Delete FROM dbo.tipoEvento
