@@ -1,5 +1,6 @@
 CONTROLLER\ControllerEstadosCuenta.class
 MODEL\EstadoCuenta.class
+VIEW\Admistrador.class
 VIEW\LoginV.class
 MODEL\Movimiento.class
 CONTROLLER\ControllerUsuario.class
@@ -20,4 +21,4 @@ VIEW\GUIBanco.class
 MODEL\CuentaObjetivo.class
 MODEL\Persona.class
 MODEL\Beneficiario.class
-VIEW\Administrador.class
+VIEW\Inicio.class

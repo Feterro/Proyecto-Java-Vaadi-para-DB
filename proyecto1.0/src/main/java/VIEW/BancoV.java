@@ -1,21 +1,12 @@
 package VIEW;
 
 import CONTROLLER.ControllerUI;
-import MODEL.*;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
-import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class BancoV extends AbsoluteLayout implements View {
     private ControllerUI controller = ControllerUI.getInstance();
@@ -30,9 +21,14 @@ public class BancoV extends AbsoluteLayout implements View {
     }
 
     public void Banco() {
-        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/fondoTotalMenu.png"));
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/fondo.png"));
         Image fondoTotalBanco = new Image("", resource);
         fondoTotalBanco.setSizeFull();
+
+        FileResource resource1 = new FileResource(new File("src/main/java/VIEW/Imagenes/menu.png"));
+        Image menuI = new Image("", resource1);
+        menuI.setWidth("1500px");
+        menuI.setHeight("50px");
 
         HorizontalLayout contenedor = new HorizontalLayout();
         contenedor.setSizeFull();
@@ -43,10 +39,11 @@ public class BancoV extends AbsoluteLayout implements View {
         contenedorTabsBanco.setStyleName(ValoTheme.PANEL_BORDERLESS);
 
         TabSheet menu = Menu();
-        contenedorTabsBanco.addComponent(menu);
 
+        contenedorTabsBanco.addComponent(menuI);
+        contenedorTabsBanco.addComponent(menu);
         contenedor.addComponent(contenedorTabsBanco);
-        contenedor.setComponentAlignment(contenedorTabsBanco, Alignment.BOTTOM_CENTER);
+        contenedor.setComponentAlignment(contenedorTabsBanco, Alignment.MIDDLE_CENTER);
 
         addComponent(fondoTotalBanco);
         addComponent(contenedor);

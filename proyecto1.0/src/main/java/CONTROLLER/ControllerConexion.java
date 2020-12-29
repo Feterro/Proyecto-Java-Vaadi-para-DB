@@ -20,7 +20,7 @@ public class ControllerConexion {
     public void  crearConexion(){
         String url = "jdbc:sqlserver://localhost:1433;database=BDProyecto";
         try {
-            Connection connection = DriverManager.getConnection(url,"BDP","gatoscools");
+            Connection connection = DriverManager.getConnection(url,"BDP","gatoscools2");
             System.out.println("Conexion exitosa!");
             this.connection = connection;
         }

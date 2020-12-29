@@ -22,8 +22,8 @@ public class MyUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
     Navigator nav = new Navigator(this, this);
-    nav.addView("Login", LoginV.class);
-    nav.navigateTo("Login");
+    nav.addView("Inicio", Inicio.class);
+    nav.navigateTo("Inicio");
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

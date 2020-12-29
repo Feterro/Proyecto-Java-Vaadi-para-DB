@@ -69,6 +69,13 @@ public class LoginV extends AbsoluteLayout implements View {
         entrar.setSizeFull();
         entrar.addClickListener(this::obtenerDatos);
 
+        Button atras = new Button("");
+        atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        atras.setIcon(VaadinIcons.ARROW_BACKWARD);
+        atras.setWidth("50px");
+        atras.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        atras.addClickListener(this::atras);
+
         FormLayout contenedor = new FormLayout(usuario, contrasenna, entrar);
         contenedor.setMargin(false);
         contenedor.setWidth("500px");
@@ -81,6 +88,7 @@ public class LoginV extends AbsoluteLayout implements View {
         contenedorLogIn.addComponent(fondoLogin);
         contenedorLogIn.addComponent(panelInicioSesion, "top: 300px; left: 100px");
         contenedorLogIn.addComponent(inicio, "top: 50px; left: 150px");
+        contenedorLogIn.addComponent(atras, "top: 625px; right: 50px");
 
         contenedorFinal.addComponent(contenedorLogIn);
         contenedorFinal.setComponentAlignment(contenedorLogIn, Alignment.MIDDLE_CENTER);
@@ -89,7 +97,7 @@ public class LoginV extends AbsoluteLayout implements View {
     }
 
     public void fondoTotal(){
-        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/fondoTotal.png"));
+        FileResource resource = new FileResource(new File("src/main/java/VIEW/Imagenes/fondo.png"));
         Image fondoTotal = new Image("", resource);
         fondoTotal.setSizeFull();
         addComponent(fondoTotal);
@@ -108,6 +116,12 @@ public class LoginV extends AbsoluteLayout implements View {
             Notification.show("Alguno de los datos ingresados es incorrecto\nVerfique e intente de nuevo");
         }
 
+    }
+
+    public void atras(Button.ClickEvent event){
+        Navigator navigator = new Navigator(UI.getCurrent(), this);
+        navigator.addView("Inicio", Inicio.class);
+        navigator.navigateTo("Inicio");
     }
 
     @Override
