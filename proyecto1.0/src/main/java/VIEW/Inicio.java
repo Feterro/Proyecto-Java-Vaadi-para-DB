@@ -32,7 +32,7 @@ public class Inicio extends AbsoluteLayout implements View {
         FileResource resource1 = new FileResource(new File("src/main/java/VIEW/Imagenes/fondoInicio.png"));
         Image fondoB = new Image("", resource1);
         fondoB.setWidth("500px");
-        fondoB.setHeight("1000px");
+        fondoB.setHeight("500px");
 
         Button administrador = new Button("ADMINISTRADOR");
         administrador.setHeight("70px");
@@ -59,16 +59,16 @@ public class Inicio extends AbsoluteLayout implements View {
 
         Label label = new Label("TIPO DE USUARIO");
         label.addStyleName(ValoTheme.LABEL_H2);
-//        label.addStyleName(ValoTheme.LABEL_BOLD);
-        label.addStyleName(ValoTheme.LABEL_COLORED);
+        label.addStyleName(ValoTheme.LABEL_BOLD);
+//        label.addStyleName(ValoTheme.LABEL_COLORED);
 
         inicio.addComponent(fondoB);
         inicio.addComponent(label, "top: 150px; left: 150px");
-        inicio.addComponent(administrador, "top: 425px; left: 25px");
-        inicio.addComponent(usuario, "top: 425; right: 25px");
+        inicio.addComponent(administrador, "top: 275px; left: 25px");
+        inicio.addComponent(usuario, "top: 275; right: 25px");
 
         fondo.addComponent(inicio);
-        fondo.setComponentAlignment(inicio, Alignment.MIDDLE_CENTER);
+        fondo.setComponentAlignment(inicio, Alignment.BOTTOM_CENTER);
 
         addComponent(fondoI);
         addComponent(fondo);

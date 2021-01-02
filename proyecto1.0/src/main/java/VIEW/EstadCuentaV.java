@@ -143,6 +143,8 @@ public class EstadCuentaV  {
                 estadoActual = estadoActual + 8;
             } else if (cantEstados != 0) {
                 estados.setItems(estadoCuentas.subList(estadoActual, -1));
+                estadoActual = estadoCuentas.size()-1;
+                cantEstados = 0;
             } else {
                 Notification.show("TOTAL","No hay más estados que mostrar", Notification.Type.TRAY_NOTIFICATION);
             }

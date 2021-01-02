@@ -1,4 +1,5 @@
 CONTROLLER\ControllerEstadosCuenta.class
+VIEW\ConsultaMultasCuenta.class
 MODEL\EstadoCuenta.class
 VIEW\Admistrador.class
 VIEW\LoginV.class
@@ -7,8 +8,10 @@ CONTROLLER\ControllerUsuario.class
 CONTROLLER\ControllerUI.class
 VIEW\CuentObjetivoV.class
 VIEW\MyUI.class
+VIEW\detallesCuentaObjetivo.class
 VIEW\pruebas.class
 CONTROLLER\ControllerMovimiento.class
+VIEW\ConsultaBeneficiarios.class
 CONTROLLER\ControllerCuentaObjetivo.class
 VIEW\CuentasV.class
 VIEW\MyUI$MyUIServlet.class
@@ -20,5 +23,6 @@ CONTROLLER\ControllerBeneficiario.class
 VIEW\GUIBanco.class
 MODEL\CuentaObjetivo.class
 MODEL\Persona.class
+VIEW\ConsultaCuentasObj.class
 MODEL\Beneficiario.class
 VIEW\Inicio.class

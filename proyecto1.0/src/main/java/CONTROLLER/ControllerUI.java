@@ -22,6 +22,8 @@ public class ControllerUI {
 
     private String nombreUsuario;
     private int numCuenta;
+    private String numCuentaOb;
+
 
     private static ControllerUI controllerUI;
 
@@ -32,6 +34,14 @@ public class ControllerUI {
             controllerUI = new ControllerUI();
         }
         return controllerUI;
+    }
+
+    public String getNumCuentaOb() {
+        return numCuentaOb;
+    }
+
+    public void setNumCuentaOb(String numCuentaOb) {
+        this.numCuentaOb = numCuentaOb;
     }
 
     public void setNumCuenta(int numCuenta) {

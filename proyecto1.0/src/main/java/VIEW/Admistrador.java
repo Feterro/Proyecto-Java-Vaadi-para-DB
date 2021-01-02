@@ -20,6 +20,11 @@ public class Admistrador extends AbsoluteLayout implements View {
         HorizontalLayout fondo = new HorizontalLayout();
         fondo.setSizeFull();
 
+        Navigator navegador = new Navigator(UI.getCurrent(), this);
+        navegador.addView("ConsultaCO", ConsultaCuentasObj.class);
+        navegador.addView("ConsultaMultas", ConsultaMultasCuenta.class);
+        navegador.addView("ConsultaBeneficiarios", ConsultaBeneficiarios.class);
+
         AbsoluteLayout consultas = new AbsoluteLayout();
         consultas.setWidth("1500px");
         consultas.setHeight("700px");
@@ -41,6 +46,7 @@ public class Admistrador extends AbsoluteLayout implements View {
         cuentasO.setIcon(VaadinIcons.FOLDER_SEARCH);
         cuentasO.setWidth("225px");
         cuentasO.setHeight("70px");
+        cuentasO.addClickListener(e-> navegador.navigateTo("ConsultaCO"));
 
 
         Button multas = new Button("MULTAS CUENTAS");
@@ -48,12 +54,14 @@ public class Admistrador extends AbsoluteLayout implements View {
         multas.setIcon(VaadinIcons.COIN_PILES);
         multas.setWidth("225px");
         multas.setHeight("70px");
+        multas.addClickListener(e-> navegador.navigateTo("ConsultaMultas"));
 
         Button beneficiarios = new Button("BENEFICIARIOS");
         beneficiarios.addStyleName(ValoTheme.BUTTON_PRIMARY);
         beneficiarios.setIcon(VaadinIcons.USERS);
         beneficiarios.setWidth("225px");
         beneficiarios.setHeight("70px");
+        beneficiarios.addClickListener(e-> navegador.navigateTo("ConsultaBeneficiarios"));
 
         Button atras = new Button("");
         atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);

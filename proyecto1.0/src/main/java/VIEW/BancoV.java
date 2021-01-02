@@ -1,6 +1,8 @@
 package VIEW;
 
 import CONTROLLER.ControllerUI;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
@@ -40,13 +42,27 @@ public class BancoV extends AbsoluteLayout implements View {
 
         TabSheet menu = Menu();
 
+        Button atras = new Button("");
+        atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        atras.setIcon(VaadinIcons.ARROW_BACKWARD);
+        atras.setWidth("50px");
+        atras.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        atras.addClickListener(e->{
+            Navigator navigator = new Navigator(UI.getCurrent(), this);
+            navigator.addView("Inicio", Inicio.class);
+            navigator.navigateTo("Inicio");
+        });
+
         contenedorTabsBanco.addComponent(menuI);
         contenedorTabsBanco.addComponent(menu);
+        contenedorTabsBanco.addComponent(atras, "top: 650px; right: 50px");
         contenedor.addComponent(contenedorTabsBanco);
         contenedor.setComponentAlignment(contenedorTabsBanco, Alignment.MIDDLE_CENTER);
 
         addComponent(fondoTotalBanco);
         addComponent(contenedor);
+
+
 
     }
 
