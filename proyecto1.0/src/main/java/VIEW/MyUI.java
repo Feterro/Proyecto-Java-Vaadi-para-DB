@@ -22,10 +22,10 @@ public class MyUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
     Navigator nav = new Navigator(this, this);
-    nav.addView("Inicio", Inicio.class);
-    nav.navigateTo("Inicio");
-//        nav.addView("Probando", detallesCuentaObjetivo.class);
-//        nav.navigateTo("Probando");
+//    nav.addView("Inicio", Inicio.class);
+//    nav.navigateTo("Inicio");
+        nav.addView("Probando", ConsultaMultasCuenta.class);
+        nav.navigateTo("Probando");
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
