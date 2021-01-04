@@ -24,7 +24,7 @@ public class MyUI extends UI {
     Navigator nav = new Navigator(this, this);
 //    nav.addView("Inicio", Inicio.class);
 //    nav.navigateTo("Inicio");
-        nav.addView("Probando", ConsultaMultasCuenta.class);
+        nav.addView("Probando", ConsultaBeneficiarios.class);
         nav.navigateTo("Probando");
     }
 

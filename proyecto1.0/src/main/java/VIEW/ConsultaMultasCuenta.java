@@ -57,7 +57,6 @@ public class ConsultaMultasCuenta extends AbsoluteLayout implements View {
         TextField cantidadDias = new TextField("ÚLTIMOS DÍAS");
         cantidadDias.setPlaceholder("CANTIDAD DE DÍAS");
         cantidadDias.setWidth("200px");
-//        cantidadDias.setHeight("50px");
         cantidadDias.addStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
         cantidadDias.setIcon(VaadinIcons.SEARCH);
 
@@ -65,7 +64,6 @@ public class ConsultaMultasCuenta extends AbsoluteLayout implements View {
         buscar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         buscar.setIcon(VaadinIcons.FOLDER_SEARCH);
         buscar.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-//        buscar.setHeight("50px");
 
         Button atras = new Button("");
         atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);

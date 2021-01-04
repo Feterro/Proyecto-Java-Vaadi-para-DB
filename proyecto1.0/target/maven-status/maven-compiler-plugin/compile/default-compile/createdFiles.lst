@@ -3,6 +3,7 @@ VIEW\ConsultaMultasCuenta.class
 MODEL\EstadoCuenta.class
 VIEW\Admistrador.class
 VIEW\LoginV.class
+MODEL\BeneficiarioConsulta.class
 MODEL\Movimiento.class
 CONTROLLER\ControllerUsuario.class
 CONTROLLER\ControllerUI.class
