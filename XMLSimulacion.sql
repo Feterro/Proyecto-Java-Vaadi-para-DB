@@ -6,7 +6,9 @@ SET NOCOUNT ON
 
 DECLARE 
 @fechasSimulacion date = '12-31-2020',
-@fechaActual date = '08-01-2020'
+@fechaActual date = '08-01-2020',
+@fechaConvertida varchar(12) 
+
 
 DECLARE 
 @lo1 int = 1,
@@ -14,10 +16,18 @@ DECLARE
 @lo2 int = 1,
 @hi2 int = 1,
 @lo3 int = 1,
-@hi3 int = 1
+@hi3 int = 1,
+@lo4 int = 1,
+@hi4 int = 1,
+@lo5 int = 1,
+@hi5 int = 1,
+@lo6 int = 1,
+@hi6 int = 1
 
 WHILE(@fechaActual <= @fechasSimulacion)
 BEGIN
+
+SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	
 
 --INSERT XML en persona-----------------------------------------------------------
@@ -46,10 +56,10 @@ BEGIN
 	@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
-	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Persona') AS A(Persona) 
+	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Persona') AS A(Persona) 
 
 	--SELECT * FROM dbo.persona
 
@@ -79,10 +89,10 @@ BEGIN
 		A.Cuenta.value('@NumeroCuenta', 'int') AS numCuenta
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
-	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Cuenta') AS A(Cuenta)
+	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Cuenta') AS A(Cuenta)
 
 	UPDATE @cuentaTemp
 	SET cantHum = dbo.tipoCuentaAhorro.maxOpeHum,
@@ -117,7 +127,8 @@ BEGIN
 
 	--INSERT XML en cuentaObjetivo-----------------------------------------------------------
 
-	--DECLARE @fechaActual date = '2020-07-01'
+	--DECLARE @fechaConvertida varchar(12) = '08-01-2020',
+	--@fechaActual date = '08-01-2020'
 
 	DECLARE @cuentaObjTemp TABLE
 	(ID int identity,
@@ -127,7 +138,13 @@ BEGIN
 	numCuenta int,
 	monto decimal(19,4),
 	descripcion varchar(50),
-	diaAhorro int)
+	diaAhorro int,
+	tasaInt int)
+
+	DECLARE
+	@intereses int,
+	@fechIniCalc date,
+	@fechFinCalc date
 
 	INSERT INTO @cuentaObjTemp(
 	numCuentProv,
@@ -136,7 +153,8 @@ BEGIN
 	numCuenta,
 	monto,
 	descripcion,
-	diaAhorro)
+	diaAhorro,
+	tasaInt)
 
 	SELECT
 		A.Cuenta.value('@NumeroCuentaPrimaria', 'int') AS tipoCuentaId,
@@ -145,18 +163,37 @@ BEGIN
 		A.Cuenta.value('@NumeroCuentaAhorro', 'int') AS tipoCuentaId,
 		A.Cuenta.value('@MontoAhorro', 'decimal(19,4)') AS tipoCuentaId,
 		A.Cuenta.value('@Descripcion', 'varchar(50)') AS tempDocIdent,
-		A.Cuenta.value('@DiaAhorro', 'int') AS numCuenta
+		A.Cuenta.value('@DiaAhorro', 'int') AS numCuenta,
+		0
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
-	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/CuentaAhorro') AS A(Cuenta)
+	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/CuentaAhorro') AS A(Cuenta)
 
 	UPDATE @cuentaObjTemp
 	SET numCuentProv = dbo.cuentaAhorro.ID
 	FROM  @cuentaObjTemp
-	INNER JOIN dbo.cuentaAhorro ON numCuentProv = dbo.cuentaAhorro.ID
+	INNER JOIN dbo.cuentaAhorro ON numCuentProv = dbo.cuentaAhorro.numeroCuenta
+
+	SET @hi4 = (SELECT COUNT(*) FROM @cuentaObjTemp) + @lo4 - 1
+
+	WHILE (@lo4 <= @hi4)
+	BEGIN
+
+		SET @fechIniCalc = (SELECT fechaIni FROM @cuentaObjTemp WHERE ID = @lo4)
+		SET @fechFinCalc = (SELECT fechaFinal FROM @cuentaObjTemp WHERE ID = @lo4)
+		SET @intereses = (SELECT DATEDIFF(month, @fechIniCalc, @fechFinCalc))
+
+		UPDATE @cuentaObjTemp
+		SET tasaInt = 0.5 * @intereses
+		WHERE ID = @lo4
+
+		SET @lo4 = @lo4 + 1
+
+	END
+	SET @lo4 = @hi4+1
 
 	INSERT INTO dbo.CuentaObjetivo(
 	objetivo,
@@ -165,7 +202,8 @@ BEGIN
 	cuota,
 	numeroCuenta,
 	fechaFin,
-	diaAhorro)
+	diaAhorro,
+	tasaInteres)
 
 	SELECT descripcion,
 	fechaIni, 
@@ -173,7 +211,8 @@ BEGIN
 	monto, 
 	numCuenta,
 	fechaFinal,
-	diaAhorro 
+	diaAhorro,
+	tasaInt
 	FROM @cuentaObjTemp 
 
 	DELETE FROM @cuentaObjTemp
@@ -208,10 +247,10 @@ BEGIN
 		SUSER_NAME()
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
-	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Beneficiario') AS A(Benef)
+	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Beneficiario') AS A(Benef)
 	
 	UPDATE @benefTemp
 	SET tempdocIdent = dbo.persona.ID
@@ -254,10 +293,10 @@ BEGIN
 		A.Usu.value('@EsAdministrador', 'bit') AS porcentaje
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
-	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Usuario') AS A(Usu)
+	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Usuario') AS A(Usu)
 
 	INSERT INTO dbo.usuario(nombreUsuario,
 	contrasenna,
@@ -273,59 +312,62 @@ BEGIN
 
 --INSERT XML en puedeVer-----------------------------------------------------------
 
-	--DECLARE @fechaActual date = '2020-07-01'
+	--DECLARE @fechaActual date = '2020-08-02',
+	--@fechaConvertida varchar(12) = '08-02-2020'
 
-	DECLARE @verTemp TABLE
-	(ID int identity,
-	usu varchar(50),
-	cuen int)
+	--DECLARE @verTemp TABLE
+	--(ID int identity,
+	--usu varchar(50),
+	--cuen int)
 	
-	INSERT INTO @verTemp(
-	usu,
-	cuen)
-	SELECT
-		A.Usu.value('@User', 'varchar(50)') AS ParId,
-		A.Usu.value('@Cuenta', 'int') AS tempDocIden
-	FROM(
-	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
-	) AS S(c)
+	--INSERT INTO @verTemp(
+	--usu,
+	--cuen)
+	--SELECT
+	--	A.Usu.value('@User', 'varchar(50)') AS ParId,
+	--	A.Usu.value('@Cuenta', 'int') AS tempDocIden
+	--FROM(
+	--SELECT CAST(c AS XML) FROM 
+	--OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	--) AS S(c)
 
-	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/UsuarioPuedeVer') AS A(Usu)
+	--cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/UsuarioPuedeVer') AS A(Usu)
 
-	UPDATE @verTemp
-	SET cuen = dbo.cuentaAhorro.ID
-	FROM  @verTemp
-	INNER JOIN dbo.cuentaAhorro ON cuen = dbo.cuentaAhorro.numeroCuenta
+	--UPDATE @verTemp
+	--SET cuen = dbo.cuentaAhorro.ID
+	--FROM  @verTemp
+	--INNER JOIN dbo.cuentaAhorro ON cuen = dbo.cuentaAhorro.numeroCuenta
 
-	UPDATE @verTemp
-	SET usu = dbo.usuario.ID
-	FROM  @verTemp
-	INNER JOIN dbo.usuario ON usu = nombreUsuario
+	--UPDATE @verTemp
+	--SET usu = dbo.persona.ID
+	--FROM  @verTemp
+	--INNER JOIN dbo.persona ON usu = valorDocIdent
 
-	DECLARE @usuAux int, @cuenAux int
+	--SELECT * FROM @verTemp
 
-	SET @hi2 = (SELECT COUNT(*) FROM @verTemp) + @lo2 - 1
-	WHILE (@lo2 <= @hi2)
-	BEGIN
+	--DECLARE @usuAux int, @cuenAux int
+
+	--SET @hi2 = (SELECT COUNT(*) FROM @verTemp) + @lo2 - 1
+	--WHILE (@lo2 <= @hi2)
+	--BEGIN
 		
-		SET @usuAux = (SELECT usu from @verTemp WHERE ID = @lo2)
-		SET @cuenAux = (SELECT cuen from @verTemp WHERE ID = @lo2)
+	--	SET @usuAux = (SELECT usu from @verTemp WHERE ID = @lo2)
+	--	SET @cuenAux = (SELECT cuen from @verTemp WHERE ID = @lo2)
 
-		IF (NOT EXISTS (SELECT usuarioId FROM dbo.puedeVer WHERE usuarioId = @usuAux AND cuentaAhorroId = @cuenAux))
-		BEGIN
+	--	IF (NOT EXISTS (SELECT usuarioId FROM dbo.puedeVer WHERE usuarioId = @usuAux AND cuentaAhorroId = @cuenAux))
+	--	BEGIN
 
-			INSERT INTO dbo.puedeVer(usuarioId, cuentaAhorroId)
-			SELECT usu, cuen FROM  @verTemp
-			WHERE ID = @lo2
-		END
+	--		INSERT INTO dbo.puedeVer(usuarioId, cuentaAhorroId)
+	--		SELECT usu, cuen FROM  @verTemp
+	--		WHERE ID = @lo2
+	--	END
 
-		SET @lo2 = @lo2 + 1
-	END
+	--	SET @lo2 = @lo2 + 1
+	--END
 
-	SET @lo2 = @hi2+1
+	--SET @lo2 = @hi2+1
 
-	DELETE FROM @verTemp
+	--DELETE FROM @verTemp
 
 	--SELECT * FROM dbo.puedeVer
 
@@ -355,10 +397,10 @@ BEGIN
 		@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'F:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
-	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaActual")]/Movimientos') AS A(Mov)
+	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Movimientos') AS A(Mov)
 
 	UPDATE @movTemp
 	SET cuentaAhorrotemp = dbo.cuentaAhorro.ID
@@ -424,7 +466,7 @@ BEGIN
 		SET @saldoIncumplido = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece);
 		SET @tipCue = (SELECT tipoCuentaId FROM dbo.cuentaAhorro WHERE ID = @cuentaPertenece);
 		SET @cantMov = (SELECT COUNT(ID) FROM dbo.movimiento WHERE cuentaAhorroId = @cuentaPertenece);
-		SET @minEstado = (SELECT saldoMin FROM dbo.estadoCuenta WHERE cuentaAhorroId = @cuentaPertenece);
+		SET @minEstado = (SELECT saldoMin FROM dbo.estadoCuenta WHERE cuentaAhorroId = @cuentaPertenece AND fechaFin IS NULL);
 
 
 		IF (@saldoIncumplido < @minEstado) OR @cantMov = 0
@@ -461,6 +503,144 @@ BEGIN
 	--SELECT * FROM dbo.movimiento
 
 --Procesamiento de Cuentas Objetivo---------------------------------------------
+
+--Depositos en Cuentas----------------------------------------------------------
+
+	--DECLARE @fechaActual date = '08-07-2020',
+	--@lo5 int = 1,
+	--@hi5 int = 1
+
+	DECLARE @saldoCue decimal(19,4),
+	@cuentaPadre int,
+	@montoParaAhorro decimal(19,4),
+	@numeroCuenta int,
+	@esActivo bit
+	
+
+	DECLARE @tablaDeposito TABLE 
+	(ID int identity,
+	numeroCuentaOb int,
+	cuentaAhorroId int,
+	monto decimal(19,4),
+	esActivo bit)
+
+	INSERT INTO @tablaDeposito(
+	cuentaAhorroId,
+	numeroCuentaOb,
+	monto,
+	esActivo)
+	(SELECT cuentaAhorroId,
+	numeroCuenta,
+	cuota,
+	activo
+	FROM dbo.CuentaObjetivo
+	WHERE diaAhorro = DAY(@fechaActual))
+
+
+	SET @hi5 = (SELECT COUNT(*) FROM @tablaDeposito) + @lo5-1
+
+	WHILE(@lo5<=@hi5)
+	BEGIN
+
+		SET @numeroCuenta = (SELECT numeroCuentaOb FROM @tablaDeposito WHERE ID = @lo5)
+		SET @montoParaAhorro = (SELECT monto FROM @tablaDeposito WHERE ID = @lo5)
+		SET @cuentaPadre = (SELECT cuentaAhorroId FROM @tablaDeposito WHERE ID = @lo5)
+		SET @saldoCue = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @cuentaPadre)
+		SET @esActivo = (SELECT esActivo FROM @tablaDeposito WHERE ID = @lo5)
+
+		IF @saldoCue > @montoParaAhorro AND @esActivo = 1
+		BEGIN
+			
+			UPDATE dbo.cuentaAhorro
+			SET saldo = saldo - @montoParaAhorro
+			WHERE ID = @cuentaPadre
+
+			UPDATE dbo.CuentaObjetivo
+			SET saldo = saldo + @montoParaAhorro
+			WHERE numeroCuenta = @numeroCuenta
+
+		END
+
+		SET @lo5 = @lo5 + 1
+	END
+
+	SET @lo5 = @hi5+1
+	DELETE FROM @tablaDeposito
+
+--Rendecion de Cuentas-----------------------------------------------------------
+
+	--DECLARE @fechaActual date = '10-01-2020',
+	--@lo6 int = 1,
+	--@hi6 int = 1
+
+	DECLARE @saldCuen decimal(19,4),
+	@cuentPad int,
+	@interesesAcu decimal(19,4),
+	@cuent int,
+	@cuentaRende int
+	
+
+	DECLARE @tablaRendecion TABLE 
+	(ID int identity,
+	idCuenOb int,
+	cuentaAhorroId int,
+	saldo decimal(19,4),
+	acumulacionInte decimal(19,4))
+
+	INSERT INTO @tablaRendecion(
+	cuentaAhorroId,
+	idCuenOb,
+	saldo,
+	acumulacionInte)
+	(SELECT cuentaAhorroId,
+	id,
+	saldo,
+	interesAcumulado
+	FROM dbo.CuentaObjetivo
+	WHERE fechaFin = @fechaActual)
+
+	SET @hi6 = (SELECT COUNT(*) FROM @tablaRendecion) + @lo6-1
+
+	WHILE(@lo6<=@hi6)
+	BEGIN
+
+		SET @cuent = (SELECT idCuenOb FROM @tablaRendecion WHERE ID = @lo6)
+		SET @interesesAcu = (SELECT acumulacionInte FROM @tablaRendecion WHERE ID = @lo6)
+		SET @cuentPad = (SELECT cuentaAhorroId FROM @tablaRendecion WHERE ID = @lo6)
+		SET @saldCuen = (SELECT saldo FROM @tablaRendecion WHERE ID = @lo6)
+
+
+		UPDATE dbo.CuentaObjetivo
+		SET saldo = saldo + @interesesAcu
+		WHERE ID = @cuent
+
+		UPDATE dbo.CuentaObjetivo
+		SET interesAcumulado = interesAcumulado - @interesesAcu
+		WHERE ID = @cuent
+
+		INSERT INTO dbo.movCoInt
+		(fecha,
+		monto,
+		cuentaObjetivoID)
+		VALUES (
+		@fechaActual,
+		@interesesAcu,
+		@cuent)
+			
+		UPDATE dbo.cuentaAhorro
+		SET saldo = saldo + @saldCuen + @interesesAcu
+		WHERE ID = @cuentPad
+
+		UPDATE dbo.CuentaObjetivo
+		SET saldo = saldo - (@saldCuen + @interesesAcu),
+		activo = 0
+		WHERE ID = @cuent
+
+		SET @lo6 = @lo6 + 1
+	END
+
+	SET @lo6 = @hi6+1
+	DELETE FROM @tablaRendecion
 
 
 --Procesamiento de Estados de Cuenta---------------------------------------------
@@ -629,9 +809,12 @@ BEGIN
 
 END
 
-
 --Delete FROM dbo.estadoCuenta
 --DBCC checkident('dbo.estadoCuenta',reseed,0)
+--Delete FROM dbo.movCoInt
+--DBCC checkident('dbo.movCoInt',reseed,0)
+--Delete FROM dbo.cuentaObjetivo
+--DBCC checkident('dbo.cuentaObjetivo',reseed,0)
 --Delete FROM dbo.movimiento
 --DBCC checkident('dbo.movimiento',reseed,0)
 --Delete FROM dbo.puedeVer
