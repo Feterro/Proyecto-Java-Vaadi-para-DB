@@ -22,7 +22,10 @@ DECLARE
 @lo5 int = 1,
 @hi5 int = 1,
 @lo6 int = 1,
-@hi6 int = 1
+@hi6 int = 1,
+@lo7 int = 1,
+@hi7 int = 1
+
 
 WHILE(@fechaActual <= @fechasSimulacion)
 BEGIN
@@ -139,7 +142,9 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	monto decimal(19,4),
 	descripcion varchar(50),
 	diaAhorro int,
-	tasaInt int)
+	tasaInt int,
+	insertAt date,
+	insertBy varchar(50))
 
 	DECLARE
 	@intereses int,
@@ -154,7 +159,9 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	monto,
 	descripcion,
 	diaAhorro,
-	tasaInt)
+	tasaInt,
+	insertAt,
+	insertBy)
 
 	SELECT
 		A.Cuenta.value('@NumeroCuentaPrimaria', 'int') AS tipoCuentaId,
@@ -164,7 +171,9 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		A.Cuenta.value('@MontoAhorro', 'decimal(19,4)') AS tipoCuentaId,
 		A.Cuenta.value('@Descripcion', 'varchar(50)') AS tempDocIdent,
 		A.Cuenta.value('@DiaAhorro', 'int') AS numCuenta,
-		0
+		0,
+		@fechaActual,
+		SUSER_NAME()
 	FROM(
 	SELECT CAST(c AS XML) FROM 
 	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
@@ -203,7 +212,9 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	numeroCuenta,
 	fechaFin,
 	diaAhorro,
-	tasaInteres)
+	tasaInteres,
+	insertAt,
+	insertBy)
 
 	SELECT descripcion,
 	fechaIni, 
@@ -212,7 +223,9 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	numCuenta,
 	fechaFinal,
 	diaAhorro,
-	tasaInt
+	tasaInt,
+	insertAt,
+	insertBy
 	FROM @cuentaObjTemp 
 
 	DELETE FROM @cuentaObjTemp
@@ -506,7 +519,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 
 --Depositos en Cuentas----------------------------------------------------------
 
-	--DECLARE @fechaActual date = '08-07-2020',
+	--DECLARE @fechaActual date = '08-16-2020',
 	--@lo5 int = 1,
 	--@hi5 int = 1
 
@@ -514,13 +527,14 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	@cuentaPadre int,
 	@montoParaAhorro decimal(19,4),
 	@numeroCuenta int,
-	@esActivo bit
+	@esActivo bit,
+	@IDCuenta int
 	
 
 	DECLARE @tablaDeposito TABLE 
 	(ID int identity,
-	numeroCuentaOb int,
 	cuentaAhorroId int,
+	numeroCuentaOb int,
 	monto decimal(19,4),
 	esActivo bit)
 
@@ -536,6 +550,8 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	FROM dbo.CuentaObjetivo
 	WHERE diaAhorro = DAY(@fechaActual))
 
+	--SELECT * FROM @tablaDeposito
+
 
 	SET @hi5 = (SELECT COUNT(*) FROM @tablaDeposito) + @lo5-1
 
@@ -547,9 +563,26 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		SET @cuentaPadre = (SELECT cuentaAhorroId FROM @tablaDeposito WHERE ID = @lo5)
 		SET @saldoCue = (SELECT saldo FROM dbo.cuentaAhorro WHERE ID = @cuentaPadre)
 		SET @esActivo = (SELECT esActivo FROM @tablaDeposito WHERE ID = @lo5)
+		SET @IDCuenta = (SELECT ID FROM dbo.CuentaObjetivo WHERE numeroCuenta = @numeroCuenta)
 
 		IF @saldoCue > @montoParaAhorro AND @esActivo = 1
 		BEGIN
+
+			--SElect @numeroCuenta
+			--SElect @montoParaAhorro 
+			--SElect @cuentaPadre 
+			--SElect @saldoCue 
+			--SElect @esActivo
+			INSERT INTO dbo.movimientoCuenOb
+			(fecha,
+			monto,
+			cuentaObjetivoID,
+			tipoMovimientoCoId)
+			VALUES (
+			@fechaActual,
+			@montoParaAhorro,
+			@IDCuenta,
+			1)
 			
 			UPDATE dbo.cuentaAhorro
 			SET saldo = saldo - @montoParaAhorro
@@ -567,9 +600,63 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	SET @lo5 = @hi5+1
 	DELETE FROM @tablaDeposito
 
+--Calculo de intereses-----------------------------------------------------------
+
+	DECLARE @cuenProce int,
+	@saldocuent decimal(19,4),
+	@tasa decimal(19,4),
+	@acumulacion decimal(19,4)
+
+	DECLARE @tablaIntereses TABLE(
+	ID int IDENTITY,
+	Idcuenta int,
+	saldo decimal(19,4),
+	tasaInteres int)
+
+	INSERT INTO @tablaIntereses(
+	Idcuenta,
+	saldo,
+	tasaInteres)
+	(SELECT
+	ID,
+	saldo,
+	tasaInteres
+	FROM dbo.cuentaObjetivo
+	WHERE activo = 1)
+
+
+	SET @hi7 = (SELECT COUNT(*) FROM @tablaIntereses) + @lo7 - 1
+
+	WHILE @lo7 <= @hi7
+	BEGIN
+
+		SET @cuenProce = (SELECT IdCuenta FROM @tablaIntereses WHERE ID = @lo7)
+		SET @saldocuent = (SELECT saldo FROM @tablaIntereses WHERE ID = @lo7)
+		SET @tasa = (SELECT tasaInteres FROM @tablaIntereses WHERE ID = @lo7)
+		SET @acumulacion = ((@tasa/365) * @saldocuent) / 100
+
+		INSERT INTO dbo.movCoInt
+		(fecha,
+		monto,
+		cuentaObjetivoID)
+		VALUES (
+		@fechaActual,
+		@acumulacion,
+		@cuenProce)
+
+		UPDATE dbo.cuentaObjetivo
+		SET interesAcumulado = interesAcumulado + @acumulacion
+		WHERE @cuenProce = ID
+
+	SET @lo7 = @lo7+1
+	END
+
+	SET @lo7 = @hi7+1
+	DELETE FROM @tablaIntereses
+
 --Rendecion de Cuentas-----------------------------------------------------------
 
-	--DECLARE @fechaActual date = '10-01-2020',
+	--DECLARE @fechaActual date = '2020-10-05',
 	--@lo6 int = 1,
 	--@hi6 int = 1
 
@@ -609,30 +696,41 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		SET @cuentPad = (SELECT cuentaAhorroId FROM @tablaRendecion WHERE ID = @lo6)
 		SET @saldCuen = (SELECT saldo FROM @tablaRendecion WHERE ID = @lo6)
 
-
-		UPDATE dbo.CuentaObjetivo
-		SET saldo = saldo + @interesesAcu
-		WHERE ID = @cuent
-
-		UPDATE dbo.CuentaObjetivo
-		SET interesAcumulado = interesAcumulado - @interesesAcu
-		WHERE ID = @cuent
-
-		INSERT INTO dbo.movCoInt
+		INSERT INTO dbo.movimientoCuenOb
 		(fecha,
 		monto,
-		cuentaObjetivoID)
+		cuentaObjetivoID,
+		tipoMovimientoCoId)
 		VALUES (
 		@fechaActual,
 		@interesesAcu,
-		@cuent)
+		@cuent,
+		2)
+
+
+		INSERT INTO dbo.movimientoCuenOb
+		(fecha,
+		monto,
+		cuentaObjetivoID,
+		tipoMovimientoCoId)
+		VALUES (
+		@fechaActual,
+		@saldCuen + @interesesAcu,
+		@cuent,
+		3)
+
+		
+		UPDATE dbo.CuentaObjetivo
+		SET interesAcumulado = 0
+		WHERE ID = @cuent
 			
 		UPDATE dbo.cuentaAhorro
 		SET saldo = saldo + @saldCuen + @interesesAcu
 		WHERE ID = @cuentPad
 
 		UPDATE dbo.CuentaObjetivo
-		SET saldo = saldo - (@saldCuen + @interesesAcu),
+		SET saldo = 0,
+		interesAcumulado = 0,
 		activo = 0
 		WHERE ID = @cuent
 
@@ -641,6 +739,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 
 	SET @lo6 = @hi6+1
 	DELETE FROM @tablaRendecion
+
 
 
 --Procesamiento de Estados de Cuenta---------------------------------------------
@@ -813,6 +912,8 @@ END
 --DBCC checkident('dbo.estadoCuenta',reseed,0)
 --Delete FROM dbo.movCoInt
 --DBCC checkident('dbo.movCoInt',reseed,0)
+--Delete FROM dbo.movimientoCuenOb
+--DBCC checkident('dbo.movimientoCuenOb',reseed,0)
 --Delete FROM dbo.cuentaObjetivo
 --DBCC checkident('dbo.cuentaObjetivo',reseed,0)
 --Delete FROM dbo.movimiento
@@ -827,3 +928,4 @@ END
 --DBCC checkident('dbo.cuentaAhorro',reseed,0)
 --DELETE FROM dbo.persona
 --DBCC checkident('dbo.persona',reseed,0)
+
