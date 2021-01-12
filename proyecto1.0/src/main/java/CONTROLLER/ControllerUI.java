@@ -19,6 +19,7 @@ public class ControllerUI {
     private ControllerEstadosCuenta estadosCuenta = new ControllerEstadosCuenta();
     private ControllerCuentaObjetivo cuentaObjetivo = new ControllerCuentaObjetivo();
     private ControllerMovimiento movimiento = new ControllerMovimiento();
+    private ControllerAdmin admin = new ControllerAdmin();
 
     private String nombreUsuario;
     private int numCuenta;
@@ -259,6 +260,20 @@ public class ControllerUI {
             return true;
         }
         return false;
+    }
+
+    //---------------------------Administrador---------------------------------
+
+    public ArrayList<CuentaObjetivo> llenarTabla1 () {
+        ArrayList<consultaCuentasObjetivo> detalles = admin.consulta1(ControllerConexion.getInstance().connection);
+        ArrayList<CuentaObjetivo> cuentas = new ArrayList<>();
+
+        for (consultaCuentasObjetivo detalle: detalles){
+            CuentaObjetivo cuentaObjetivo = new CuentaObjetivo();
+//            cuentaObjetivo.set
+        }
+
+        return cuentas;
     }
 
 }

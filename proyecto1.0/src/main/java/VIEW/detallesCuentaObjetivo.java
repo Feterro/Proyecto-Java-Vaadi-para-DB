@@ -72,10 +72,34 @@ public class detallesCuentaObjetivo extends AbsoluteLayout implements View {
 
         Label totalDebitado = new Label("Total debitado");
         totalDebitado.addStyleName(ValoTheme.LABEL_H3);
-        Label realD = new Label("2545343242");
-        realD.addStyleName(ValoTheme.LABEL_H4);
-        Label hubieraD = new Label("45456454");
-        hubieraD.addStyleName(ValoTheme.LABEL_H4);
+
+        Label realDSI = new Label("2545343242");
+        realDSI.addStyleName(ValoTheme.LABEL_H4);
+
+        Label conInteresDR = new Label("Con interéses");
+        conInteresDR.addStyleName(ValoTheme.LABEL_H4);
+        conInteresDR.addStyleName(ValoTheme.LABEL_COLORED);
+
+        Label realDCI = new Label("3243242");
+        realDCI.addStyleName(ValoTheme.LABEL_H4);
+
+        Label sinInteresDR = new Label("Sin interéses");
+        sinInteresDR.addStyleName(ValoTheme.LABEL_H4);
+        sinInteresDR.addStyleName(ValoTheme.LABEL_COLORED);
+
+        Label hubieraDSI = new Label("45456454");
+        hubieraDSI.addStyleName(ValoTheme.LABEL_H4);
+
+        Label conInteresH = new Label("Con interéses");
+        conInteresH.addStyleName(ValoTheme.LABEL_H4);
+        conInteresH.addStyleName(ValoTheme.LABEL_COLORED);
+
+        Label hubieraDCI = new Label("9561231");
+        hubieraDCI.addStyleName(ValoTheme.LABEL_H4);
+
+        Label sinInteresH = new Label("Sin interéses");
+        sinInteresH.addStyleName(ValoTheme.LABEL_H4);
+        sinInteresH.addStyleName(ValoTheme.LABEL_COLORED);
 
         Button atras = new Button("");
         atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -103,8 +127,14 @@ public class detallesCuentaObjetivo extends AbsoluteLayout implements View {
         detalles.addComponent(cantReal, "top: 300px; left: 615px");
         detalles.addComponent(cantHubiera, "top: 300px; right: 525px");
         detalles.addComponent(totalDebitado, "top: 400px; left: 325px");
-        detalles.addComponent(realD, "top: 400px; left: 575px");
-        detalles.addComponent(hubieraD, "top: 400px; right: 500px");
+        detalles.addComponent(realDSI, "top: 400px; left: 500px");
+        detalles.addComponent(conInteresDR, "top: 450px; left: 490px");
+        detalles.addComponent(realDCI, "top: 400px; left:650px");
+        detalles.addComponent(sinInteresDR, "top: 450px; left: 640px");
+        detalles.addComponent(hubieraDSI, "top: 400px; right: 400px");
+        detalles.addComponent(hubieraDCI, "top: 400px; right: 550px");
+        detalles.addComponent(conInteresH, "top: 450px; right: 540px");
+        detalles.addComponent(sinInteresH, "top:450px; right: 390px");
         detalles.addComponent(atras, "top: 600px; right: 50px");
 
         fondo.addComponent(detalles);

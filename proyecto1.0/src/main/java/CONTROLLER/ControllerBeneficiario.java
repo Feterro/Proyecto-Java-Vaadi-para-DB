@@ -7,6 +7,9 @@ import MODEL.EstadoCuenta;
 
 public class ControllerBeneficiario {
 
+    public ControllerBeneficiario() {
+    }
+
     public ArrayList<String> getParentescos(Connection connection) {
         ArrayList<String> listaParentezcos = new ArrayList<>();
         try {
