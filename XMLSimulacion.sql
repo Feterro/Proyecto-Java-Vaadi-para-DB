@@ -59,7 +59,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Persona') AS A(Persona) 
@@ -92,7 +92,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		A.Cuenta.value('@NumeroCuenta', 'int') AS numCuenta
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Cuenta') AS A(Cuenta)
@@ -176,7 +176,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		SUSER_NAME()
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/CuentaAhorro') AS A(Cuenta)
@@ -260,7 +260,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		SUSER_NAME()
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Beneficiario') AS A(Benef)
@@ -306,7 +306,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		A.Usu.value('@EsAdministrador', 'bit') AS porcentaje
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Usuario') AS A(Usu)
@@ -341,7 +341,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	--	A.Usu.value('@Cuenta', 'int') AS tempDocIden
 	--FROM(
 	--SELECT CAST(c AS XML) FROM 
-	--OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	--OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea3.xml', SINGLE_BLOB) AS T(c)
 	--) AS S(c)
 
 	--cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/UsuarioPuedeVer') AS A(Usu)
@@ -410,7 +410,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		@fechaActual
 	FROM(
 	SELECT CAST(c AS XML) FROM 
-	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos-Tarea3.xml', SINGLE_BLOB) AS T(c)
+	OPENROWSET(BULK 'E:\ArchivosTec\Cuartosemestre\Bases\Proyecto-Java-Vaadi-para-DB\Datos_Tarea3.xml', SINGLE_BLOB) AS T(c)
 	) AS S(c)
 
 	cross apply c.nodes('Operaciones/FechaOperacion[@Fecha=sql:variable("@fechaConvertida")]/Movimientos') AS A(Mov)
@@ -550,9 +550,6 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 	FROM dbo.CuentaObjetivo
 	WHERE diaAhorro = DAY(@fechaActual))
 
-	--SELECT * FROM @tablaDeposito
-
-
 	SET @hi5 = (SELECT COUNT(*) FROM @tablaDeposito) + @lo5-1
 
 	WHILE(@lo5<=@hi5)
@@ -568,11 +565,6 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		IF @saldoCue > @montoParaAhorro AND @esActivo = 1
 		BEGIN
 
-			--SElect @numeroCuenta
-			--SElect @montoParaAhorro 
-			--SElect @cuentaPadre 
-			--SElect @saldoCue 
-			--SElect @esActivo
 			INSERT INTO dbo.movimientoCuenOb
 			(fecha,
 			monto,
@@ -590,6 +582,14 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 
 			UPDATE dbo.CuentaObjetivo
 			SET saldo = saldo + @montoParaAhorro
+			WHERE numeroCuenta = @numeroCuenta
+
+		END
+		ELSE
+		BEGIN
+				
+			UPDATE dbo.CuentaObjetivo
+			SET fallo = 1
 			WHERE numeroCuenta = @numeroCuenta
 
 		END
@@ -723,6 +723,7 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		UPDATE dbo.CuentaObjetivo
 		SET interesAcumulado = 0
 		WHERE ID = @cuent
+
 			
 		UPDATE dbo.cuentaAhorro
 		SET saldo = saldo + @saldCuen + @interesesAcu
@@ -731,7 +732,9 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		UPDATE dbo.CuentaObjetivo
 		SET saldo = 0,
 		interesAcumulado = 0,
-		activo = 0
+		activo = 0,
+		saldoQueHubo = @saldCuen,
+		interesQueHubo = @interesesAcu
 		WHERE ID = @cuent
 
 		SET @lo6 = @lo6 + 1
@@ -792,7 +795,9 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 		@multAuto decimal(19,4),
 		@multIncum decimal(19,4),
 		@inter decimal(19,4),
-		@mensCargServ decimal(19,4)
+		@mensCargServ decimal(19,4),
+		@maximoOpeHum int,
+		@maximoOpeAuto int
 
 		SET @hi3 = (SELECT COUNT(*) FROM @cuentasCierre) + @lo3 - 1
 
@@ -811,6 +816,8 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 			SET @multIncum = (SELECT multMin FROM @cuentasCierre WHERE ID = @lo3)
 			SET @mensCargServ = (SELECT mensMontServ FROM @cuentasCierre WHERE ID = @lo3)
 			SET @inter = (SELECT inter FROM @cuentasCierre WHERE ID = @lo3)
+			SET @maximoOpeAuto = (SELECT maxOpeAuto FROM dbo.tipoCuentaAhorro WHERE ID = @tipoCuent)
+			SET @maximoOpeHum = (SELECT maxOpeHum FROM dbo.tipoCuentaAhorro WHERE ID = @tipoCuent)
 
 			IF @hizoAuto < 0
 			BEGIN
@@ -827,7 +834,8 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 				'Multa por sobrepaso en cantidad de operaciones en cajero automatico',
 				@multAuto)
 				UPDATE dbo.cuentaAhorro SET
-				saldo = saldo - @multAuto WHERE
+				saldo = saldo - @multAuto,
+				multado = 1 WHERE
 				ID = @IdBus
 			END
 
@@ -863,6 +871,12 @@ SET @fechaConvertida = CONVERT(varchar, @fechaActual, 110)
 
 			UPDATE dbo.cuentaAhorro SET
 			saldo = saldo + (((@inter * saldo )/100)/12) WHERE
+			ID = @IdBus
+
+			UPDATE dbo.cuentaAhorro SET
+			cantAuto = @maximoOpeAuto,
+			cantHumano = @maximoOpeHum
+			WHERE
 			ID = @IdBus
 			
 			INSERT INTO dbo.movimiento(
@@ -928,4 +942,3 @@ END
 --DBCC checkident('dbo.cuentaAhorro',reseed,0)
 --DELETE FROM dbo.persona
 --DBCC checkident('dbo.persona',reseed,0)
-

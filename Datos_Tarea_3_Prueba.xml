@@ -1,0 +1,22 @@
+<Operaciones>
+	<FechaOperacion Fecha="08-01-2020">
+		<Persona TipoDocuIdentidad="6" Nombre="Bulbasaur" ValorDocumentoIdentidad="44730465" FechaNacimiento="11-22-1952" Email="bulbasaur@outlook.com" Telefono1="80330968" Telefono2="79769831"/>
+		<Persona TipoDocuIdentidad="4" Nombre="Ivysaur" ValorDocumentoIdentidad="40346810" FechaNacimiento="01-05-1974" Email="ivysaur@hotmail.com" Telefono1="82299547" Telefono2="83484602"/>
+		<Persona TipoDocuIdentidad="4" Nombre="Venusaur" ValorDocumentoIdentidad="76008779" FechaNacimiento="02-10-1984" Email="venusaur@yahoo.com" Telefono1="87804400" Telefono2="86543298"/>
+		<Persona TipoDocuIdentidad="5" Nombre="Charmander" ValorDocumentoIdentidad="10797799" FechaNacimiento="04-15-2002" Email="charmander@gmail.com" Telefono1="80248454" Telefono2="78037957"/>
+		<Cuenta ValorDocumentoIdentidadDelCliente="10797799" TipoCuentaId="1" NumeroCuenta="86073678"/>
+		<CuentaAhorro NumeroCuentaPrimaria="86073678" NumeroCuentaAhorro="43871663" MontoAhorro="30000" DiaAhorro="7" FechaFinal="2020-10-01 00:00:00" Descripcion="Bicicleta"/>
+		<Beneficiario NumeroCuenta="86073678" ValorDocumentoIdentidadBeneficiario="40346810" ParentezcoId="3" Porcentaje="30"/>
+		<Beneficiario NumeroCuenta="86073678" ValorDocumentoIdentidadBeneficiario="44730465" ParentezcoId="4" Porcentaje="30"/>
+		<Beneficiario NumeroCuenta="86073678" ValorDocumentoIdentidadBeneficiario="76008779" ParentezcoId="5" Porcentaje="31"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="6865201" Descripcion="Deposito Ventana"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="923935" Descripcion="Compra"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="6865201" Descripcion="Deposito Ventana"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="923935" Descripcion="Compra"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="6865201" Descripcion="Deposito Ventana"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="923935" Descripcion="Compra"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="6865201" Descripcion="Deposito Ventana"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="923935" Descripcion="Compra"/>
+		<Movimientos Tipo="2" CodigoCuenta="86073678" Monto="923935" Descripcion="Compra"/>
+	</FechaOperacion>
+</Operaciones>
