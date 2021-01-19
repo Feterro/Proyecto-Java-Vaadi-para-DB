@@ -5,7 +5,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SP_AD_Consulta2] @incantDias int, @outResultCode int
+ALTER PROCEDURE [dbo].[SP_AD_Consulta2] @incantDias int, @outResultCode int
 
 AS
 BEGIN
@@ -18,7 +18,10 @@ SET NOCOUNT ON
 		cuentaId int,
 		valida bit,
 		cantidadMov decimal(4, 2),
-		promedio decimal(4, 2))
+		promedio decimal(4, 2),
+		mayorCantR int, 
+		mes int, 
+		ano int)
 
 		DECLARE @movPorCuenta TABLE(
 		ID int IDENTITY,
@@ -41,14 +44,20 @@ SET NOCOUNT ON
 		@cantMeses decimal(4, 2) = 0,
 		@cuentProm int,
 		@activoProm bit,
-		@cantMov decimal(4, 2)
+		@cantMov decimal(4, 2),
+		@cantMovMes int = 0,
+		@anoMayor int,
+		@mesMayor int
 
 		INSERT INTO @cuentasMultadas
 		(cuentaId)
 		SELECT ID FROM dbo.cuentaAhorro 
 		WHERE multado = 1
 
-		UPDATE @cuentasMultadas SET valida = 1
+		UPDATE @cuentasMultadas SET valida = 1,
+		mayorCantR = 0, 
+		mes = 0,
+		ano = 0
 
 		SET @hi = (SELECT COUNT(*) FROM @cuentasMultadas)
 
@@ -106,11 +115,34 @@ SET NOCOUNT ON
 
 				WHILE @lo3 <= @hi3
 				BEGIN
-
+					SET @cantMovMes = @cantMovMes + 1
+					PRINT @cantMovMes
+					
 					SET @mesNuev = MONTH((SELECT fechaOpe FROM @movPorCuenta WHERE ID = @lo3))
+					SET @mesMayor = @mesRev
+					SET @anoMayor = YEAR((SELECT fechaOpe FROM @movPorCuenta WHERE ID = @lo3))
+
+			
 					IF @mesNuev != @mesRev
 					BEGIN
+			
+						IF @mesRev != 13
+						BEGIN
+							IF ((SELECT mayorCantR FROM @cuentasMultadas WHERE ID = @lo2) > @cantMovMes-1)
+							BEGIN
+								SET @cantMovMes = (SELECT mayorCantR FROM @cuentasMultadas WHERE ID = @lo2)+1
+								SET @mesMayor = (SELECT mes FROM @cuentasMultadas WHERE ID = @lo2)
+								SET @anoMayor = (SELECT ano FROM @cuentasMultadas WHERE ID = @lo2)
+							END
 
+							UPDATE @cuentasMultadas
+							SET mayorCantR = @cantMovMes-1,
+							mes = @mesMayor,
+							ano = @anoMayor
+							WHERE ID  = @lo2
+						END
+
+						SET @cantMovMes = 1
 						SET @mesRev = @mesNuev
 						SET @cantMeses = @cantMeses + 1
 
@@ -120,20 +152,32 @@ SET NOCOUNT ON
 				END
 				SET @lo3 = @hi3+1
 
+				IF ((SELECT mayorCantR FROM @cuentasMultadas WHERE ID = @lo2) > @cantMovMes)
+					BEGIN
+						SET @cantMovMes = (SELECT mayorCantR FROM @cuentasMultadas WHERE ID = @lo2)
+						SET @mesMayor = (SELECT mes FROM @cuentasMultadas WHERE ID = @lo2)
+						SET @anoMayor = (SELECT ano FROM @cuentasMultadas WHERE ID = @lo2)
+					END
+
+				UPDATE @cuentasMultadas
+				SET mayorCantR = @cantMovMes,
+				mes = @mesMayor,
+				ano = @anoMayor
+				WHERE ID  = @lo2
+
 				UPDATE @cuentasMultadas
 				SET promedio = @cantMov/@cantMeses
 				WHERE ID = @lo2
 
 				SET @mesRev = 13
 				SET @cantMeses = 0
+				SET @cantMovMes = 0
 				DELETE FROM @movPorCuenta
 
 			END
 
 			SET @lo2 = @lo2+1
 		END
-
-		SELECT * FROM @cuentasMultadas
 
 	END TRY
 	BEGIN CATCH
@@ -160,12 +204,19 @@ END
 --INSERT INTO dbo.cuentaAhorro VALUES(1, '2020-08-01', 1, 7777777, -1, -1, 100, 1)
 --INSERT INTO dbo.cuentaAhorro VALUES(2, '2020-08-01', 1, 8888888, -1, -1, 200, 1)
 --INSERT INTO dbo.cuentaAhorro VALUES(3, '2020-08-01', 1, 9999999, -1, -1, 300, 1)
+--INSERT INTO dbo.cuentaAhorro VALUES(1, '2020-08-01', 1, 6666666, -1, -1, 100, 1)
+--INSERT INTO dbo.cuentaAhorro VALUES(2, '2020-08-01', 1, 1111111, -1, -1, 200, 1)
+--INSERT INTO dbo.cuentaAhorro VALUES(3, '2020-08-01', 1, 2222222, -1, -1, 300, 1)
+--INSERT INTO dbo.cuentaAhorro VALUES(1, '2020-08-01', 1, 3333333, -1, -1, 100, 1)
+--INSERT INTO dbo.cuentaAhorro VALUES(2, '2020-08-01', 1, 4444444, -1, -1, 200, 1)
+--INSERT INTO dbo.cuentaAhorro VALUES(3, '2020-08-01', 1, 5555555, -1, -1, 300, 1)
+--INSERT INTO dbo.cuentaAhorro VALUES(1, '2020-08-01', 1, 1212121, -1, -1, 300, 1)
 
---INSERT INTO dbo.movimiento VALUES (2, 32, '9-27-2020', 'prueba', 0)
---INSERT INTO dbo.movimiento VALUES (2, 32, '9-26-2020', 'prueba', 0)
---INSERT INTO dbo.movimiento VALUES (2, 32, '9-25-2020', 'prueba', 0)
---INSERT INTO dbo.movimiento VALUES (2, 32, '10-28-2020', 'prueba', 0)
---INSERT INTO dbo.movimiento VALUES (2, 32, '10-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 32, '12-31-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 32, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 32, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 32, '12-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 32, '12-27-2020', 'prueba', 0)
 
 --INSERT INTO dbo.movimiento VALUES (2, 33, '12-31-2020', 'prueba', 0)
 --INSERT INTO dbo.movimiento VALUES (2, 33, '12-30-2020', 'prueba', 0)
@@ -173,10 +224,98 @@ END
 --INSERT INTO dbo.movimiento VALUES (2, 33, '12-28-2020', 'prueba', 0)
 --INSERT INTO dbo.movimiento VALUES (2, 33, '12-27-2020', 'prueba', 0)
 
-
 --INSERT INTO dbo.movimiento VALUES (2, 34, '12-31-2020', 'prueba', 0)
 --INSERT INTO dbo.movimiento VALUES (2, 34, '12-30-2020', 'prueba', 0)
 --INSERT INTO dbo.movimiento VALUES (2, 34, '12-29-2020', 'prueba', 0)
 --INSERT INTO dbo.movimiento VALUES (2, 34, '12-28-2020', 'prueba', 0)
 
---SELECT fechaMovimiento from movimiento WHERE cuentaAhorroId = 32
+--INSERT INTO dbo.movimiento VALUES (2, 35, '9-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '9-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '10-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '10-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '10-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '11-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '11-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '11-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '11-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '11-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '11-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '12-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '12-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 35, '12-31-2020', 'prueba', 0)
+
+--INSERT INTO dbo.movimiento VALUES (2, 36, '8-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '8-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '8-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '8-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '8-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '8-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '9-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '10-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '10-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '11-24-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '11-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '11-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '11-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '12-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '12-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 36, '12-31-2020', 'prueba', 0)
+
+--INSERT INTO dbo.movimiento VALUES (2, 37, '12-31-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 37, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 37, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 37, '12-28-2020', 'prueba', 0)
+
+--INSERT INTO dbo.movimiento VALUES (2, 38, '9-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '10-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '11-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-22-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-23-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-24-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 38, '12-31-2020', 'prueba', 0)
+
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-20-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-21-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-22-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-23-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-24-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '10-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '12-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '12-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 39, '12-31-2020', 'prueba', 0)
+
+--INSERT INTO dbo.movimiento VALUES (2, 40, '9-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '9-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '9-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '9-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '9-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '9-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '10-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '11-25-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '11-26-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '11-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '12-27-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '12-28-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 40, '12-31-2020', 'prueba', 0)
+
+--INSERT INTO dbo.movimiento VALUES (2, 41, '12-31-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 41, '12-30-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 41, '12-29-2020', 'prueba', 0)
+--INSERT INTO dbo.movimiento VALUES (2, 41, '12-28-2020', 'prueba', 0)
+
