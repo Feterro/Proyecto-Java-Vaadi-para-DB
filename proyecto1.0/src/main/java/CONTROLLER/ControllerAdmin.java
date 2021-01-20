@@ -9,8 +9,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ControllerAdmin {
+
+    ArrayList<String> meses = new ArrayList<>(Arrays.asList("ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE","OCTUBRE", "NOVIEMBRE", "DICIEMBRE"));
 
     public ControllerAdmin() {}
 
@@ -47,7 +50,10 @@ public class ControllerAdmin {
             callableStatement.registerOutParameter(2, Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
-                String fecha = String.valueOf(resultSet.getInt("mes")) + resultSet.getInt("ano");
+                String mes = String.valueOf(resultSet.getInt("mes"));
+                System.out.println(mes);
+                String nuevoMes = meses.get(Integer.parseInt(mes)-1);
+                String fecha = nuevoMes + "/" +resultSet.getInt("ano");
                 tablaMultas tabla = new tablaMultas(resultSet.getInt("numCuenta"), resultSet.getFloat("promedio"), fecha);
                 cuentas.add(tabla);
             }
