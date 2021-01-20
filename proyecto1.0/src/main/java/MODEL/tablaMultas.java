@@ -1,14 +1,18 @@
 package MODEL;
 
-import java.util.Date;
-
 public class tablaMultas {
 
     private int numeroCuenta;
-    private int cantPromedioMes;
-    private Date mayorCantRetiros;
+    private float cantPromedioMes;
+    private String mayorCantRetiros;
 
     public tablaMultas() {}
+
+    public tablaMultas(int numeroCuenta, float cantPromedioMes, String mayorCantRetiros) {
+        this.numeroCuenta = numeroCuenta;
+        this.cantPromedioMes = cantPromedioMes;
+        this.mayorCantRetiros = mayorCantRetiros;
+    }
 
     public int getNumeroCuenta() {
         return numeroCuenta;
@@ -18,7 +22,7 @@ public class tablaMultas {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public int getCantPromedioMes() {
+    public float getCantPromedioMes() {
         return cantPromedioMes;
     }
 
@@ -26,11 +30,11 @@ public class tablaMultas {
         this.cantPromedioMes = cantPromedioMes;
     }
 
-    public Date getMayorCantRetiros() {
+    public String getMayorCantRetiros() {
         return mayorCantRetiros;
     }
 
-    public void setMayorCantRetiros(Date mayorCantRetiros) {
+    public void setMayorCantRetiros(String mayorCantRetiros) {
         this.mayorCantRetiros = mayorCantRetiros;
     }
 }

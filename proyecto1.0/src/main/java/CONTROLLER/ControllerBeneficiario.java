@@ -35,7 +35,6 @@ public class ControllerBeneficiario {
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()) {
                 listaTip.add(resultSet.getString("tipoDoc"));
-//                System.out.println(resultSet.getString("tipoDoc"));
 
             }
         } catch (Exception ex) {

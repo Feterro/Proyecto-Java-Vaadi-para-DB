@@ -1,5 +1,6 @@
 package VIEW;
 
+import CONTROLLER.ControllerUI;
 import MODEL.BeneficiarioConsulta;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
@@ -12,6 +13,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 
 public class ConsultaBeneficiarios extends AbsoluteLayout implements View {
+
+    private ControllerUI controller = ControllerUI.getInstance();
 
     public ConsultaBeneficiarios() {
         ventana();
@@ -42,13 +45,14 @@ public class ConsultaBeneficiarios extends AbsoluteLayout implements View {
 
         Grid<BeneficiarioConsulta> tablaConsulta = new Grid<>(BeneficiarioConsulta.class);
         tablaConsulta.setWidth("1000px");
-        tablaConsulta.setHeight("300px");
+        tablaConsulta.setHeight("400px");
         tablaConsulta.setColumnOrder("cedula", "nombre", "numCuentaMas", "cantCuentas", "montoDinero");
         tablaConsulta.getColumn("cedula").setCaption("CÉDULA");
         tablaConsulta.getColumn("nombre").setCaption("NOMBRE");
         tablaConsulta.getColumn("numCuentaMas").setCaption("CUENTA CON MÁS %");
         tablaConsulta.getColumn("cantCuentas").setCaption("CANTIDAD DE CUENTAS");
         tablaConsulta.getColumn("montoDinero").setCaption("MONTO TOTAL RECIBIDO");
+        tablaConsulta.setItems(controller.consulta3());
 
         Button atras = new Button("");
         atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -61,7 +65,7 @@ public class ConsultaBeneficiarios extends AbsoluteLayout implements View {
             navigator.navigateTo("Consultas");
         });
 
-        consulta.addComponent(tablaConsulta, "top: 250px; left: 250px");
+        consulta.addComponent(tablaConsulta, "top: 200px; left: 250px");
         consulta.addComponent(fondoConsu);
         consulta.addComponent(label, "top: 25px; left: 675px");
         consulta.addComponent(detalles, "top: 80px; left: 625px");

@@ -11,6 +11,14 @@ public class BeneficiarioConsulta {
     public BeneficiarioConsulta() {
     }
 
+    public BeneficiarioConsulta(String nombre, int cedula, float montoDinero, int numCuentaMas, int cantCuentas) {
+        this.nombre = nombre;
+        this.cedula = cedula;
+        this.montoDinero = montoDinero;
+        this.numCuentaMas = numCuentaMas;
+        this.cantCuentas = cantCuentas;
+    }
+
     public String getNombre() {
         return nombre;
     }

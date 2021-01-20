@@ -22,9 +22,7 @@ public class MyUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         Navigator nav = new Navigator(this, this);
-//    nav.addView("Inicio", Inicio.class);
-//    nav.navigateTo("Inicio");
-        nav.addView("Inicio", detallesCuentaObjetivo.class);
+        nav.addView("Inicio", Inicio.class);
         nav.navigateTo("Inicio");
     }
 

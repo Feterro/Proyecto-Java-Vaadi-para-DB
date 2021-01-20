@@ -99,19 +99,23 @@ public class ControllerCuentaObjetivo {
         return numerosCuenta;
     }
 
-    public CuentaObjetivo verDetalles(Connection connection, String cuentaOb){
+    public CuentaObjetivo verDetalles(Connection connection, String cuentaOb, boolean admin){
         CuentaObjetivo cuentaObjetivo =  new CuentaObjetivo();
         try {
-            CallableStatement callableStatement = connection.prepareCall("SP_CO_VerDetallesCuentaObjetivo ?, ?");
+            CallableStatement callableStatement = connection.prepareCall("SP_CO_VerDetallesCuentaObjetivo ?, ?, ?");
             callableStatement.setString(1, cuentaOb);
-            callableStatement.registerOutParameter(2, Types.INTEGER);
+            callableStatement.setBoolean(2, admin);
+            callableStatement.registerOutParameter(3, Types.INTEGER);
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()){
                 cuentaObjetivo.setNumCuenta(resultSet.getString("numeroCuenta"));
                 cuentaObjetivo.setCuota(resultSet.getFloat("cuota"));
                 cuentaObjetivo.setFechaInicio(resultSet.getDate("fechaIn"));
                 cuentaObjetivo.setFechaFinal(resultSet.getDate("fechaFin"));
-                cuentaObjetivo.setSaldo(resultSet.getFloat("saldo"));
+                if(admin)
+                    cuentaObjetivo.setSaldo(resultSet.getFloat("saldoQueHubo"));
+                else
+                    cuentaObjetivo.setSaldo(resultSet.getFloat("saldo"));
                 cuentaObjetivo.setObjetivo(resultSet.getString("objetivo"));
             }
         }

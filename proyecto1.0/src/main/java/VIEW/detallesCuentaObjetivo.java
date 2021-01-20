@@ -1,6 +1,7 @@
 package VIEW;
 
 import CONTROLLER.ControllerUI;
+import MODEL.consultaCuentasObjetivo;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -30,6 +31,13 @@ public class detallesCuentaObjetivo extends AbsoluteLayout implements View {
         fondoConsu.setWidth("1500px");
         fondoConsu.setHeight("700px");
 
+        consultaCuentasObjetivo cuenta = null;
+        for(consultaCuentasObjetivo cuen: controller.getDetalles()){
+            if (cuen.getNumCuenta() == Integer.parseInt(controller.getNumCuentaOb())){
+                cuenta = cuen;
+            }
+        }
+
         HorizontalLayout fondo = new HorizontalLayout();
         fondo.setSizeFull();
 
@@ -49,12 +57,12 @@ public class detallesCuentaObjetivo extends AbsoluteLayout implements View {
 
         Label IDco = new Label("ID");
         IDco.addStyleName(ValoTheme.LABEL_H3);
-        Label id = new Label("22");
+        Label id = new Label(String.valueOf(cuenta.getIdCO()));
         id.addStyleName(ValoTheme.LABEL_H4);
 
         Label objetivo = new Label("Objetivo");
         objetivo.addStyleName(ValoTheme.LABEL_H3);
-        Label desc = new Label("Comprar casa");
+        Label desc = new Label(cuenta.getObjetivo());
         desc.addStyleName(ValoTheme.LABEL_H4);
 
         Label real = new Label("Depositos reales");
@@ -65,36 +73,40 @@ public class detallesCuentaObjetivo extends AbsoluteLayout implements View {
 
         Label cantDepositos = new Label("Cantidad depositos");
         cantDepositos.addStyleName(ValoTheme.LABEL_H3);
-        Label cantReal = new Label("20");
+        Label cantReal = new Label(String.valueOf(cuenta.getCantDepReal()));
         cantReal.addStyleName(ValoTheme.LABEL_H4);
-        Label cantHubiera = new Label("21");
+        Label cantHubiera = new Label(String.valueOf(cuenta.getCantDepH()));
         cantHubiera.addStyleName(ValoTheme.LABEL_H4);
 
         Label totalDebitado = new Label("Total debitado");
         totalDebitado.addStyleName(ValoTheme.LABEL_H3);
 
-        Label realDSI = new Label("2545343242");
+        Label realDSI = new Label(String.valueOf(cuenta.getTotalReal()));
         realDSI.addStyleName(ValoTheme.LABEL_H4);
+
+        float conInteresReal = cuenta.getTotalReal() + cuenta.getInterR();
 
         Label conInteresDR = new Label("Con interéses");
         conInteresDR.addStyleName(ValoTheme.LABEL_H4);
         conInteresDR.addStyleName(ValoTheme.LABEL_COLORED);
 
-        Label realDCI = new Label("3243242");
+        Label realDCI = new Label(String.valueOf(conInteresReal));
         realDCI.addStyleName(ValoTheme.LABEL_H4);
 
         Label sinInteresDR = new Label("Sin interéses");
         sinInteresDR.addStyleName(ValoTheme.LABEL_H4);
         sinInteresDR.addStyleName(ValoTheme.LABEL_COLORED);
 
-        Label hubieraDSI = new Label("45456454");
+        Label hubieraDSI = new Label(String.valueOf(cuenta.getTotalH()));
         hubieraDSI.addStyleName(ValoTheme.LABEL_H4);
 
         Label conInteresH = new Label("Con interéses");
         conInteresH.addStyleName(ValoTheme.LABEL_H4);
         conInteresH.addStyleName(ValoTheme.LABEL_COLORED);
 
-        Label hubieraDCI = new Label("9561231");
+        float totalHCi = cuenta.getTotalH() + cuenta.getInterH();
+
+        Label hubieraDCI = new Label(String.valueOf(totalHCi));
         hubieraDCI.addStyleName(ValoTheme.LABEL_H4);
 
         Label sinInteresH = new Label("Sin interéses");
@@ -120,7 +132,7 @@ public class detallesCuentaObjetivo extends AbsoluteLayout implements View {
         detalles.addComponent(IDco, "top: 100px; left: 375px");
         detalles.addComponent(id, "top: 125px; left: 375");
         detalles.addComponent(objetivo, "top: 100x; right: 350px");
-        detalles.addComponent(desc, "top: 125px; right: 325px");
+        detalles.addComponent(desc, "top: 125px; right: 350px");
         detalles.addComponent(real, "top: 200px; left: 525px");
         detalles.addComponent(seHubiera, "top: 200px; right: 425px");
         detalles.addComponent(cantDepositos, "top: 300px; left: 325px");

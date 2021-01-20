@@ -1,5 +1,6 @@
 package VIEW;
 
+import CONTROLLER.ControllerUI;
 import MODEL.tablaMultas;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
@@ -12,6 +13,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 
 public class ConsultaMultasCuenta extends AbsoluteLayout implements View {
+
+    private ControllerUI controller = ControllerUI.getInstance();
 
     public ConsultaMultasCuenta() {
         ventana();
@@ -46,6 +49,12 @@ public class ConsultaMultasCuenta extends AbsoluteLayout implements View {
         Label detalles3 = new Label("en cajero automático");
         detalles3.addStyleName(ValoTheme.LABEL_H4);
 
+        TextField cantidadDias = new TextField("ÚLTIMOS DÍAS");
+        cantidadDias.setPlaceholder("CANTIDAD DE DÍAS");
+        cantidadDias.setWidth("200px");
+        cantidadDias.addStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
+        cantidadDias.setIcon(VaadinIcons.SEARCH);
+
         Grid<tablaMultas> multas = new Grid<>(tablaMultas.class);
         multas.getColumn("numeroCuenta").setCaption("# CUENTA");
         multas.getColumn("cantPromedioMes").setCaption("# RETIROS PROMEDIO POR MES");
@@ -54,16 +63,13 @@ public class ConsultaMultasCuenta extends AbsoluteLayout implements View {
         multas.setWidth("1000px");
         multas.setColumnOrder("numeroCuenta", "cantPromedioMes", "mayorCantRetiros");
 
-        TextField cantidadDias = new TextField("ÚLTIMOS DÍAS");
-        cantidadDias.setPlaceholder("CANTIDAD DE DÍAS");
-        cantidadDias.setWidth("200px");
-        cantidadDias.addStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
-        cantidadDias.setIcon(VaadinIcons.SEARCH);
-
         Button buscar = new Button();
         buscar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         buscar.setIcon(VaadinIcons.FOLDER_SEARCH);
         buscar.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        buscar.addClickListener(e->{
+           multas.setItems(controller.consulta2(Integer.parseInt(cantidadDias.getValue())));
+        });
 
         Button atras = new Button("");
         atras.addStyleName(ValoTheme.BUTTON_ICON_ONLY);

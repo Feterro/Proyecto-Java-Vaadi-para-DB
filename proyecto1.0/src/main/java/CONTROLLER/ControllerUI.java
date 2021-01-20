@@ -6,6 +6,8 @@ import com.vaadin.ui.TabSheet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class ControllerUI {
 
@@ -13,6 +15,9 @@ public class ControllerUI {
 
     private ArrayList<Beneficiario> beneficiarios; //igual al sp
     private ArrayList<String> numerosCuentaObjetivo;
+    private ArrayList<consultaCuentasObjetivo> detalles;
+    private ArrayList<String> numsCuenta;
+    private ArrayList<CuentaObjetivo> cuentas;
 
     private ControllerBeneficiario beneficiarioCon = new ControllerBeneficiario();
     private ControllerUsuario usuarioCon = new ControllerUsuario();
@@ -35,6 +40,26 @@ public class ControllerUI {
             controllerUI = new ControllerUI();
         }
         return controllerUI;
+    }
+
+    public List<CuentaObjetivo> getCuentas() {
+        return cuentas;
+    }
+
+    public ArrayList<consultaCuentasObjetivo> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(ArrayList<consultaCuentasObjetivo> detalles) {
+        this.detalles = detalles;
+    }
+
+    public ArrayList<String> getNumsCuenta() {
+        return numsCuenta;
+    }
+
+    public void setNumsCuenta(ArrayList<String> numsCuenta) {
+        this.numsCuenta = numsCuenta;
     }
 
     public String getNumCuentaOb() {
@@ -218,7 +243,7 @@ public class ControllerUI {
         System.out.println("Cuentas: " + numerosCuentaObjetivo);
         for(String numCuenta: numerosCuentaObjetivo){
             System.out.println(numCuenta);
-            CuentaObjetivo cuentaGuardar = cuentaObjetivo.verDetalles(ControllerConexion.getInstance().connection, numCuenta);
+            CuentaObjetivo cuentaGuardar = cuentaObjetivo.verDetalles(ControllerConexion.getInstance().connection, numCuenta, false);
             System.out.println(cuentaGuardar.imprimir());
             cuentasActuales.add(cuentaGuardar);
         }
@@ -237,7 +262,7 @@ public class ControllerUI {
     }
 
     public CuentaObjetivo llenarCamposAct(String numCuenta){
-        CuentaObjetivo cuenta = cuentaObjetivo.verDetalles(ControllerConexion.getInstance().connection, numCuenta);
+        CuentaObjetivo cuenta = cuentaObjetivo.verDetalles(ControllerConexion.getInstance().connection, numCuenta, false);
         CuentaObjetivo actualizar = new CuentaObjetivo();
         actualizar.setObjetivo(cuenta.getObjetivo());
         actualizar.setFechaFinal(cuenta.getFechaFinal());
@@ -264,16 +289,38 @@ public class ControllerUI {
 
     //---------------------------Administrador---------------------------------
 
-    public ArrayList<CuentaObjetivo> llenarTabla1 () {
-        ArrayList<consultaCuentasObjetivo> detalles = admin.consulta1(ControllerConexion.getInstance().connection);
-        ArrayList<CuentaObjetivo> cuentas = new ArrayList<>();
-
-        for (consultaCuentasObjetivo detalle: detalles){
-            CuentaObjetivo cuentaObjetivo = new CuentaObjetivo();
-//            cuentaObjetivo.set
+    public ArrayList<CuentaObjetivo> llenarTablaCoAdm () {
+        cuentas = new ArrayList<>();
+        numsCuenta = new ArrayList<>();
+        detalles = admin.consulta1(ControllerConexion.getInstance().connection);
+        for(consultaCuentasObjetivo detalle: detalles){
+            numsCuenta.add(String.valueOf(detalle.getNumCuenta()));
+        }
+        for(String num: numsCuenta){
+            cuentas.add(cuentaObjetivo.verDetalles(ControllerConexion.getInstance().connection, num,true));
         }
 
         return cuentas;
+    }
+
+    public ArrayList<CuentaObjetivo> filtro (String filtro){
+        ArrayList<CuentaObjetivo> cuentasNuevas = new ArrayList<>();
+
+        Pattern pattern = Pattern.compile(filtro);
+        for(CuentaObjetivo cuenta: cuentas){
+            if(pattern.matcher(cuenta.getNumCuenta()).find()){
+                cuentasNuevas.add(cuenta);
+            }
+        }
+        return cuentasNuevas;
+    }
+
+    public ArrayList<tablaMultas> consulta2 (int cantDias){
+        return admin.consulta2(ControllerConexion.getInstance().connection, cantDias);
+    }
+
+    public ArrayList<BeneficiarioConsulta> consulta3(){
+        return admin.consulta3(ControllerConexion.getInstance().connection);
     }
 
 }
