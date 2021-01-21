@@ -81,16 +81,17 @@ public class detallesCuentaObjetivo extends AbsoluteLayout implements View {
         Label totalDebitado = new Label("Total debitado");
         totalDebitado.addStyleName(ValoTheme.LABEL_H3);
 
-        Label realDSI = new Label(String.valueOf(cuenta.getTotalReal()));
+        float conInteresReal = cuenta.getTotalReal() + cuenta.getInterR();
+
+        Label realDSI = new Label(String.valueOf(conInteresReal));
         realDSI.addStyleName(ValoTheme.LABEL_H4);
 
-        float conInteresReal = cuenta.getTotalReal() + cuenta.getInterR();
 
         Label conInteresDR = new Label("Con interéses");
         conInteresDR.addStyleName(ValoTheme.LABEL_H4);
         conInteresDR.addStyleName(ValoTheme.LABEL_COLORED);
 
-        Label realDCI = new Label(String.valueOf(conInteresReal));
+        Label realDCI = new Label(String.valueOf(cuenta.getTotalReal()));
         realDCI.addStyleName(ValoTheme.LABEL_H4);
 
         Label sinInteresDR = new Label("Sin interéses");
